@@ -2,3 +2,8 @@
 function channelDetailsV1 (authUserId, channelId) {
     return 'authUserId' + 'channelId';
 }
+
+// Returns a string concatination of the input arguments 'authUserId' and 'channelId'
+function channelJoinV1 (authUserId, channelId) {
+    return 'authUserId' + 'channelId';
+}

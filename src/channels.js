@@ -1,15 +1,19 @@
-
-// Returns a string concatination of the input arguments 'authUserId', 'name' and 'isPublic'
 function channelsCreateV1(authUserId, name, isPublic) {
-    return 'authUserId' + 'name' + 'isPublic';
+  return {
+    channelId: 1,
+  };
 }
 
-// Returns a string concatination of the input arguments 'authUserId' 
 function channelsListV1(authUserId) {
-    return 'authUserId';
+  return {
+    channels: [] // see interface for contents
+  };
 }
 
-// Returns a string concatination of the input arguments 'authUserId'
 function channelsListallV1(authUserId) {
-    return 'authUserId';
+  return {
+    channels: [] // see interface for contents
+  };
 }
+
+export { channelsCreateV1, channelsListV1, channelsListallV1 };

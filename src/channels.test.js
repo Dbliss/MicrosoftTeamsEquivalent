@@ -54,7 +54,21 @@ describe('Testing channelsCreateV1', () => {
                                   'name', 
                                   false);
 
-    expect(result).any(Number));
+    expect(result).toMatchObject({channelId: any(Number)}));
+  });
+  
+    test('Invalid authUserId', () => {
+    clearV1();
+    let authUserId = authRegisterV1('email@email.com', 
+                                    'password', 
+                                    'First',
+                                    'Last');
+                                    
+    let result = channelsCreateV1(-9999, 
+                                  'name', 
+                                  false);
+
+    expect(result).toMatchObject({error: 'error'});
   });
   
   
@@ -80,12 +94,12 @@ describe('Testing channelsListV1', () => {
                                   true);
                                   
     let result = channelsListV1(authUserId);
-    expect(result).toEqual([{
+    expect(result).toMatchObject({channels: [{
                               channelId: channelId1,
                               name: 'name1'},
                             {
                               channelId: channelId2,
-                              name: 'name2'}]);
+                              name: 'name2'}]});
                                   
   });
   
@@ -111,9 +125,9 @@ describe('Testing channelsListV1', () => {
                                   true);
                                   
     let result = channelsListV1(authUserId2);
-    expect(result).toEqual([{
+    expect(result).toMatchObject({channels: [{
                                   channelId: channelId2,
-                                  name: 'name2'}]);
+                                  name: 'name2'}]});
                                   
   });
   
@@ -139,7 +153,7 @@ describe('Testing channelsListV1', () => {
                                   true);
                                   
     let result = channelsListV1(authUserId2);
-    expect(result).toEqual([]);
+    expect(result).toMatchObject({channels: []});
                                   
   });
   
@@ -155,7 +169,7 @@ describe('Testing channelsListV1', () => {
                                   false);
                                   
     let result = channelsListV1(-99999);
-    expect(result).toEqual([]);
+    expect(result).toMatchObject({channels: []});
                                   
   });
   
@@ -181,12 +195,12 @@ describe('Testing channelsListallV1', () => {
                                   true);
                                   
     let result = channelsListAllV1(authUserId);
-    expect(result).toEqual([{
+    expect(result).toMatchObject({channels: [{
                               channelId: channelId1,
                               name: 'name1'},
                             {
                               channelId: channelId2,
-                              name: 'name2'}]);
+                              name: 'name2'}]});
                                   
   });
   
@@ -212,12 +226,12 @@ describe('Testing channelsListallV1', () => {
                                   true);
                                   
     let result = channelsListAllV1(authUserId2);
-    expect(result).toEqual([{
+    expect(result).toMatchObject({channels: [{
                               channelId: channelId1,
                               name: 'name1'},
                             {
                               channelId: channelId2,
-                              name: 'name2'}]);
+                              name: 'name2'}]});
                                   
   });
   
@@ -243,12 +257,12 @@ describe('Testing channelsListallV1', () => {
                                   true);
                                   
     let result = channelsListAllV1(authUserId2);
-    expect(result).toEqual([{
+    expect(result).toMatchObject({channels: [{
                               channelId: channelId1,
                               name: 'name1'},
                             {
                               channelId: channelId2,
-                              name: 'name2'}]);
+                              name: 'name2'}]});
                                   
   });
   
@@ -264,7 +278,7 @@ describe('Testing channelsListallV1', () => {
                                   false);
                                   
     let result = channelsListAllV1(-99999);
-    expect(result).toEqual([]);
+    expect(result).toMatchObject({channels: []});
                                   
   });
   

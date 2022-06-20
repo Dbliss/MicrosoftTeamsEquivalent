@@ -4,7 +4,7 @@ import { clearV1 } from './other'
 test('Test successful returns authUserId', () => {
     clearV1();
     let result = authRegisterV1('z5364121@unsw.edu.au', 'banana', 'Thevindu', 'Hewa');
-    expect(result).toBe('thevinduhewa');
+    expect(result).toMatchObject({ authUserId: expect.any(Number)});
 });
 
 test('Invalid email', () => {

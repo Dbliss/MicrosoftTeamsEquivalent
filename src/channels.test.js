@@ -8,8 +8,12 @@ import {
 } from './channels.js';
 
 import {
-  clearV1;
-} from './other.js'
+  authRegisterV1,
+} from "auth.js";
+
+import {
+  clearV1,
+} from './other.js';
 
 
 describe('Testing channelsCreateV1', () => {

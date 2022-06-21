@@ -1,5 +1,5 @@
-import { authLoginV1, authRegisterV1 } from './auth';
-import { clearV1 } from './other'
+import { authLoginV1, authRegisterV1 } from './auth.js';
+import { clearV1 } from './other.js'
 
 test('Test successful returns authUserId', () => {
     clearV1();

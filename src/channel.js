@@ -1,4 +1,4 @@
-import {getData, setData}  from 'dataStore.js'
+import {getData, setData}  from './dataStore.js';
 
 // Returns a string concatination of the input arguments 'authUserId' and 'channelId'
 function channelDetailsV1 (authUserId, channelId) {
@@ -23,7 +23,7 @@ function channelInviteV1 (authUserId, channelId, uId) {
     //checking the channelId is valid
     for (let channel of dataSet.channel){
         if (channel.cId === channelId){
-            validChannal = true;
+            validChannel = true;
             currentChannel =  channel;
         }
     }
@@ -35,7 +35,7 @@ function channelInviteV1 (authUserId, channelId, uId) {
         }
     }
 
-    //checking that the uId isnt already in  the channel
+    //checking that the uId isnt already in the channel
     if (currentChannel.members.includes(uId) === true){
          return {error: 'error'};
     }
@@ -46,7 +46,7 @@ function channelInviteV1 (authUserId, channelId, uId) {
    }
 
    //checking valid inputted channelId and uId 
-     if (validChannal  === false || validUid === false){
+     if (validChannel  === false || validUid === false){
         return {error: 'error'};
     }
 

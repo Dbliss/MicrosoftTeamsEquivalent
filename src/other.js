@@ -1,5 +1,16 @@
+import {
+  getData,
+  setData,
+} from './dataStore.js';
+
+
 function clearV1() {
-  return {};
+  
+  let emptyData = {
+    'user': [],
+    'channel':[],
+  }
+  setData(emptyData);
 }
 
 export { clearV1 };

@@ -1,3 +1,4 @@
+
 import {
   getData,
   setData,
@@ -16,18 +17,19 @@ import {
 // Returns {error: 'error'} on invalid authUserId - Being authUserId does not exist
 // Returns {error: 'error'} on invalid name - name must be in between 1 and 20 characters inclusive  
 
+
+
+
 function channelsCreateV1(authUserId, name, isPublic) {
   
   let data = getData();
   let validId = false;
-  
   // Validates the authUserId Passed
-  for(let i = 0; i < data.channels.length; i++) {
-    if(data.channels[i].userId === authUserId) {
+  for(let i = 0; i < data.user.length; i++) {
+    if(data.user[i].authUserId === authUserId.authUserId) {
       validId = true;
     }
   }
-  
   // Returns error message when authUserId or name is invalid
   if(validId === false || name.length < 1 || name.length > 20) {
     return {error: 'error'};
@@ -40,11 +42,11 @@ function channelsCreateV1(authUserId, name, isPublic) {
                       start: authUserId,
                       members: [authUserId],};
                       
-  data.channels.push(newChannel);
+  data.channel.push(newChannel);
   setData(data);
   
   return {
-    channelId: newChannel.CId,
+    channelId: newChannel.cId,
   };
 }
 
@@ -67,8 +69,8 @@ function channelsListV1(authUserId) {
   let flag = 0;
   
   // Validates the authUserId Passed
-  for(let i = 0; i < data.users.length; i++) {
-    if(data.users[i].userId === authUserId) {
+  for(let i = 0; i < data.user.length; i++) {
+    if(data.user[i].userId === authUserId.authUserId) {
       validId = true;
       flag = i;
     }
@@ -82,13 +84,13 @@ function channelsListV1(authUserId) {
   
   let storeChannels = {channels: []};
   
-  for(let j = 0; j < data.users[flag].channels.length; j++) {
-    let channelId = data.users[flag].channels[j];
+  for(let j = 0; j < data.user[flag].channels.length; j++) {
+    let channelId = data.user[flag].channels[j];
     
-    for(let k = 0; k < data.channels.length; k++) {
-      if(channelId === data.channels[k].cId) {
-        storeChannels.channels.push({channelId: data.channels[k].cId,
-                                     name: data.channels[k].name});
+    for(let k = 0; k < data.channel.length; k++) {
+      if(channelId === data.channel[k].cId) {
+        storeChannels.channels.push({channelId: data.channel[k].cId,
+                                     name: data.channel[k].name});
         break;
       }
     }
@@ -115,8 +117,8 @@ function channelsListallV1(authUserId) {
   let flag = 0;
   
   // Validates the authUserId Passed
-  for(let i = 0; i < data.users.length; i++) {
-    if(data.users[i].userId === authUserId) {
+  for(let i = 0; i < data.user.length; i++) {
+    if(data.user[i].userId === authUserId.authUserId) {
       validId = true;
       flag = i;
     }
@@ -130,9 +132,9 @@ function channelsListallV1(authUserId) {
   
   let storeChannels = {channels: []};
 
-  for(let j = 0; j < data.channels.length; j++) {
-    storeChannels.channels.push({channelId: data.channels[j].cId,
-                                 name: data.channels[j].name});
+  for(let j = 0; j < data.channel.length; j++) {
+    storeChannels.channels.push({channelId: data.channel[j].cId,
+                                 name: data.channel[j].name});
   }
   
   return storeChannels;

@@ -14,9 +14,10 @@ import {
 import {
   clearV1,
 } from './other.js';
+import { getData } from './dataStore.js';
 
 
-
+/*
 
 describe('Testing channelsCreateV1', () => {
   
@@ -44,21 +45,21 @@ describe('Testing channelsCreateV1', () => {
 
     expect(result).toMatchObject({error: 'error'});
   });
-  
+*/  
   test('Valid parameters', () => {
     clearV1();
-    let authUserId = authRegisterV1('email@gmail.com', 
+    let authUserId = authRegisterV1('email@email.com', 
                                     'password', 
                                     'First',
                                     'Last');
-    console.log(authUserId);
+
     let result = channelsCreateV1(authUserId, 
                                   'name', 
                                   false);
 
     expect(result).toMatchObject({channelId: expect.any(Number)});
   });
-  
+/*  
     test('Invalid authUserId', () => {
     clearV1();
     let authUserId = authRegisterV1('email@email.com', 
@@ -73,10 +74,12 @@ describe('Testing channelsCreateV1', () => {
     expect(result).toMatchObject({error: 'error'});
   });
   
-  
+ 
 
 
 });
+
+
 
 describe('Testing channelsListV1', () => {
 
@@ -286,4 +289,4 @@ describe('Testing channelsListallV1', () => {
   
 
 });
-
+*/

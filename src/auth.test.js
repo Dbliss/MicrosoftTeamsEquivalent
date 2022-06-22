@@ -43,3 +43,23 @@ test('length of nameLast is not between 1 and 50 characters inclusive', () => {
     result = authRegisterV1('z5364121@unsw.edu.au', 'apple', 'Thev', 'abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz');
     expect(result).toMatchObject({ error: 'error' });
 });
+
+test('Login succesful', () => {
+    clearV1();
+    authRegisterV1('z5364121@unsw.edu.au', 'banana', 'Thevindu', 'Hewa');
+    let result = authLoginV1('z5364121@unsw.edu.au', 'banana');
+    expect(result).toMatchObject({ authUserId: expect.any(Number)});
+});
+
+test('email does not belong to any user', () => {
+    clearV1();
+    let result = authLoginV1('z5364121@unsw.edu.au', 'apple');
+    expect(result).toMatchObject({ error: 'error' });
+});
+
+test('password is not correct', () => {
+    clearV1();
+    authRegisterV1('z5364121@unsw.edu.au', 'banana', 'Thevindu', 'Hewa');
+    let result = authLoginV1('z5364121@unsw.edu.au', 'apple');
+    expect(result).toMatchObject({ error: 'error' });
+});

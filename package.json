@@ -3,6 +3,7 @@
         "test": "jest"
     },
     "dependencies": {
+        "date-now": "^1.0.1",
         "rewire": "^6.0.0"
     },
     "devDependencies": {

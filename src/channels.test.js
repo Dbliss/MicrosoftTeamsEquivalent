@@ -17,8 +17,6 @@ import {
 import { getData } from './dataStore.js';
 
 
-/*
-
 describe('Testing channelsCreateV1', () => {
   
   test('Name length < 1', () => {
@@ -82,7 +80,7 @@ describe('Testing channelsCreateV1', () => {
 
 
 describe('Testing channelsListV1', () => {
-*/
+
   test('Listing 2 channels user is part of', () => {
     clearV1();
     let authUserId = authRegisterV1('email@email.com', 
@@ -97,17 +95,17 @@ describe('Testing channelsListV1', () => {
     let channelId2 = channelsCreateV1(authUserId, 
                                   'name2', 
                                   true);
-    console.log(getData());                
+
     let result = channelsListV1(authUserId);
     expect(result).toMatchObject({channels: [{
-                              channelId: channelId1,
+                              channelId: channelId1.channelId,
                               name: 'name1'},
                             {
-                              channelId: channelId2,
+                              channelId: channelId2.channelId,
                               name: 'name2'}]});
                                   
   });
-/*
+
   test('Listing 1 channel user is part of', () => {
     clearV1();
     let authUserId1 = authRegisterV1('email@email.com', 
@@ -131,7 +129,7 @@ describe('Testing channelsListV1', () => {
                                   
     let result = channelsListV1(authUserId2);
     expect(result).toMatchObject({channels: [{
-                                  channelId: channelId2,
+                                  channelId: channelId2.channelId,
                                   name: 'name2'}]});
                                   
   });
@@ -201,10 +199,10 @@ describe('Testing channelsListallV1', () => {
                                   
     let result = channelsListallV1(authUserId);
     expect(result).toMatchObject({channels: [{
-                              channelId: channelId1,
+                              channelId: channelId1.channelId,
                               name: 'name1'},
                             {
-                              channelId: channelId2,
+                              channelId: channelId2.channelId,
                               name: 'name2'}]});
                                   
   });
@@ -232,10 +230,10 @@ describe('Testing channelsListallV1', () => {
                                   
     let result = channelsListallV1(authUserId2);
     expect(result).toMatchObject({channels: [{
-                              channelId: channelId1,
+                              channelId: channelId1.channelId,
                               name: 'name1'},
                             {
-                              channelId: channelId2,
+                              channelId: channelId2.channelId,
                               name: 'name2'}]});
                                   
   });
@@ -263,10 +261,10 @@ describe('Testing channelsListallV1', () => {
                                   
     let result = channelsListallV1(authUserId2);
     expect(result).toMatchObject({channels: [{
-                              channelId: channelId1,
+                              channelId: channelId1.channelId,
                               name: 'name1'},
                             {
-                              channelId: channelId2,
+                              channelId: channelId2.channelId,
                               name: 'name2'}]});
                                   
   });
@@ -289,4 +287,4 @@ describe('Testing channelsListallV1', () => {
   
 
 });
-*/
+

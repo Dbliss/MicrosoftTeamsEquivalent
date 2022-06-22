@@ -24,10 +24,12 @@ function channelsCreateV1(authUserId, name, isPublic) {
   
   let data = getData();
   let validId = false;
+  let flag = 0;
   // Validates the authUserId Passed
   for(let i = 0; i < data.user.length; i++) {
     if(data.user[i].authUserId === authUserId.authUserId) {
       validId = true;
+      flag = i;
     }
   }
   // Returns error message when authUserId or name is invalid
@@ -36,13 +38,15 @@ function channelsCreateV1(authUserId, name, isPublic) {
   }
   
   let newChannel = {
-                      cId: Date.now(),
+                      cId: Math.floor(Math.random() * Date.now()),
                       name: name,
                       isPublic: isPublic,
-                      start: authUserId,
+                      start: authUserId.authUserId,
                       members: [authUserId],};
                       
   data.channel.push(newChannel);
+  data.user[flag].channels.push(newChannel.cId);
+  
   setData(data);
   
   return {
@@ -83,8 +87,9 @@ function channelsListV1(authUserId) {
   }
   
   let storeChannels = {channels: []};
-  
+  console.log(data);
   for(let j = 0; j < data.user[flag].channels.length; j++) {
+    console.log(data.user[flag].channels);
     let channelId = data.user[flag].channels[j];
     
     for(let k = 0; k < data.channel.length; k++) {
@@ -118,7 +123,7 @@ function channelsListallV1(authUserId) {
   
   // Validates the authUserId Passed
   for(let i = 0; i < data.user.length; i++) {
-    if(data.user[i].userId === authUserId.authUserId) {
+    if(data.user[i].authUserId === authUserId.authUserId) {
       validId = true;
       flag = i;
     }

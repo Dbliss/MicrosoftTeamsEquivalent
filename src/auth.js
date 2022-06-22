@@ -43,7 +43,7 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
     }
 
     // make unique uID and store data
-    const uID = Date.now();
+    const uID = Math.floor(Math.random() * Date.now());
     let j = data.user.length;
     data.user[j] = {
         'email': email,

@@ -11,8 +11,8 @@ database = {
             'nameFirst': 'Person1firstname',
             'nameLast': 'Person1lastname',
             'authUserId': Person1authUserId,
-            'isPublic': Person1Publicity,
             'channels': [ cIds ]
+            'handle': 'person1firstnameperson1lastname'
         },
 
     ],

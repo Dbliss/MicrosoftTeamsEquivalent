@@ -9,11 +9,13 @@ import {
 
 import {
   authRegisterV1,
-} from "auth.js";
+} from "./auth.js";
 
 import {
   clearV1,
 } from './other.js';
+
+
 
 
 describe('Testing channelsCreateV1', () => {
@@ -45,16 +47,16 @@ describe('Testing channelsCreateV1', () => {
   
   test('Valid parameters', () => {
     clearV1();
-    let authUserId = authRegisterV1('email@email.com', 
+    let authUserId = authRegisterV1('email@gmail.com', 
                                     'password', 
                                     'First',
                                     'Last');
-                                    
+    console.log(authUserId);
     let result = channelsCreateV1(authUserId, 
                                   'name', 
                                   false);
 
-    expect(result).toMatchObject({channelId: any(Number)}));
+    expect(result).toMatchObject({channelId: expect.any(Number)});
   });
   
     test('Invalid authUserId', () => {
@@ -194,7 +196,7 @@ describe('Testing channelsListallV1', () => {
                                   'name2', 
                                   true);
                                   
-    let result = channelsListAllV1(authUserId);
+    let result = channelsListallV1(authUserId);
     expect(result).toMatchObject({channels: [{
                               channelId: channelId1,
                               name: 'name1'},
@@ -225,7 +227,7 @@ describe('Testing channelsListallV1', () => {
                                   'name2', 
                                   true);
                                   
-    let result = channelsListAllV1(authUserId2);
+    let result = channelsListallV1(authUserId2);
     expect(result).toMatchObject({channels: [{
                               channelId: channelId1,
                               name: 'name1'},
@@ -256,7 +258,7 @@ describe('Testing channelsListallV1', () => {
                                   'name2', 
                                   true);
                                   
-    let result = channelsListAllV1(authUserId2);
+    let result = channelsListallV1(authUserId2);
     expect(result).toMatchObject({channels: [{
                               channelId: channelId1,
                               name: 'name1'},
@@ -277,7 +279,7 @@ describe('Testing channelsListallV1', () => {
                                   'name1', 
                                   false);
                                   
-    let result = channelsListAllV1(-99999);
+    let result = channelsListallV1(-99999);
     expect(result).toMatchObject({channels: []});
                                   
   });

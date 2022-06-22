@@ -70,7 +70,7 @@ function channelsListV1(authUserId) {
   
   // Validates the authUserId Passed
   for(let i = 0; i < data.user.length; i++) {
-    if(data.user[i].userId === authUserId.authUserId) {
+    if(data.user[i].authUserId === authUserId.authUserId) {
       validId = true;
       flag = i;
     }

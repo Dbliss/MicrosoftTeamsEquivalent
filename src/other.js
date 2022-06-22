@@ -9,6 +9,8 @@ function clearV1() {
     'channel': [],
   }
 
+
+  
   setData(emptyData);
   
   return {};

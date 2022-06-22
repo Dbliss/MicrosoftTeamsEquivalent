@@ -1,8 +1,8 @@
 import { clear } from "node:console";
 import test from "node:test";
 import { channelDetailsV1, channelJoinV1 } from "./channel";
-import { authRegisterV1, authLoginV1} from "./auth";
-import {channelsCreateV1} from "./channels";
+import { authRegisterV1 } from "./auth";
+import { channelsCreateV1 } from "./channels";
 
 describe('Testing channelDetailsV1', () => {
     test('Testing successful return of channelDetailsV1', () => {
@@ -17,8 +17,20 @@ describe('Testing channelDetailsV1', () => {
         const result = channelDetailsV1(auth_user, channelId);
         expect(result).toMatchObject({name: 'name',
                                     isPublic: true,
-                                    ownerMembers: [auth_user = {}],
-                                    allMembers: [auth_user = {}]})
+                                    ownerMembers: [{
+                                        uID: auth_user,
+                                        email: 'email@email.com',
+                                        nameFirst: 'First',
+                                        nameLast: 'Last',
+                                        handleStr: 'firstlast'
+                                    }],
+                                    allMembers: [{
+                                        uID: auth_user,
+                                        email: 'email@email.com',
+                                        nameFirst: 'First',
+                                        nameLast: 'Last',
+                                        handleStr: 'firstlast'
+                                    }]})
 
     });
 
@@ -36,7 +48,7 @@ describe('Testing channelDetailsV1', () => {
 
     });
 
-    test('Testing when the channelId is valid but authUserId is not a member of the channel ', () => {
+    test('channelId is valid but authUserId is not a member of the channel', () => {
         clear();
         let auth_user1 = authRegisterV1('email@email.com', 
         'password', 

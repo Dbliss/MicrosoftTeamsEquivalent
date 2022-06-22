@@ -2,12 +2,12 @@
 
 
 import { authLoginV1 } from "./auth";
-import { getData } from "./dataStore";
+import { getData, setData } from "./dataStore";
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
 // Parameters:{ authUserId, channelId }
 // Return type if no error:{ name, isPublic, ownerMembers, allMembers }
-export function channelDetailsV1 (authUserId, channelId) {
+function channelDetailsV1 (authUserId, channelId) {
     let data = getData();
     
     let error = {error: 'error'};
@@ -46,27 +46,12 @@ export function channelDetailsV1 (authUserId, channelId) {
     return_object.allMembers = data.channel[channel_index].allMembers;
 
     return return_object;
-   
-    
-    
-    // for(const elem of data.user) {
-    //     if (elem.authUserId === authUserId) {
-    //         val_user = 1;
-            
-    //     }
-    // }
-
-    // for(const elem of data.channel) {
-    //     if (elem.cId === channelId) {
-    //         val_channel = 1;
-    //     }
-    // }
-}
+ }
 
 // Given a channelId of a channel that the authorised user can join, adds them to that channel.
 // Parameters:{ authUserId, channelId }
 // Return type if no error:{}
-export function channelJoinV1 (authUserId, channelId) {
+function channelJoinV1 (authUserId, channelId) {
 
     let data = getData();
     let return_object = {};
@@ -101,6 +86,9 @@ export function channelJoinV1 (authUserId, channelId) {
     data.user[user_index].channels.push(channelId);
     data.channel[channel_index].channels.push(authUserId);
 
+    // updating the data in the data storage file
+    setData(data);
+    
     return return_object;
 }
 
@@ -114,3 +102,5 @@ function channelInviteV1 (authUserId, channelId, uId) {
 function channelMessagesV1 (authUserId, channelId, start) {
     return 'authUserId' + 'channelId' + 'start';
 }
+
+export { channelDetailsV1, channelJoinV1 };

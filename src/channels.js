@@ -87,9 +87,7 @@ function channelsListV1(authUserId) {
   }
   
   let storeChannels = {channels: []};
-  console.log(data);
   for(let j = 0; j < data.user[flag].channels.length; j++) {
-    console.log(data.user[flag].channels);
     let channelId = data.user[flag].channels[j];
     
     for(let k = 0; k < data.channel.length; k++) {

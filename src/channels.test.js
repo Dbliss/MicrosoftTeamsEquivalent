@@ -54,7 +54,7 @@ describe('Testing channelsCreateV1', () => {
                                   'name', 
                                   false);
 
-    expect(result).any(Number));
+    expect(result).any(Number);
   });
   
   

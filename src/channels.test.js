@@ -9,12 +9,11 @@ import {
 
 import {
   authRegisterV1,
-} from "auth.js";
+} from './auth.js';
 
 import {
   clearV1,
 } from './other.js';
-
 
 describe('Testing channelsCreateV1', () => {
   
@@ -54,13 +53,13 @@ describe('Testing channelsCreateV1', () => {
                                   'name', 
                                   false);
 
-    expect(result).any(Number));
+    expect(result).any(Number);
   });
   
   
 
 
-});
+
 
 describe('Testing channelsListV1', () => {
 
@@ -271,3 +270,4 @@ describe('Testing channelsListallV1', () => {
 
 });
 
+});

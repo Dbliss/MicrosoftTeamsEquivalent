@@ -56,7 +56,16 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
 }
 // Returns a string concatination of the input arguments 'email' and 'password 
 function authLoginV1(email, password) {
-
-    return 'email' + 'password';
+    const data = getData();
+    if (!(email in data.users)) {
+        return { error: 'error' };
+    } else {
+        if (data.users[email].password !== password) {
+            return { error: 'error' };
+        } else {
+            return { authUserId: data.users[email].userID, }
+        }
+    }
 }
+
 export { authRegisterV1, authLoginV1 }

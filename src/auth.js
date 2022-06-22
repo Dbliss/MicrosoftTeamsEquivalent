@@ -61,19 +61,31 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
 
 function authLoginV1(email, password) {
     const data = getData();
+    // counter to keep track of each index that is checked for dupe email
+    let k = 0;
     for (let i = 0; i < data.user.length; i++) {
-        // check to see if email is in database
-        if (email === data.user[i].email) {
+        // check to see if email is in index
+        if (email !== data.user[i].email) {
+            k++;
+        }
+    }
+    // if the for loop as gone to the end and there is no matches then return error object
+    if (k = data.user.length - 1) {
+        return { error: 'error' };
+    }
+    for (let j = 0; j < data.user.length; j++) {
+        if (email === data.user[j].email) {
             // check to see if password matches email in database
-            if (password === data.user[i].password) {
-                return { authUserId: data.user[i].authUserId }
+            if (password === data.user[j].password) {
+                return { authUserId: data.user[j].authUserId }
             } else {
                 return { error: 'error' };
             }
-        } else {
-            return { error: 'error' };
         }
     }
-}
+} 
+        
+    
+
 
 export { authRegisterV1, authLoginV1 }

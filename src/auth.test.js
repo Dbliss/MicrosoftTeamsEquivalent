@@ -52,7 +52,7 @@ test('Login succesful', () => {
 });
 
 test('email does not belong to any user', () => {
-    //clearV1();
+    clearV1();
     let result = authLoginV1('z5364121@unsw.edu.au', 'apple');
     expect(result).toMatchObject({ error: 'error' });
 });

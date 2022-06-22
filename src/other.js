@@ -6,8 +6,10 @@ function clearV1() {
   
   let emptyData = {
     'user': [],
-    'channel':[],
+    'channel': [],
   }
+
+
   
   setData(emptyData);
   

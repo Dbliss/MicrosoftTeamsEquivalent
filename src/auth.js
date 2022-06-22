@@ -1,13 +1,6 @@
 import { getData, setData } from './dataStore';
 
-function isDuplicateEmail(email) { 
-    for (const user of getData().users) {
-        if (user.email === email) {
-            return true;
-        } 
-    }
-    return false;
-}
+
 
 // Returns a string concatination of the input arguments 'email', 'password', 'nameFirst' and 'nameLast'
 function authRegisterV1(email, password, nameFirst, nameLast) {
@@ -17,7 +10,8 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
         return { error: 'error' };
     } else {
         // test for duplicate emails in database
-        if (isDuplicateEmail(email) === true) {
+        const data = getData();
+        if (email in data.users) {
             return { error: 'error' };
         } else {
              // see if password length is less than 6 characters
@@ -36,14 +30,14 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
                         let handleName = handleString.toLowerCase();
                         // add for loop for taken handles
                         let i = 0;
-                        for (const user of getData().users) {
-                            if (user.handle === handleName) {
+                        const data = getData();
+                        for (const user of data.users) {
+                            if (handleName === data.users[handle]) {
                                 handleName = handleName + i;
                                 i++;
                             } 
                         }
                         const uID = Date.now(); 
-                        const data = getData();
                         data.users[email] = {
                             name: '${nameFirst} ${nameLast}',
                             password: password,

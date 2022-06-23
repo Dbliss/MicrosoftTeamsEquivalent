@@ -41,8 +41,8 @@ function channelsCreateV1(authUserId, name, isPublic) {
                       cId: Math.floor(Math.random() * Date.now()),
                       name: name,
                       isPublic: isPublic,
-                      start: authUserId.authUserId,
-                      members: [authUserId],};
+                      start: [data.user[flag]],
+                      members: [data.user[flag]],};
                       
   data.channel.push(newChannel);
   data.user[flag].channels.push(newChannel.cId);

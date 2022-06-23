@@ -9,3 +9,5 @@ Assumptions :
 4. If an invalid authUserId is passed to channelJoinV1 the function will return {error: 'error'}
 
 5. If an invalid authUserId is passed to userProfileV1 the function will return {error: 'error'}
+
+6. An invalid email string is when there is no "@" or "." in the email string parameter 

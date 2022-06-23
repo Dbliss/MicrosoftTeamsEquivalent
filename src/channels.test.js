@@ -26,7 +26,7 @@ describe('Testing channelsCreateV1', () => {
                                     'First',
                                     'Last');
                                     
-    let result = channelsCreateV1(authUserId, '', false);
+    let result = channelsCreateV1(authUserId.authUserId, '', false);
     expect(result).toMatchObject({error: 'error'});
   });
   
@@ -37,7 +37,7 @@ describe('Testing channelsCreateV1', () => {
                                     'First',
                                     'Last');
                                     
-    let result = channelsCreateV1(authUserId, 
+    let result = channelsCreateV1(authUserId.authUserId, 
                                   'abcdefghijklmnopqrstuv', 
                                   false);
 
@@ -51,7 +51,7 @@ describe('Testing channelsCreateV1', () => {
                                     'First',
                                     'Last');
 
-    let result = channelsCreateV1(authUserId, 
+    let result = channelsCreateV1(authUserId.authUserId, 
                                   'name', 
                                   false);
 
@@ -88,15 +88,15 @@ describe('Testing channelsListV1', () => {
                                     'First',
                                     'Last');
                                     
-    let channelId1 = channelsCreateV1(authUserId, 
+    let channelId1 = channelsCreateV1(authUserId.authUserId, 
                                   'name1', 
                                   false);
                   
-    let channelId2 = channelsCreateV1(authUserId, 
+    let channelId2 = channelsCreateV1(authUserId.authUserId, 
                                   'name2', 
                                   true);
 
-    let result = channelsListV1(authUserId);
+    let result = channelsListV1(authUserId.authUserId);
     expect(result).toMatchObject({channels: [{
                               channelId: channelId1.channelId,
                               name: 'name1'},
@@ -119,15 +119,15 @@ describe('Testing channelsListV1', () => {
                                      'Last2');
                          
                                     
-    let channelId1 = channelsCreateV1(authUserId1, 
+    let channelId1 = channelsCreateV1(authUserId1.authUserId, 
                                   'name1', 
                                   false);
                   
-    let channelId2 = channelsCreateV1(authUserId2, 
+    let channelId2 = channelsCreateV1(authUserId2.authUserId, 
                                   'name2', 
                                   true);
-                                  
-    let result = channelsListV1(authUserId2);
+    let data = getData();                 
+    let result = channelsListV1(authUserId2.authUserId);
     expect(result).toMatchObject({channels: [{
                                   channelId: channelId2.channelId,
                                   name: 'name2'}]});
@@ -147,15 +147,15 @@ describe('Testing channelsListV1', () => {
                                      'Last2');
                          
                                     
-    let channelId1 = channelsCreateV1(authUserId1, 
+    let channelId1 = channelsCreateV1(authUserId1.authUserId, 
                                   'name1', 
                                   false);
                   
-    let channelId2 = channelsCreateV1(authUserId1, 
+    let channelId2 = channelsCreateV1(authUserId1.authUserId, 
                                   'name2', 
                                   true);
                                   
-    let result = channelsListV1(authUserId2);
+    let result = channelsListV1(authUserId2.authUserId);
     expect(result).toMatchObject({channels: []});
                                   
   });
@@ -167,7 +167,7 @@ describe('Testing channelsListV1', () => {
                                      'First',
                                      'Last');
     
-    let channelId1 = channelsCreateV1(authUserId1, 
+    let channelId1 = channelsCreateV1(authUserId1.authUserId, 
                                   'name1', 
                                   false);
                                   
@@ -189,15 +189,15 @@ describe('Testing channelsListallV1', () => {
                                     'First',
                                     'Last');
                                     
-    let channelId1 = channelsCreateV1(authUserId, 
+    let channelId1 = channelsCreateV1(authUserId.authUserId, 
                                   'name1', 
                                   false);
                   
-    let channelId2 = channelsCreateV1(authUserId, 
+    let channelId2 = channelsCreateV1(authUserId.authUserId, 
                                   'name2', 
                                   true);
                                   
-    let result = channelsListallV1(authUserId);
+    let result = channelsListallV1(authUserId.authUserId);
     expect(result).toMatchObject({channels: [{
                               channelId: channelId1.channelId,
                               name: 'name1'},
@@ -220,15 +220,15 @@ describe('Testing channelsListallV1', () => {
                                      'Last2');
                          
                                     
-    let channelId1 = channelsCreateV1(authUserId1, 
+    let channelId1 = channelsCreateV1(authUserId1.authUserId, 
                                   'name1', 
                                   false);
                   
-    let channelId2 = channelsCreateV1(authUserId2, 
+    let channelId2 = channelsCreateV1(authUserId2.authUserId, 
                                   'name2', 
                                   true);
                                   
-    let result = channelsListallV1(authUserId2);
+    let result = channelsListallV1(authUserId2.authUserId);
     expect(result).toMatchObject({channels: [{
                               channelId: channelId1.channelId,
                               name: 'name1'},
@@ -251,15 +251,15 @@ describe('Testing channelsListallV1', () => {
                                      'Last2');
                          
                                     
-    let channelId1 = channelsCreateV1(authUserId1, 
+    let channelId1 = channelsCreateV1(authUserId1.authUserId, 
                                   'name1', 
                                   false);
                   
-    let channelId2 = channelsCreateV1(authUserId1, 
+    let channelId2 = channelsCreateV1(authUserId1.authUserId, 
                                   'name2', 
                                   true);
                                   
-    let result = channelsListallV1(authUserId2);
+    let result = channelsListallV1(authUserId2.authUserId);
     expect(result).toMatchObject({channels: [{
                               channelId: channelId1.channelId,
                               name: 'name1'},
@@ -276,7 +276,7 @@ describe('Testing channelsListallV1', () => {
                                      'First',
                                      'Last');
     
-    let channelId1 = channelsCreateV1(authUserId1, 
+    let channelId1 = channelsCreateV1(authUserId1.authUserId, 
                                   'name1', 
                                   false);
                                   

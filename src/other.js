@@ -8,8 +8,6 @@ function clearV1() {
     'user': [],
     'channel': [],
   }
-
-
   
   setData(emptyData);
   

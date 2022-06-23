@@ -5,7 +5,10 @@ import { authLoginV1 } from "./auth";
 import { getData, setData } from "./dataStore";
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
-// Parameters:{ authUserId, channelId }
+// Arguments:
+// <authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
+// <channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
+
 // Return type if no error:{ name, isPublic, ownerMembers, allMembers }
 function channelDetailsV1 (authUserId, channelId) {
     let data = getData();
@@ -15,12 +18,12 @@ function channelDetailsV1 (authUserId, channelId) {
     // The code finds the index of the object which contains the apropriate authUserId, in the user key array,
     // and stores it within a variable. If not found -1 is stored
     const user_index = data.user.findIndex(object => {
-        return object.authUserId === authUserId.authUserId;
+        return object.authUserId === authUserId;
     }); 
     //code adapted from the website shorturl.at/eoJKY 
     
     const channel_index = data.channel.findIndex(object => {
-        return object.cId === channelId.channelId;
+        return object.cId === channelId;
     });
 
     // if neither the authUserId nor the channelId is valid then the function
@@ -31,7 +34,7 @@ function channelDetailsV1 (authUserId, channelId) {
 
     // returns the index of the channelId in the channels array of the valid user
     // if the channel is not within the user's channels array then -1 is returned
-    const cId_index = data.user[user_index].channels.indexOf(channelId.channelId);
+    const cId_index = data.user[user_index].channels.indexOf(channelId);
     // when the user is not a part of the channel error onject is returned
     if (cId_index === -1) {
         return error;
@@ -45,36 +48,38 @@ function channelDetailsV1 (authUserId, channelId) {
     return_object.isPublic = data.channel[channel_index].isPublic;
     
     let tempMembers = [];
-    for(let i = 0; i <  data.channel[channel_index].start.length; i++) {
+
+    let channel_owners = data.channel[channel_index].owners;
+
+
+    for(let i = 0; i <  data.channel[channel_index].owners.length; i++) {
          tempMembers.push( {
-             email: data.channel[channel_index].start[i].email,
-             handleStr:  data.channel[channel_index].start[i].handle,
-             nameFirst:  data.channel[channel_index].start[i].nameFirst,
-             nameLast:  data.channel[channel_index].start[i].nameLast,
-             uId: {authUserId: data.channel[channel_index].start[i].authUserId},
+             email: channel_owners[i].email,
+             handleStr: channel_owners[i].handle,
+             nameFirst: channel_owners[i].nameFirst,
+             nameLast: channel_owners[i].nameLast,
+             uId: channel_owners[i].authUserId,
         } )
     }
     return_object.ownerMembers = tempMembers;
 
     tempMembers = [];
+
+    let channel_members = data.channel[channel_index].members;
+
     for(let j = 0; j <  data.channel[channel_index].members.length; j++) {
         tempMembers.push( {
-            email: data.channel[channel_index].members[j].email,
-            handleStr: data.channel[channel_index].members[j].handle,
-            nameFirst: data.channel[channel_index].members[j].nameFirst,
-            nameLast: data.channel[channel_index].members[j].nameLast,
-            uId: {authUserId: data.channel[channel_index].members[j].authUserId},
+            email: channel_members[j].email,
+            handleStr: channel_members[j].handle,
+            nameFirst: channel_members[j].nameFirst,
+            nameLast: channel_members[j].nameLast,
+            uId: channel_members[j].authUserId,
        } )
    }
 
    return_object.allMembers = tempMembers;
-    // return_object.allMembers = data.channel[channel_index].members;
-    // console.log(data.channel[channel_index].start);
-    // JSON.parse(JSON.stringify(data.channel[channel_index].ownerMembers));
-    // JSON.parse(JSON.stringify(data.channel[channel_index].allMembers));
 
     
-    // console.log(return_object);
     return return_object;
  }
 
@@ -86,6 +91,7 @@ function channelJoinV1 (authUserId, channelId) {
     let data = getData();
     let return_object = {};
     let error = {error: 'error'};
+    
     // The code finds the index of the object which contains the apropriate channelId, in the user key array,
     // and stores it within a variable. If not found -1 is stored
     const channel_index = data.channel.findIndex(object => {
@@ -98,6 +104,13 @@ function channelJoinV1 (authUserId, channelId) {
         return object.authUserId === authUserId;
     }); //code adapted from the website shorturl.at/eoJKY
 
+
+    for(let i = 0; i < data.channel[channel_index].members.length; i++) {
+        if ( data.channel[channel_index].members[i].authUserId === authUserId) {
+            return error;
+        }
+    }
+    
     // if neither the authUserId nor the channelId is valid then the function
     // returns an error object
     if ((user_index === -1) || (channel_index === -1)) {
@@ -111,13 +124,7 @@ function channelJoinV1 (authUserId, channelId) {
     }
 
     let push_object = data.user[user_index];
-    /*
-    push_object.uId = data.user[user_index].authUserId;
-    push_object.email =    data.user[user_index].email;
-    push_object.nameFirst = data.user[user_index].nameFirst;
-    push_object.nameLast = data.user[user_index].nameLast;
-    push_object.handleStr = data.user[user_index].handle;
-    */
+    
 
     // User is able to join the channel and so members is updated within the channel's
     // member array and channels list is updated within the user's channels array
@@ -129,7 +136,7 @@ function channelJoinV1 (authUserId, channelId) {
     // updating the data in the data storage file
     setData(data);
     
-    console.log(data);
+    
 
     return return_object;
 }

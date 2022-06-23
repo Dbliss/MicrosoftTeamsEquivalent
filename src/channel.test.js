@@ -1,5 +1,4 @@
-// import { clear } from "node:console";
-// import test from "node:test";
+
 import { channelDetailsV1, channelJoinV1 } from "./channel.js";
 import { authRegisterV1 } from "./auth.js";
 import { channelsCreateV1 } from "./channels.js";
@@ -14,22 +13,20 @@ describe('Testing channelDetailsV1', () => {
         'First',
         'Last');
 
-        let channelId = channelsCreateV1(auth_user, 'name', true);
+        let channelId = channelsCreateV1(auth_user.authUserId, 'name', true);
         let data = getData();
-        // console.log(data);
-        const result = channelDetailsV1(auth_user, channelId);
-        // console.log(result);
+        const result = channelDetailsV1(auth_user.authUserId, channelId.channelId);
         expect(result).toMatchObject({name: 'name',
                                     isPublic: true,
                                     ownerMembers: [{
-                                        uId: auth_user,
+                                        uId: auth_user.authUserId,
                                         email: 'email@email.com',
                                         nameFirst: 'First',
                                         nameLast: 'Last',
                                         handleStr: 'firstlast',
                                     }],
                                     allMembers: [{
-                                        uId: auth_user,
+                                        uId: auth_user.authUserId,
                                         email: 'email@email.com',
                                         nameFirst: 'First',
                                         nameLast: 'Last',
@@ -50,33 +47,29 @@ describe('Testing channelDetailsV1', () => {
         'First1',
         'Last1');
 
-        let channelId = channelsCreateV1(auth_user, 'name', true);
+        let channelId = channelsCreateV1(auth_user.authUserId, 'name', true);
         
-        channelJoinV1(auth_user1, channelId);
+        channelJoinV1(auth_user1.authUserId, channelId.channelId);
 
-
-        let data = getData();
-        // console.log(data);
-        const result = channelDetailsV1(auth_user, channelId);
-        console.log(result);
+        const result = channelDetailsV1(auth_user.authUserId, channelId.channelId);
         expect(result).toMatchObject({name: 'name',
                                     isPublic: true,
                                     ownerMembers: [{
-                                        uId: auth_user,
+                                        uId: auth_user.authUserId,
                                         email: 'email@email.com',
                                         nameFirst: 'First',
                                         nameLast: 'Last',
                                         handleStr: 'firstlast',
                                     }],
                                     allMembers: [{
-                                        uId: auth_user,
+                                        uId: auth_user.authUserId,
                                         email: 'email@email.com',
                                         nameFirst: 'First',
                                         nameLast: 'Last',
                                         handleStr: 'firstlast',
                                     },
                                     {
-                                        uId: auth_user1,
+                                        uId: auth_user1.authUserId,
                                         email: 'email1@email.com',
                                         nameFirst: 'First1',
                                         nameLast: 'Last1',
@@ -92,9 +85,41 @@ describe('Testing channelDetailsV1', () => {
         'First',
         'Last');
 
+        let channelId = channelsCreateV1(auth_user.authUserId, 'name', true);
+
+        
+        const result = channelDetailsV1(-9999, -9999);
+        expect(result).toMatchObject({error: 'error'});
+
+    });
+
+    test('Testing when the channelId is not valid ', () => {
+        clearV1();
+        let auth_user = authRegisterV1('email@email.com', 
+        'password', 
+        'First',
+        'Last');
+
+        
         let channelId = -9999;
 
-        const result = channelDetailsV1(auth_user, channelId);
+        const result = channelDetailsV1(auth_user.authUserId, channelId);
+        expect(result).toMatchObject({error: 'error'});
+
+    });
+
+    test('Testing when the authUserId is not valid ', () => {
+        clearV1();
+        let auth_user = authRegisterV1('email@email.com', 
+        'password', 
+        'First',
+        'Last');
+
+        let channelId = channelsCreateV1(auth_user.authUserId, 'name', true);
+
+        let userId = -9999;
+
+        const result = channelDetailsV1(userId, channelId.channelId);
         expect(result).toMatchObject({error: 'error'});
 
     });
@@ -111,9 +136,9 @@ describe('Testing channelDetailsV1', () => {
         'First2',
         'Last2');
 
-        let channelId = channelsCreateV1(auth_user1, 'name', true);
+        let channelId = channelsCreateV1(auth_user1.authUserId, 'name', true);
 
-        const result = channelDetailsV1(auth_user2, channelId);
+        const result = channelDetailsV1(auth_user2.authUserId, channelId.channelId);
         expect(result).toMatchObject({error: 'error'});
 
     });
@@ -129,9 +154,9 @@ describe('Testing channelJoinV1', () => {
         'First',
         'Last');
 
-        let channelId = channelsCreateV1(auth_user, 'name', true);
+        let channelId = channelsCreateV1(auth_user.authUserId, 'name', true);
 
-        const result = channelJoinV1(auth_user,channelId);
+        const result = channelJoinV1(auth_user.authUserId,channelId.channelId);
         expect(result).toMatchObject({error: 'error'})
 
     });
@@ -149,10 +174,10 @@ describe('Testing channelJoinV1', () => {
         'First1',
         'Last1');
 
-        let channelId = channelsCreateV1(auth_user1, 'name', true);
+        let channelId = channelsCreateV1(auth_user1.authUserId, 'name', true);
 
-        const result = channelJoinV1(auth_user,channelId);
-        console.log(data);
+        const result = channelJoinV1(auth_user.authUserId,channelId.channelId);
+        
         expect(result).toMatchObject({})
 
     });
@@ -169,9 +194,9 @@ describe('Testing channelJoinV1', () => {
         'First1',
         'Last1');
 
-        let channelId = channelsCreateV1(auth_user1, 'name', false);
+        let channelId = channelsCreateV1(auth_user1.authUserId, 'name', false);
 
-        const result = channelJoinV1(auth_user,channelId);
+        const result = channelJoinV1(auth_user.authUserId,channelId.channelId);
         expect(result).toMatchObject({error: 'error'})
 
     });

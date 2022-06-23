@@ -9,11 +9,12 @@ import {
 
 import {
   authRegisterV1,
-} from "auth.js";
+} from "./auth.js";
 
 import {
   clearV1,
 } from './other.js';
+import { getData } from './dataStore.js';
 
 
 describe('Testing channelsCreateV1', () => {
@@ -25,7 +26,7 @@ describe('Testing channelsCreateV1', () => {
                                     'First',
                                     'Last');
                                     
-    let result = channelsCreateV1(authUserId, '', false);
+    let result = channelsCreateV1(authUserId.authUserId, '', false);
     expect(result).toMatchObject({error: 'error'});
   });
   
@@ -36,31 +37,47 @@ describe('Testing channelsCreateV1', () => {
                                     'First',
                                     'Last');
                                     
-    let result = channelsCreateV1(authUserId, 
+    let result = channelsCreateV1(authUserId.authUserId, 
                                   'abcdefghijklmnopqrstuv', 
                                   false);
 
     expect(result).toMatchObject({error: 'error'});
   });
-  
+ 
   test('Valid parameters', () => {
     clearV1();
     let authUserId = authRegisterV1('email@email.com', 
                                     'password', 
                                     'First',
                                     'Last');
-                                    
-    let result = channelsCreateV1(authUserId, 
+
+    let result = channelsCreateV1(authUserId.authUserId, 
                                   'name', 
                                   false);
 
-    expect(result).any(Number));
+    expect(result).toMatchObject({channelId: expect.any(Number)});
+  });
+
+    test('Invalid authUserId', () => {
+    clearV1();
+    let authUserId = authRegisterV1('email@email.com', 
+                                    'password', 
+                                    'First',
+                                    'Last');
+                                    
+    let result = channelsCreateV1(-9999, 
+                                  'name', 
+                                  false);
+
+    expect(result).toMatchObject({error: 'error'});
   });
   
-  
+ 
 
 
 });
+
+
 
 describe('Testing channelsListV1', () => {
 
@@ -71,24 +88,24 @@ describe('Testing channelsListV1', () => {
                                     'First',
                                     'Last');
                                     
-    let channelId1 = channelsCreateV1(authUserId, 
+    let channelId1 = channelsCreateV1(authUserId.authUserId, 
                                   'name1', 
                                   false);
                   
-    let channelId2 = channelsCreateV1(authUserId, 
+    let channelId2 = channelsCreateV1(authUserId.authUserId, 
                                   'name2', 
                                   true);
-                                  
-    let result = channelsListV1(authUserId);
-    expect(result).toEqual([{
-                              channelId: channelId1,
+
+    let result = channelsListV1(authUserId.authUserId);
+    expect(result).toMatchObject({channels: [{
+                              channelId: channelId1.channelId,
                               name: 'name1'},
                             {
-                              channelId: channelId2,
-                              name: 'name2'}]);
+                              channelId: channelId2.channelId,
+                              name: 'name2'}]});
                                   
   });
-  
+
   test('Listing 1 channel user is part of', () => {
     clearV1();
     let authUserId1 = authRegisterV1('email@email.com', 
@@ -102,18 +119,18 @@ describe('Testing channelsListV1', () => {
                                      'Last2');
                          
                                     
-    let channelId1 = channelsCreateV1(authUserId1, 
+    let channelId1 = channelsCreateV1(authUserId1.authUserId, 
                                   'name1', 
                                   false);
                   
-    let channelId2 = channelsCreateV1(authUserId2, 
+    let channelId2 = channelsCreateV1(authUserId2.authUserId, 
                                   'name2', 
                                   true);
-                                  
-    let result = channelsListV1(authUserId2);
-    expect(result).toEqual([{
-                                  channelId: channelId2,
-                                  name: 'name2'}]);
+    let data = getData();                 
+    let result = channelsListV1(authUserId2.authUserId);
+    expect(result).toMatchObject({channels: [{
+                                  channelId: channelId2.channelId,
+                                  name: 'name2'}]});
                                   
   });
   
@@ -130,16 +147,16 @@ describe('Testing channelsListV1', () => {
                                      'Last2');
                          
                                     
-    let channelId1 = channelsCreateV1(authUserId1, 
+    let channelId1 = channelsCreateV1(authUserId1.authUserId, 
                                   'name1', 
                                   false);
                   
-    let channelId2 = channelsCreateV1(authUserId1, 
+    let channelId2 = channelsCreateV1(authUserId1.authUserId, 
                                   'name2', 
                                   true);
                                   
-    let result = channelsListV1(authUserId2);
-    expect(result).toEqual([]);
+    let result = channelsListV1(authUserId2.authUserId);
+    expect(result).toMatchObject({channels: []});
                                   
   });
   
@@ -150,12 +167,12 @@ describe('Testing channelsListV1', () => {
                                      'First',
                                      'Last');
     
-    let channelId1 = channelsCreateV1(authUserId1, 
+    let channelId1 = channelsCreateV1(authUserId1.authUserId, 
                                   'name1', 
                                   false);
                                   
     let result = channelsListV1(-99999);
-    expect(result).toEqual([]);
+    expect(result).toMatchObject({channels: []});
                                   
   });
   
@@ -172,21 +189,21 @@ describe('Testing channelsListallV1', () => {
                                     'First',
                                     'Last');
                                     
-    let channelId1 = channelsCreateV1(authUserId, 
+    let channelId1 = channelsCreateV1(authUserId.authUserId, 
                                   'name1', 
                                   false);
                   
-    let channelId2 = channelsCreateV1(authUserId, 
+    let channelId2 = channelsCreateV1(authUserId.authUserId, 
                                   'name2', 
                                   true);
                                   
-    let result = channelsListAllV1(authUserId);
-    expect(result).toEqual([{
-                              channelId: channelId1,
+    let result = channelsListallV1(authUserId.authUserId);
+    expect(result).toMatchObject({channels: [{
+                              channelId: channelId1.channelId,
                               name: 'name1'},
                             {
-                              channelId: channelId2,
-                              name: 'name2'}]);
+                              channelId: channelId2.channelId,
+                              name: 'name2'}]});
                                   
   });
   
@@ -203,21 +220,21 @@ describe('Testing channelsListallV1', () => {
                                      'Last2');
                          
                                     
-    let channelId1 = channelsCreateV1(authUserId1, 
+    let channelId1 = channelsCreateV1(authUserId1.authUserId, 
                                   'name1', 
                                   false);
                   
-    let channelId2 = channelsCreateV1(authUserId2, 
+    let channelId2 = channelsCreateV1(authUserId2.authUserId, 
                                   'name2', 
                                   true);
                                   
-    let result = channelsListAllV1(authUserId2);
-    expect(result).toEqual([{
-                              channelId: channelId1,
+    let result = channelsListallV1(authUserId2.authUserId);
+    expect(result).toMatchObject({channels: [{
+                              channelId: channelId1.channelId,
                               name: 'name1'},
                             {
-                              channelId: channelId2,
-                              name: 'name2'}]);
+                              channelId: channelId2.channelId,
+                              name: 'name2'}]});
                                   
   });
   
@@ -234,21 +251,21 @@ describe('Testing channelsListallV1', () => {
                                      'Last2');
                          
                                     
-    let channelId1 = channelsCreateV1(authUserId1, 
+    let channelId1 = channelsCreateV1(authUserId1.authUserId, 
                                   'name1', 
                                   false);
                   
-    let channelId2 = channelsCreateV1(authUserId1, 
+    let channelId2 = channelsCreateV1(authUserId1.authUserId, 
                                   'name2', 
                                   true);
                                   
-    let result = channelsListAllV1(authUserId2);
-    expect(result).toEqual([{
-                              channelId: channelId1,
+    let result = channelsListallV1(authUserId2.authUserId);
+    expect(result).toMatchObject({channels: [{
+                              channelId: channelId1.channelId,
                               name: 'name1'},
                             {
-                              channelId: channelId2,
-                              name: 'name2'}]);
+                              channelId: channelId2.channelId,
+                              name: 'name2'}]});
                                   
   });
   
@@ -259,15 +276,14 @@ describe('Testing channelsListallV1', () => {
                                      'First',
                                      'Last');
     
-    let channelId1 = channelsCreateV1(authUserId1, 
+    let channelId1 = channelsCreateV1(authUserId1.authUserId, 
                                   'name1', 
                                   false);
                                   
-    let result = channelsListAllV1(-99999);
-    expect(result).toEqual([]);
+    let result = channelsListallV1(-99999);
+    expect(result).toMatchObject({channels: []});
                                   
   });
   
 
 });
-

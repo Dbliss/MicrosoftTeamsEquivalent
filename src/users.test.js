@@ -1,9 +1,9 @@
 import { authRegisterV1 } from "./auth";
 import { userProfileV1 } from "./users";
-
-describe('userProfileV1', () => {
+import { clearV1 } from "./other.js"
+describe('Testing userProfileV1', () => {
     test('Testing error return of userProfileV1 when the uId does not refer to a valid user', () => {
-        clear();
+        clearV1();
         let authUserId = authRegisterV1('email@email.com', 
                                     'password', 
                                     'First',
@@ -16,7 +16,7 @@ describe('userProfileV1', () => {
     });
 
     test('Testing successful return of user object from userProfileV1', () => {
-        clear();
+        clearV1();
         let authUserId = authRegisterV1('email@email.com', 
                                     'password', 
                                     'First',
@@ -24,17 +24,17 @@ describe('userProfileV1', () => {
 
         let uId = authRegisterV1(
             'email1@email.com', 
-            'password', 
+            'password1', 
             'First1',
             'Last1');
 
         const result = userProfileV1(authUserId,uId);
-        expect(result).toMatchObject(user = {
+        expect(result).toMatchObject({
             uId: uId,
             email: 'email1@email.com',
             nameFirst: 'First1',
             nameLast: 'Last1',
-            handleStr: 'some_string'
+            handleStr: 'first1last1'
         });
 
     });

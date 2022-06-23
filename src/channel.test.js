@@ -1,12 +1,13 @@
-import { clear } from "node:console";
-import test from "node:test";
-import { channelDetailsV1, channelJoinV1 } from "./channel";
-import { authRegisterV1 } from "./auth";
-import { channelsCreateV1 } from "./channels";
+// import { clear } from "node:console";
+// import test from "node:test";
+import { channelDetailsV1, channelJoinV1 } from "./channel.js";
+import { authRegisterV1 } from "./auth.js";
+import { channelsCreateV1 } from "./channels.js";
+import { clearV1 } from "./other.js"
 
 describe('Testing channelDetailsV1', () => {
     test('Testing successful return of channelDetailsV1', () => {
-        clear();
+        clearV1();
         let auth_user = authRegisterV1('email@email.com', 
         'password', 
         'First',
@@ -35,7 +36,7 @@ describe('Testing channelDetailsV1', () => {
     });
 
     test('Testing when the channelId is not valid ', () => {
-        clear();
+        clearV1();
         let auth_user = authRegisterV1('email@email.com', 
         'password', 
         'First',
@@ -49,7 +50,7 @@ describe('Testing channelDetailsV1', () => {
     });
 
     test('channelId is valid but authUserId is not a member of the channel', () => {
-        clear();
+        clearV1();
         let auth_user1 = authRegisterV1('email@email.com', 
         'password', 
         'First',
@@ -72,7 +73,7 @@ describe('Testing channelDetailsV1', () => {
 
 describe('Testing channelJoinV1', () => {
     test('Person who created the channel tries to join', () => {
-        clear();
+        clearV1();
         let auth_user = authRegisterV1('email@email.com', 
         'password', 
         'First',
@@ -86,7 +87,7 @@ describe('Testing channelJoinV1', () => {
     });
 
     test('Person who did not create channel tries to join public channel', () => {
-        clear();
+        clearV1();
         let auth_user = authRegisterV1('email@email.com', 
         'password', 
         'First',
@@ -105,7 +106,7 @@ describe('Testing channelJoinV1', () => {
     });
 
     test('Person who did not create channel tries to join private channel', () => {
-        clear();
+        clearV1();
         let auth_user = authRegisterV1('email@email.com', 
         'password', 
         'First',

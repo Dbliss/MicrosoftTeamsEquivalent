@@ -15,11 +15,12 @@ function channelDetailsV1 (authUserId, channelId) {
     // The code finds the index of the object which contains the apropriate authUserId, in the user key array,
     // and stores it within a variable. If not found -1 is stored
     const user_index = data.user.findIndex(object => {
-        return object.authUserId === authUserId;
-    }); //code adapted from the website shorturl.at/eoJKY 
+        return object.authUserId === authUserId.authUserId;
+    }); 
+    //code adapted from the website shorturl.at/eoJKY 
     
     const channel_index = data.channel.findIndex(object => {
-        return object.cId === channelId;
+        return object.cId === channelId.channelId;
     });
 
     // if neither the authUserId nor the channelId is valid then the function
@@ -30,7 +31,7 @@ function channelDetailsV1 (authUserId, channelId) {
 
     // returns the index of the channelId in the channels array of the valid user
     // if the channel is not within the user's channels array then -1 is returned
-    const cId_index = data.user[user_index].channels.indexOf(channelId);
+    const cId_index = data.user[user_index].channels.indexOf(channelId.channelId);
     // when the user is not a part of the channel error onject is returned
     if (cId_index === -1) {
         return error;
@@ -42,9 +43,10 @@ function channelDetailsV1 (authUserId, channelId) {
     let return_object = {};
     return_object.name = data.channel[channel_index].name;
     return_object.isPublic = data.channel[channel_index].isPublic;
-    return_object.ownerMembers = data.channel[channel_index].ownerMembers;
+    return_object.ownerMembers = data.channel[channel_index].start;
     return_object.allMembers = data.channel[channel_index].allMembers;
-
+    // JSON.parse(JSON.stringify(data.channel[channel_index].ownerMembers));
+    // JSON.parse(JSON.stringify(data.channel[channel_index].allMembers));
     return return_object;
  }
 
@@ -104,3 +106,5 @@ function channelMessagesV1 (authUserId, channelId, start) {
 }
 
 export { channelDetailsV1, channelJoinV1 };
+
+

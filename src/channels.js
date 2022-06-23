@@ -27,7 +27,7 @@ function channelsCreateV1(authUserId, name, isPublic) {
   let flag = 0;
   // Validates the authUserId Passed
   for(let i = 0; i < data.user.length; i++) {
-    if(data.user[i].authUserId === authUserId.authUserId) {
+    if(data.user[i].authUserId === authUserId) {
       validId = true;
       flag = i;
     }
@@ -41,8 +41,9 @@ function channelsCreateV1(authUserId, name, isPublic) {
                       cId: Math.floor(Math.random() * Date.now()),
                       name: name,
                       isPublic: isPublic,
-                      start: [data.user[flag]],
-                      members: [data.user[flag]],};
+                      owners: [data.user[flag]],
+                      members: [data.user[flag]],
+                      messages: [],};
                       
   data.channel.push(newChannel);
   data.user[flag].channels.push(newChannel.cId);
@@ -74,7 +75,7 @@ function channelsListV1(authUserId) {
   
   // Validates the authUserId Passed
   for(let i = 0; i < data.user.length; i++) {
-    if(data.user[i].authUserId === authUserId.authUserId) {
+    if(data.user[i].authUserId === authUserId) {
       validId = true;
       flag = i;
     }
@@ -121,7 +122,7 @@ function channelsListallV1(authUserId) {
   
   // Validates the authUserId Passed
   for(let i = 0; i < data.user.length; i++) {
-    if(data.user[i].authUserId === authUserId.authUserId) {
+    if(data.user[i].authUserId === authUserId) {
       validId = true;
       flag = i;
     }

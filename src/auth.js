@@ -24,10 +24,11 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
     }
 
     // concatenate handle 
-    let handleString = JSON.stringify(nameFirst);
-    handleString += JSON.stringify(nameLast);
+    // let handleString = JSON.stringify(nameFirst);
+    // handleString += JSON.stringify(nameLast);
+    // let handleName = handleString.toLowerCase();
+    let handleString = nameFirst + nameLast;
     let handleName = handleString.toLowerCase();
-
     // check for duplicate email and duplicate handle
     const data = getData();
     let k = 0;
@@ -46,13 +47,13 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
     const uID = Math.floor(Math.random() * Date.now());
     let j = data.user.length;
     data.user[j] = {
-        'email': email,
-        'password': password,
-        'nameFirst': '${nameFirst}',
-        'nameLast': '${nameLast}',
-        'authUserId': uID,
-        'channels': [],
-        'handle': handleName,
+        email: email,
+        password: password,
+        nameFirst: nameFirst,
+        nameLast: nameLast,
+        authUserId: uID,
+        channels: [],
+        handle: handleName,
     }
     setData(data);
 

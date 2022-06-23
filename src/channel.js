@@ -43,10 +43,38 @@ function channelDetailsV1 (authUserId, channelId) {
     let return_object = {};
     return_object.name = data.channel[channel_index].name;
     return_object.isPublic = data.channel[channel_index].isPublic;
-    return_object.ownerMembers = data.channel[channel_index].start;
-    return_object.allMembers = data.channel[channel_index].allMembers;
+    
+    let tempMembers = [];
+    for(let i = 0; i <  data.channel[channel_index].start.length; i++) {
+         tempMembers.push( {
+             email: data.channel[channel_index].start[i].email,
+             handleStr:  data.channel[channel_index].start[i].handle,
+             nameFirst:  data.channel[channel_index].start[i].nameFirst,
+             nameLast:  data.channel[channel_index].start[i].nameLast,
+             uId: {authUserId: data.channel[channel_index].start[i].authUserId},
+        } )
+    }
+    return_object.ownerMembers = tempMembers;
+
+    tempMembers = [];
+    for(let j = 0; j <  data.channel[channel_index].members.length; j++) {
+        tempMembers.push( {
+            email: data.channel[channel_index].members[j].email,
+            handleStr:  data.channel[channel_index].members[j].handle,
+            nameFirst:  data.channel[channel_index].members[j].nameFirst,
+            nameLast:  data.channel[channel_index].members[j].nameLast,
+            uId: {authUserId: data.channel[channel_index].members[j].authUserId},
+       } )
+   }
+
+   return_object.allMembers = tempMembers;
+    // return_object.allMembers = data.channel[channel_index].members;
+    // console.log(data.channel[channel_index].start);
     // JSON.parse(JSON.stringify(data.channel[channel_index].ownerMembers));
     // JSON.parse(JSON.stringify(data.channel[channel_index].allMembers));
+
+    
+    // console.log(return_object);
     return return_object;
  }
 
@@ -82,11 +110,19 @@ function channelJoinV1 (authUserId, channelId) {
         return error;
     }
 
+    let push_object = {};
+    /*
+    push_object.uId = data.user[user_index].authUserId;
+    push_object.email =    data.user[user_index].email;
+    push_object.nameFirst = data.user[user_index].nameFirst;
+    push_object.nameLast = data.user[user_index].nameLast;
+    push_object.handleStr = data.user[user_index].handle;
+    */
 
     // User is able to join the channel and so members is updated within the channel's
     // member array and channels list is updated within the user's channels array
-    data.user[user_index].channels.push(channelId);
-    data.channel[channel_index].channels.push(authUserId);
+    data.user[user_index].channels.push(channelId.cId);
+    data.channel[channel_index].members.push(push_object);
 
     // updating the data in the data storage file
     setData(data);

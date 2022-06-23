@@ -60,9 +60,9 @@ function channelDetailsV1 (authUserId, channelId) {
     for(let j = 0; j <  data.channel[channel_index].members.length; j++) {
         tempMembers.push( {
             email: data.channel[channel_index].members[j].email,
-            handleStr:  data.channel[channel_index].members[j].handle,
-            nameFirst:  data.channel[channel_index].members[j].nameFirst,
-            nameLast:  data.channel[channel_index].members[j].nameLast,
+            handleStr: data.channel[channel_index].members[j].handle,
+            nameFirst: data.channel[channel_index].members[j].nameFirst,
+            nameLast: data.channel[channel_index].members[j].nameLast,
             uId: {authUserId: data.channel[channel_index].members[j].authUserId},
        } )
    }
@@ -110,7 +110,7 @@ function channelJoinV1 (authUserId, channelId) {
         return error;
     }
 
-    let push_object = {};
+    let push_object = data.user[user_index];
     /*
     push_object.uId = data.user[user_index].authUserId;
     push_object.email =    data.user[user_index].email;
@@ -121,12 +121,16 @@ function channelJoinV1 (authUserId, channelId) {
 
     // User is able to join the channel and so members is updated within the channel's
     // member array and channels list is updated within the user's channels array
-    data.user[user_index].channels.push(channelId.cId);
+    data.user[user_index].channels.push(channelId);
     data.channel[channel_index].members.push(push_object);
+
+    
 
     // updating the data in the data storage file
     setData(data);
     
+    console.log(data);
+
     return return_object;
 }
 

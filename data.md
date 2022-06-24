@@ -20,7 +20,7 @@ database = {
             'cId': cId,
             'name': 'Channel1name',
             'isPublic': Channel1publicity,
-            'ownerMembers': [ memberuIds ]
+            'owners': [ memberuIds ]
             'members': [ uIDs ]
             'messages': [ messages ]
         },

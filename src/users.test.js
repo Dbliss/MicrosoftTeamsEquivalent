@@ -56,4 +56,22 @@ describe('Testing userProfileV1', () => {
 
     });
 
+    test('Testing return of userProfileV1 when authUserId is trying to access their own information', () => {
+        clearV1();
+        let authUserId = authRegisterV1('email@email.com', 
+                                    'password', 
+                                    'First',
+                                    'Last');
+
+        const result = userProfileV1(authUserId.authUserId,authUserId.authUserId);
+        expect(result).toMatchObject({
+            uId: authUserId.authUserId,
+            email: 'email@email.com',
+            nameFirst: 'First',
+            nameLast: 'Last',
+            handleStr: 'firstlast'
+        });
+
+    });
+
 });

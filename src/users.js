@@ -3,17 +3,30 @@ import {
   setData,
 } from './dataStore.js';
 
+//<For a valid user, returns information about their userId, email, first name, last name, and handle> 
+
+// Arguments:
+    // <authUserId> (<integer>)    - <This is the unique number given to a user once registered and is the number for the person looking for information>
+    // <uId> (<integer>)    - <This is the unique number given to a user once registered and is the number of the user if valid whose details is being sought>
+
+
+// Return Value:
+    // Returns <{user}> on <valid input of authUserId and uId>
+    // Returns <{error: error}> on <invalid input of authUserId or invalid uId>
 
 function userProfileV1(authUserId, uId) {
   let data = getData();
   let return_user = {};
   let error = {error: 'error'};
   
+
+  // Finds the index of the object which contains the apropriate authUserId matching uId, in the user key array,
+  // and stores it within a variable. If not found -1 is stored
   const uId_index = data.user.findIndex(object => {
       return object.authUserId === uId;
   });
 
-  // The code finds the index of the object which contains the apropriate authUserId, in the user key array,
+  // Finds the index of the object which contains the apropriate authUserId of uId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
   const user_index = data.user.findIndex(object => {
       return object.authUserId === authUserId;
@@ -25,6 +38,7 @@ function userProfileV1(authUserId, uId) {
       return error;
   }
  
+  // Setting the values of the returned user object with the necessary details
   let retuId = data.user[uId_index].authUserId;
   return_user.uId = retuId;
   return_user.email = data.user[uId_index].email;

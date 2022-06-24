@@ -222,6 +222,11 @@ describe('Testing channelJoinV1', () => {
 
 
 
+
+
+
+
+
 describe('Testing channelInvite1', () => {
 
   test('channelId does not refer to a valid channel', () => {

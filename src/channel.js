@@ -8,9 +8,9 @@ import { getData, setData } from "./dataStore.js";
 
 // Return Value:
     // Returns <{name, isPublic, ownerMembers, allMembers}> on <valid input of authUserId and channelId>
-    // Returns <{error: error}> on <channelId does not refer to a valid channel, 
-    // Returns <{error: error}> on when channelId is invalid 
-    // Returns <{error: error}> on authorised user is not a member of the channel>
+    // Returns <{error: error}> on <channelId does not refer to a valid channel> 
+    // Returns <{error: error}> on <when channelId is invalid> 
+    // Returns <{error: error}> on <authorised user is not a member of the channel>
 
 function channelDetailsV1 (authUserId, channelId) {
     let data = getData();
@@ -99,13 +99,16 @@ function channelDetailsV1 (authUserId, channelId) {
 
 
 // Given a channelId of a channel that the authorised user can join, adds them to that channel.
+
 // Arguments:
     // <authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
     // <channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
+
 // Return Value:
     // Returns {} on <valid input of authUserId and channelId>
     // Returns {error: error} on channelId does not refer to a valid channel, 
     // Returns {error: error} on the authorised user is already a member of the channel
+
 function channelJoinV1 (authUserId, channelId) {
 
     let data = getData();
@@ -132,7 +135,7 @@ function channelJoinV1 (authUserId, channelId) {
 
     // Loops through the array members in the specified channel and checks
     // whether the authorised user is already a member of the channel,
-    // if they are then error onject is returned
+    // if they are then error object is returned
     for(let i = 0; i < data.channel[channel_index].members.length; i++) {
         if ( data.channel[channel_index].members[i].authUserId === authUserId) {
             return error;
@@ -159,6 +162,8 @@ function channelJoinV1 (authUserId, channelId) {
         addingChannel.channelPermissionId = 1;
     } 
 
+    // setting the push object to the user needs to be added to the members array for 
+    // the particular channel
     let push_object = data.user[user_index];
     
 
@@ -173,6 +178,11 @@ function channelJoinV1 (authUserId, channelId) {
     return return_object;
 }
 
+
+
+// Invites a user with ID uId to join a channel with ID channelId. Once invited, the user is added
+//  to the channel immediately. In both public and private channels, all members are able to invite users.
+
 // Arguments:
     // authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
     // channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
@@ -185,7 +195,6 @@ function channelJoinV1 (authUserId, channelId) {
     // Returns <{error: error}> when uId refers to a user who is already a member of the channel 
     // Returns <{error: error}> on authorised user is not a member of the channel
 
-// Returns a string concatination of the input arguments 'authUserId', 'channelId' and 'uId'
 function channelInviteV1(authUserId, channelId, uId) {
     //getting the dataset
     let data = getData();
@@ -264,6 +273,11 @@ function channelInviteV1(authUserId, channelId, uId) {
     return { };
 }
 
+
+
+// Given a channel with ID channelId that the authorised user is a member of, return
+// up to 50 messages between index "start" and "start + 50".
+
 // Arguments:
     // authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
     // channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
@@ -276,7 +290,7 @@ function channelInviteV1(authUserId, channelId, uId) {
     // Returns <{error: error}> on authorised user is not a member of the channel
 
 
-// Returns a string concatination of the input arguments 'authUserId', 'channelId' and 'start'
+
 function channelMessagesV1 (authUserId, channelId, start) {
     //getting the dataset
     let data = getData();

@@ -1,4 +1,3 @@
-
 import { getData, setData } from "./dataStore.js";
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
@@ -174,6 +173,17 @@ function channelJoinV1 (authUserId, channelId) {
     return return_object;
 }
 
+// Arguments:
+    // authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
+    // channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
+    // uId> (<integer>)    - <This is the unique ID given to a a user once they are registered. It is the same as the users authUserId>
+
+// Return Value:
+    // Returns <{}> on <valid input of authUserId, channelId and uId>
+    // Returns <{error: error}> on channelId does not refer to a valid channel, 
+    // Returns <{error: error}> when uId does not refer to a valid user
+    // Returns <{error: error}> when uId refers to a user who is already a member of the channel 
+    // Returns <{error: error}> on authorised user is not a member of the channel
 
 // Returns a string concatination of the input arguments 'authUserId', 'channelId' and 'uId'
 function channelInviteV1(authUserId, channelId, uId) {
@@ -253,6 +263,17 @@ function channelInviteV1(authUserId, channelId, uId) {
 
     return { };
 }
+
+// Arguments:
+    // authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
+    // channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
+    // start> (<integer>)    - <This is an integer given from the user>
+
+// Return Value:
+    // Returns <{ messages, start, end}> on <valid input of authUserId, channelId and uId>
+    // Returns <{error: error}> on channelId does not refer to a valid channel, 
+    // Returns <{error: error}> start is greater than the total number of messages in the channel
+    // Returns <{error: error}> on authorised user is not a member of the channel
 
 
 // Returns a string concatination of the input arguments 'authUserId', 'channelId' and 'start'

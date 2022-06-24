@@ -14,8 +14,6 @@ import {
 import {
   clearV1,
 } from './other.js';
-import { getData } from './dataStore.js';
-
 
 describe('Testing channelsCreateV1', () => {
   
@@ -126,7 +124,7 @@ describe('Testing channelsListV1', () => {
     let channelId2 = channelsCreateV1(authUserId2.authUserId, 
                                   'name2', 
                                   true);
-    let data = getData();                 
+                    
     let result = channelsListV1(authUserId2.authUserId);
     expect(result).toMatchObject({channels: [{
                                   channelId: channelId2.channelId,

@@ -31,7 +31,6 @@ describe('Testing channelDetailsV1', () => {
       'Last');
 
       let channelId = channelsCreateV1(auth_user.authUserId, 'name', true);
-      let data = getData();
       const result = channelDetailsV1(auth_user.authUserId, channelId.channelId);
       expect(result).toMatchObject({name: 'name',
                                   isPublic: true,
@@ -179,7 +178,6 @@ describe('Testing channelJoinV1', () => {
   });
 
   test('Person who did not create channel tries to join public channel', () => {
-      let data = getData();
       clearV1();
       let auth_user = authRegisterV1('email@email.com', 
       'password', 
@@ -365,6 +363,31 @@ describe('Testing channelMessages1', () => {
     let result = channelMessagesV1(authUserId.authUserId, channelId.channelId, 0);
     
     expect(result).toEqual({messages: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], start: 0,  end: -1});
+});
+
+test('more than 50 messages success', () => {
+    clearV1();
+    let data = getData();
+    let authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
+
+    let channelId = channelsCreateV1(authUserId.authUserId, 'name', false);
+
+    data.channel[0].messages = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 
+                                '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
+                                '21', '22', '23', '24', '25', '26', '27', '28', '29', '30',
+                                '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', 
+                                '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', 
+                                '51', '52', '53', '54', '55', '56', '57', '58', '59', '60'];
+          
+    setData(data);
+
+    let result = channelMessagesV1(authUserId.authUserId, channelId.channelId, 0);
+    
+    expect(result).toEqual({messages: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 
+                                        '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', 
+                                        '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', 
+                                        '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', 
+                                        '41', '42', '43', '44', '45', '46', '47', '48', '49'], start: 0,  end: 50});
 });
 });
 

@@ -8,9 +8,9 @@ import { getData, setData } from "./dataStore.js";
 
 // Return Value:
     // Returns <{name, isPublic, ownerMembers, allMembers}> on <valid input of authUserId and channelId>
-    // Returns <{error: error}> on <channelId does not refer to a valid channel, 
-    // Returns <{error: error}> on when channelId is invalid 
-    // Returns <{error: error}> on authorised user is not a member of the channel>
+    // Returns <{error: error}> on <channelId does not refer to a valid channel> 
+    // Returns <{error: error}> on <when channelId is invalid> 
+    // Returns <{error: error}> on <authorised user is not a member of the channel>
 
 function channelDetailsV1 (authUserId, channelId) {
     let data = getData();
@@ -38,17 +38,16 @@ function channelDetailsV1 (authUserId, channelId) {
 
     // returns the index of the channelId in the channels array of the valid user
     // if the channel is not within the user's channels array then -1 is returned
-    // const cId_index = data.user[user_index].channels.indexOf(channelId);
     const cId_index = data.user[user_index].channels.findIndex(object => {
         return object.cId === channelId;
     });
+
     // when the user is not a part of the channel error onject is returned
     if (cId_index === -1) {
         return error;
     }
 
-    // using the index of the specified channel in the channel key we access the information
-    // and store it within a new object with the relevant information to return
+    // store relevant information from the user into a return object
     let return_object = {};
     return_object.name = data.channel[channel_index].name;
     return_object.isPublic = data.channel[channel_index].isPublic;
@@ -98,6 +97,7 @@ function channelDetailsV1 (authUserId, channelId) {
     return return_object;
  }
 
+
 // Given a channelId of a channel that the authorised user can join, adds them to that channel.
 
 // Arguments:
@@ -105,9 +105,10 @@ function channelDetailsV1 (authUserId, channelId) {
     // <channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
 
 // Return Value:
-    // Returns <{}> on <valid input of authUserId and channelId>
-    // Returns <{error: error}> on <channelId does not refer to a valid channel, 
-    //                              the authorised user is already a member of the channel>
+    // Returns {} on <valid input of authUserId and channelId>
+    // Returns {error: error} on channelId does not refer to a valid channel, 
+    // Returns {error: error} on the authorised user is already a member of the channel
+
 function channelJoinV1 (authUserId, channelId) {
 
     let data = getData();
@@ -134,7 +135,7 @@ function channelJoinV1 (authUserId, channelId) {
 
     // Loops through the array members in the specified channel and checks
     // whether the authorised user is already a member of the channel,
-    // if they are then error onject is returned
+    // if they are then error object is returned
     for(let i = 0; i < data.channel[channel_index].members.length; i++) {
         if ( data.channel[channel_index].members[i].authUserId === authUserId) {
             return error;
@@ -155,10 +156,14 @@ function channelJoinV1 (authUserId, channelId) {
     }
 
     let addingChannel = { cId: channelId, channelPermissionId: 2,};
+
+    // checking if the owner is a global owner and updating permissions if they are
     if (isGlobalMember === 1) {
         addingChannel.channelPermissionId = 1;
     } 
 
+    // setting the push object to the user needs to be added to the members array for 
+    // the particular channel
     let push_object = data.user[user_index];
     
 
@@ -173,6 +178,11 @@ function channelJoinV1 (authUserId, channelId) {
     return return_object;
 }
 
+
+
+// Invites a user with ID uId to join a channel with ID channelId. Once invited, the user is added
+//  to the channel immediately. In both public and private channels, all members are able to invite users.
+
 // Arguments:
     // authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
     // channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
@@ -185,7 +195,6 @@ function channelJoinV1 (authUserId, channelId) {
     // Returns <{error: error}> when uId refers to a user who is already a member of the channel 
     // Returns <{error: error}> on authorised user is not a member of the channel
 
-// Returns a string concatination of the input arguments 'authUserId', 'channelId' and 'uId'
 function channelInviteV1(authUserId, channelId, uId) {
     //getting the dataset
     let data = getData();
@@ -264,6 +273,11 @@ function channelInviteV1(authUserId, channelId, uId) {
     return { };
 }
 
+
+
+// Given a channel with ID channelId that the authorised user is a member of, return
+// up to 50 messages between index "start" and "start + 50".
+
 // Arguments:
     // authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
     // channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
@@ -276,7 +290,7 @@ function channelInviteV1(authUserId, channelId, uId) {
     // Returns <{error: error}> on authorised user is not a member of the channel
 
 
-// Returns a string concatination of the input arguments 'authUserId', 'channelId' and 'start'
+
 function channelMessagesV1 (authUserId, channelId, start) {
     //getting the dataset
     let data = getData();

@@ -19,7 +19,6 @@ function userProfileV1(authUserId, uId) {
   let return_user = {};
   let error = {error: 'error'};
   
-
   // Finds the index of the object which contains the apropriate authUserId matching uId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
   const uId_index = data.user.findIndex(object => {
@@ -46,8 +45,7 @@ function userProfileV1(authUserId, uId) {
   return_user.nameLast = data.user[uId_index].nameLast;
   return_user.handleStr = data.user[uId_index].handle;
   
-  return return_user;
-  
+  return return_user; 
 }
 
 export { userProfileV1 };

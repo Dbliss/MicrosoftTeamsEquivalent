@@ -46,7 +46,10 @@ function channelsCreateV1(authUserId, name, isPublic) {
                       messages: [],};
                       
   data.channel.push(newChannel);
-  data.user[flag].channels.push(newChannel.cId);
+  let push_object = { cId: newChannel.cId, 
+                      channelPermissionsId: 1, };
+  data.user[flag].channels.push(push_object);
+
   
   setData(data);
   
@@ -89,7 +92,7 @@ function channelsListV1(authUserId) {
   
   let storeChannels = {channels: []};
   for(let j = 0; j < data.user[flag].channels.length; j++) {
-    let channelId = data.user[flag].channels[j];
+    let channelId = data.user[flag].channels[j].cId;
     
     for(let k = 0; k < data.channel.length; k++) {
       if(channelId === data.channel[k].cId) {

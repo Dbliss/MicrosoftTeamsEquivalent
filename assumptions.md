@@ -11,3 +11,7 @@ Assumptions :
 5. If an invalid authUserId is passed to userProfileV1 the function will return {error: 'error'}
 
 6. An invalid email string is when there is no "@" or "." in the email string parameter 
+
+7. A valid channelpermissionId is either a 1 for channel owner permissions or a 2 for member permissions
+
+8. Once a global owner is invited through channelInviteV1, they are treated as a member until further action is taken by channel owner

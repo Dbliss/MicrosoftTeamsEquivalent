@@ -146,6 +146,11 @@ describe('Testing channelDetailsV1', () => {
     
 });
 
+
+
+
+
+
 describe('Testing channelJoinV1', () => {
     test('Person who created the channel tries to join', () => {
         clearV1();

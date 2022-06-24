@@ -23,7 +23,7 @@ database = {
             'isPublic': Channel1publicity,
             'start': Channel1start,
             'members': [ uIDs ]
-            'ownerMembers': [ memberuIds ]
+            'owners': [ memberuIds ]
         },
     ]
 }

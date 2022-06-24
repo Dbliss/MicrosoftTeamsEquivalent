@@ -15,6 +15,7 @@ database = {
                            channelPermissionId: ,
                         }, ]
             'handle': 'person1firstnameperson1lastname'
+            'permissionId': permissionId,
         },
     ],
     channel: [

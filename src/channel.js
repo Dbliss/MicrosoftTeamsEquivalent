@@ -1,15 +1,17 @@
 
-
-
-import { authLoginV1 } from "./auth";
 import { getData, setData } from "./dataStore";
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
-// Arguments:
-// <authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
-// <channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
 
-// Return type if no error:{ name, isPublic, ownerMembers, allMembers }
+// Arguments:
+    // <authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
+    // <channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
+
+// Return Value:
+    // Returns <{name, isPublic, ownerMembers, allMembers}> on <valid input of authUserId and channelId>
+    // Returns <{error: error}> on <channelId does not refer to a valid channel, and when channelId is 
+    //                              valid and the authorised user is not a member of the channel>
+
 function channelDetailsV1 (authUserId, channelId) {
     let data = getData();
     
@@ -22,6 +24,8 @@ function channelDetailsV1 (authUserId, channelId) {
     }); 
     //code adapted from the website shorturl.at/eoJKY 
     
+    // The code finds the index of the object which contains the apropriate channelId, in the channel key array,
+    // and stores it within a variable. If not found -1 is stored
     const channel_index = data.channel.findIndex(object => {
         return object.cId === channelId;
     });
@@ -43,7 +47,6 @@ function channelDetailsV1 (authUserId, channelId) {
         return error;
     }
 
-    
     // using the index of the specified channel in the channel key we access the information
     // and store it within a new object with the relevant information to return
     let return_object = {};
@@ -54,7 +57,8 @@ function channelDetailsV1 (authUserId, channelId) {
 
     let channel_owners = data.channel[channel_index].owners;
 
-
+    // Receives all appropriate information from the owners array of user objects and stores them in a
+    // object which is pushed to the end of a temporary array tempMembers
     for(let i = 0; i <  data.channel[channel_index].owners.length; i++) {
          tempMembers.push( {
              email: channel_owners[i].email,
@@ -64,12 +68,18 @@ function channelDetailsV1 (authUserId, channelId) {
              uId: channel_owners[i].authUserId,
         } )
     }
+
+    // setting the array of ownerMembers in the return object to the 
+    // tempMembers array
     return_object.ownerMembers = tempMembers;
 
+    // tempMembers is reset to empty
     tempMembers = [];
 
     let channel_members = data.channel[channel_index].members;
 
+    // Receives all appropriate information from the members array of user objects and stores them in a
+    // object which is pushed to the end of a temporary array tempMembers
     for(let j = 0; j <  data.channel[channel_index].members.length; j++) {
         tempMembers.push( {
             email: channel_members[j].email,
@@ -80,6 +90,8 @@ function channelDetailsV1 (authUserId, channelId) {
        } )
    }
 
+   // setting the array of allMembers in the return object to the 
+   // tempMembers array
    return_object.allMembers = tempMembers;
 
     
@@ -87,8 +99,15 @@ function channelDetailsV1 (authUserId, channelId) {
  }
 
 // Given a channelId of a channel that the authorised user can join, adds them to that channel.
-// Parameters:{ authUserId, channelId }
-// Return type if no error:{}
+
+// Arguments:
+    // <authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
+    // <channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
+
+// Return Value:
+    // Returns <{}> on <valid input of authUserId and channelId>
+    // Returns <{error: error}> on <channelId does not refer to a valid channel, 
+    //                              the authorised user is already a member of the channel>
 function channelJoinV1 (authUserId, channelId) {
 
     let data = getData();
@@ -113,6 +132,9 @@ function channelJoinV1 (authUserId, channelId) {
         isGlobalMember = 1;
     }
 
+    // Loops through the array members in the specified channel and checks
+    // whether the authorised user is already a member of the channel,
+    // if they are then error onject is returned
     for(let i = 0; i < data.channel[channel_index].members.length; i++) {
         if ( data.channel[channel_index].members[i].authUserId === authUserId) {
             return error;
@@ -145,12 +167,8 @@ function channelJoinV1 (authUserId, channelId) {
     data.user[user_index].channels.push(addingChannel);
     data.channel[channel_index].members.push(push_object);
 
-    
-
     // updating the data in the data storage file
     setData(data);
-    
-    
 
     return return_object;
 }

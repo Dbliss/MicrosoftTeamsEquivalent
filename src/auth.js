@@ -1,5 +1,20 @@
 import { getData, setData } from './dataStore';
 
+// Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.
+// Arguments:
+// email (string) - This is the email string the user uses to register their account with
+// password (string) - This is password string the user uses to register their account with
+// nameFirst (string) - This is first name the user would like to register their account with
+// nameLast (string) - This is last name the user would like to register their account with
+
+//Return Values:
+// Returns { authUserId } (integer) on valid email, password, nameFirst and nameLast
+// Returns { error: 'error' } on invalid email parameter - email must contain @ or .
+// Returns { error: 'error' } on invalid password - password must be greater than 6 characters
+// Returns { error: 'error' } on invalid nameFirst - nameFirst must be in between 1 and 50 characters inclusive
+// Returns { error: 'error' } on invalid nameLast - nameLast must be in between 1 and 50 characters inclusive
+
+
 function authRegisterV1(email, password, nameFirst, nameLast) {
     
     // check for valid email parameter
@@ -24,9 +39,6 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
     }
 
     // concatenate handle 
-    // let handleString = JSON.stringify(nameFirst);
-    // handleString += JSON.stringify(nameLast);
-    // let handleName = handleString.toLowerCase();
     let handleString = nameFirst + nameLast;
     let handleName = handleString.toLowerCase();
     // check for duplicate email and duplicate handle
@@ -59,6 +71,17 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
 
     return { authUserId: uID };
 }
+
+// Given a registered user's email and password, returns their `authUserId` value
+// Arguments: 
+// email (string) - This is the email string the user uses to log into their registered account with
+// password (string) - This is password string the user uses to log into their registered account with
+
+// Return values:
+// Returns { authUserId } (integer) on valid email and password
+// Returns { error: 'error' } on invalid email - email must already be registered in the database
+// Returns { error: 'error' } on invalid password - The password must match the one in the database under the specific email 
+
 
 function authLoginV1(email, password) {
     const data = getData();

@@ -14,16 +14,16 @@ database = {
             'channels': [ cIds ]
             'handle': 'person1firstnameperson1lastname'
         },
-
     ],
     channel: [
         {
             'cId': cId,
             'name': 'Channel1name',
             'isPublic': Channel1publicity,
-            'start': Channel1start,
-            'members': [ uIDs ]
             'owners': [ memberuIds ]
+            'members': [ uIDs ]
+            'messages': [ messages ]
         },
     ]
 }
+

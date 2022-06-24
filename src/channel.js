@@ -162,15 +162,138 @@ function channelJoinV1 (authUserId, channelId) {
 
 
 // Returns a string concatination of the input arguments 'authUserId', 'channelId' and 'uId'
-function channelInviteV1 (authUserId, channelId, uId) {
-    return 'authUserId' + 'channelId' + 'uId';
+function channelInviteV1(authUserId, channelId, uId) {
+    //getting the dataset
+    let data = getData();
+
+    let validChannel = false;
+    let validUid = false;
+
+    let currentChannel = {};
+    let currentUser = {};
+
+    // if no channels have been created return an error
+    if (JSON.stringify(data.channel) === JSON.stringify([])){
+        return {error: 'error'};
+    }
+
+    //checking the channelId is valid and setting currentChannel to the valid channel
+    for (let channel of data.channel){
+        if (channel.cId === channelId){
+            validChannel = true;
+            currentChannel =  channel;
+        }
+    }
+
+    //checking the uId is valid 
+    for (let user of data.user){
+        if (user === uId){
+            validUid = true;
+            currentUser = user;
+        }
+    }
+ 
+    
+    //checking valid inputted channelId and uId 
+    if (validChannel  === false || validUid === false){
+        return {error: 'error'};
+    }
+
+    //checking that the uId isnt already in the channel
+    if (currentChannel.members.includes(uId) === true){
+         return {error: 'error'};
+    }
+
+    //checking the authUserId is apart of the channel 
+    if (currentChannel.members.includes(authUserId) === false){
+        return {error: 'error'};
+   }
+
+    //need to find which user uId is 
+    for (let i = 0; i < data.user.length; i++){
+        if (data.user[i].authUserId === uId){
+            data.user[i].channels.push(channelId);
+            let j = i;
+        }
+    }
+
+
+    //need to find which channel channelId is 
+    for (let i = 0; i < data.channel.length; i++){
+        if (data.channel[i].cId === channelId){
+            data.channel[k].members.push(data.user[j]);
+        }
+    }
+
+
+    
+
+    setData(data);
+
+    return { };
 }
+
 
 // Returns a string concatination of the input arguments 'authUserId', 'channelId' and 'start'
 function channelMessagesV1 (authUserId, channelId, start) {
-    return 'authUserId' + 'channelId' + 'start';
+    //getting the dataset
+    let data = getData();
+
+    let currentChannel = {};
+    let messages = [];
+
+     // if no channels have been created return an error
+    if (data.channel.length === 0){
+        return {error: 'error'};
+    }
+    
+    //checking the channelId is valid and setting currentChannel to the valid channel
+    let validChannel = false;
+    for (let channel of data.channel){
+        if (channel.cId === channelId){
+            validChannel = true;
+            currentChannel =  channel;
+        }
+    }
+   
+
+    //checking valid inputted channelId and uId 
+    if (validChannel === false){
+        return {error: 'error'};
+    }
+    
+    
+    //checking that start is not greater than the total number of messages in the channel
+    if (currentChannel.messages.length < start){
+        return {error: 'error'};
+    }
+    
+
+    //checking the authUserId is a member of the channel 
+    for (let user of data.user){
+        if (user.authUserId === authUserId){
+            if (user.channels.includes(channelId) === false) {
+                return {error: 'error'};
+            }
+        }
+    }
+
+    let j = 0;
+    for (let i = start; i < currentChannel.messages.length && j < 50; i++){
+        messages[j] = currentChannel.messages[i];
+        j++;
+    }
+    
+    let end = start + 50;
+
+    if (j !== 50){
+        end = -1;
+    }
+
+
+
+    return { messages, start, end };
 }
 
-export { channelDetailsV1, channelJoinV1 };
-
+export { channelDetailsV1, channelJoinV1, channelInviteV1 , channelMessagesV1 };
 

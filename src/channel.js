@@ -1,5 +1,15 @@
-import {getData, setData}  from './dataStore.js';
 
+
+
+import { authLoginV1 } from "./auth";
+import { getData, setData } from "./dataStore";
+
+// Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
+// Arguments:
+// <authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
+// <channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
+
+// Return type if no error:{ name, isPublic, ownerMembers, allMembers }
 function channelDetailsV1 (authUserId, channelId) {
     let data = getData();
     

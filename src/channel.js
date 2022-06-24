@@ -39,17 +39,16 @@ function channelDetailsV1 (authUserId, channelId) {
 
     // returns the index of the channelId in the channels array of the valid user
     // if the channel is not within the user's channels array then -1 is returned
-    // const cId_index = data.user[user_index].channels.indexOf(channelId);
     const cId_index = data.user[user_index].channels.findIndex(object => {
         return object.cId === channelId;
     });
+
     // when the user is not a part of the channel error onject is returned
     if (cId_index === -1) {
         return error;
     }
 
-    // using the index of the specified channel in the channel key we access the information
-    // and store it within a new object with the relevant information to return
+    // store relevant information from the user into a return object
     let return_object = {};
     return_object.name = data.channel[channel_index].name;
     return_object.isPublic = data.channel[channel_index].isPublic;
@@ -99,16 +98,15 @@ function channelDetailsV1 (authUserId, channelId) {
     return return_object;
  }
 
-// Given a channelId of a channel that the authorised user can join, adds them to that channel.
 
+// Given a channelId of a channel that the authorised user can join, adds them to that channel.
 // Arguments:
     // <authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
     // <channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
-
 // Return Value:
-    // Returns <{}> on <valid input of authUserId and channelId>
-    // Returns <{error: error}> on <channelId does not refer to a valid channel, 
-    //                              the authorised user is already a member of the channel>
+    // Returns {} on <valid input of authUserId and channelId>
+    // Returns {error: error} on channelId does not refer to a valid channel, 
+    // Returns {error: error} on the authorised user is already a member of the channel
 function channelJoinV1 (authUserId, channelId) {
 
     let data = getData();
@@ -156,6 +154,8 @@ function channelJoinV1 (authUserId, channelId) {
     }
 
     let addingChannel = { cId: channelId, channelPermissionId: 2,};
+
+    // checking if the owner is a global owner and updating permissions if they are
     if (isGlobalMember === 1) {
         addingChannel.channelPermissionId = 1;
     } 

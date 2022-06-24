@@ -1,5 +1,5 @@
-import { clearV1 } from "./other";
-import { channelsCreateV1 } from "./channels.js";
+import { clearV1 } from "./other.js";
+import { channelsCreateV1, channelsListallV1 } from "./channels.js";
 import {channelJoinV1} from "./channel.js"
 import { authRegisterV1 } from "./auth.js"
 
@@ -21,10 +21,10 @@ describe('Testing clearV1', () => {
         channelsCreateV1(uId.authUserId, 'name1', true);
         channelJoinV1(authUserId.authUserId, channel_id.channelId);
             
-        let result = clearV1();
+        clearV1();
 
-        
+        let result = channelsListallV1(authUserId.authUserId);
 
-        expect(result).toMatchObject({});  
+        expect(result).toMatchObject({channels: []});  
     });  
 });

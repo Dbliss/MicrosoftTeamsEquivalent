@@ -1,16 +1,17 @@
 
-import { getData, setData } from "./dataStore";
+import { getData, setData } from "./dataStore.js";
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
 
 // Arguments:
-    // <authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
-    // <channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
+    // authUserId> (<integer>)    - <This is the unique ID given to a user once they are registered>
+    // channelId> (<integer>)    - <This is the unique ID given to a channel once it has been created>
 
 // Return Value:
     // Returns <{name, isPublic, ownerMembers, allMembers}> on <valid input of authUserId and channelId>
-    // Returns <{error: error}> on <channelId does not refer to a valid channel, and when channelId is 
-    //                              valid and the authorised user is not a member of the channel>
+    // Returns <{error: error}> on <channelId does not refer to a valid channel, 
+    // Returns <{error: error}> on when channelId is invalid 
+    // Returns <{error: error}> on authorised user is not a member of the channel>
 
 function channelDetailsV1 (authUserId, channelId) {
     let data = getData();

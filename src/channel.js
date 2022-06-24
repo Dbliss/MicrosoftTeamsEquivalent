@@ -1,5 +1,5 @@
 
-import { getData, setData } from "./dataStore";
+import { getData, setData } from "./dataStore.js";
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
 

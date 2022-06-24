@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore';
+import { getData, setData } from './dataStore.js';
 
 // Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.
 // Arguments:

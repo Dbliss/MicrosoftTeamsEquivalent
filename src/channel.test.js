@@ -217,6 +217,25 @@ describe('Testing channelJoinV1', () => {
       expect(result).toMatchObject({error: 'error'})
 
   });
+
+  test('Private channel + global owner', () => {
+    clearV1();
+    let global_owner = authRegisterV1('email@email.com', 
+    'password', 
+    'First',
+    'Last');
+
+    let global_member = authRegisterV1('email1@email.com', 
+    'password1', 
+    'First1',
+    'Last1');
+
+    let channelId = channelsCreateV1(global_member.authUserId, 'name', false);
+
+    const result = channelJoinV1(global_owner.authUserId,channelId.channelId);
+    expect(result).toMatchObject({});
+
+});
   
 });
 

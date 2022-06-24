@@ -38,8 +38,10 @@ function channelDetailsV1 (authUserId, channelId) {
 
     // returns the index of the channelId in the channels array of the valid user
     // if the channel is not within the user's channels array then -1 is returned
-    const cId_index = data.user[user_index].channels.indexOf(channelId);
-
+    // const cId_index = data.user[user_index].channels.indexOf(channelId);
+    const cId_index = data.user[user_index].channels.findIndex(object => {
+        return object.cId === channelId;
+    });
     // when the user is not a part of the channel error onject is returned
     if (cId_index === -1) {
         return error;
@@ -124,6 +126,11 @@ function channelJoinV1 (authUserId, channelId) {
         return object.authUserId === authUserId;
     }); //code adapted from the website shorturl.at/eoJKY
 
+    // Check to see if new user is a member
+    let isGlobalMember = 0;
+    if (data.user[user_index].permissionId === 1) {
+        isGlobalMember = 1;
+    }
 
     // Loops through the array members in the specified channel and checks
     // whether the authorised user is already a member of the channel,
@@ -142,16 +149,22 @@ function channelJoinV1 (authUserId, channelId) {
 
     // checking if the channel is public or not if not true then error is returned
     let is_public = data.channel[channel_index].isPublic;
-    if(is_public === false) {
+    // if member is not a global owner and channel is private then return error 
+    if (is_public === false && isGlobalMember === 0) {
         return error;
     }
+
+    let addingChannel = { cId: channelId, channelPermissionId: 2,};
+    if (isGlobalMember === 1) {
+        addingChannel.channelPermissionId = 1;
+    } 
 
     let push_object = data.user[user_index];
     
 
     // User is able to join the channel and so members is updated within the channel's
-    // member array and channels array of channelIds is updated within the user's channels array
-    data.user[user_index].channels.push(channelId);
+    // member array and channels list is updated within the user's channels array
+    data.user[user_index].channels.push(addingChannel);
     data.channel[channel_index].members.push(push_object);
 
     // updating the data in the data storage file
@@ -207,13 +220,20 @@ function channelInviteV1(authUserId, channelId, uId) {
     //checking the authUserId is apart of the channel 
     if (currentChannel.members.includes(authUserId) === false){
         return {error: 'error'};
-   }
+    }
+
+   
 
     //need to find which user uId is 
     for (let i = 0; i < data.user.length; i++){
         if (data.user[i].authUserId === uId){
-            data.user[i].channels.push(channelId);
             let j = i;
+            let isGlobalMember = 2;
+            if (data.user[j].permissionId === 1) {
+                isGlobalMember = 1;
+            } 
+            let push_object = { cId: channelId, channelPermissionId: isGlobalMember, }
+            data.user[i].channels.push(push_object);
         }
     }
 
@@ -270,13 +290,25 @@ function channelMessagesV1 (authUserId, channelId, start) {
     
 
     //checking the authUserId is a member of the channel 
+    let flag = false;
     for (let user of data.user){
         if (user.authUserId === authUserId){
-            if (user.channels.includes(channelId) === false) {
+            /*if (user.channels.includes(channelId) === false) {
                 return {error: 'error'};
+            }*/
+
+            for (let channel of user.channels) {
+                if (channel.cId === channelId) {
+                    flag = true;
+                }
             }
+           
         }
+    } 
+    if (flag === false) {
+        return {error: 'error'}
     }
+
 
     let j = 0;
     for (let i = start; i < currentChannel.messages.length && j < 50; i++){

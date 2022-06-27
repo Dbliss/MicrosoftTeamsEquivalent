@@ -48,4 +48,5 @@ function userProfileV1(authUserId, uId) {
   return return_user; 
 }
 
-export { userProfileV1 };
+export { userProfileV1 }
+

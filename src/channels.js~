@@ -27,7 +27,7 @@ function channelsCreateV1(authUserId, name, isPublic) {
   let flag = 0;
   // Validates the authUserId Passed
   for(let i = 0; i < data.user.length; i++) {
-    if(data.user[i].authUserId === authUserId) {
+    if(data.user[i].authUserId === authUserId.authUserId) {
       validId = true;
       flag = i;
     }
@@ -41,15 +41,11 @@ function channelsCreateV1(authUserId, name, isPublic) {
                       cId: Math.floor(Math.random() * Date.now()),
                       name: name,
                       isPublic: isPublic,
-                      owners: [data.user[flag]],
-                      members: [data.user[flag]],
-                      messages: [],};
+                      start: [data.user[flag]],
+                      members: [data.user[flag]],};
                       
   data.channel.push(newChannel);
-  let push_object = { cId: newChannel.cId, 
-                      channelPermissionsId: 1, };
-  data.user[flag].channels.push(push_object);
-
+  data.user[flag].channels.push(newChannel.cId);
   
   setData(data);
   
@@ -78,7 +74,7 @@ function channelsListV1(authUserId) {
   
   // Validates the authUserId Passed
   for(let i = 0; i < data.user.length; i++) {
-    if(data.user[i].authUserId === authUserId) {
+    if(data.user[i].authUserId === authUserId.authUserId) {
       validId = true;
       flag = i;
     }
@@ -92,7 +88,7 @@ function channelsListV1(authUserId) {
   
   let storeChannels = {channels: []};
   for(let j = 0; j < data.user[flag].channels.length; j++) {
-    let channelId = data.user[flag].channels[j].cId;
+    let channelId = data.user[flag].channels[j];
     
     for(let k = 0; k < data.channel.length; k++) {
       if(channelId === data.channel[k].cId) {
@@ -125,7 +121,7 @@ function channelsListallV1(authUserId) {
   
   // Validates the authUserId Passed
   for(let i = 0; i < data.user.length; i++) {
-    if(data.user[i].authUserId === authUserId) {
+    if(data.user[i].authUserId === authUserId.authUserId) {
       validId = true;
       flag = i;
     }

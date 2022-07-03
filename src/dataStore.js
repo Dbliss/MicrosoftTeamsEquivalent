@@ -1,8 +1,8 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 let data = {
-  'user': [],
-  'channel': [],
-  
+  user: [],
+  channel: [],
+
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

@@ -1,13 +1,20 @@
-import request from 'sync-request';
-import config from './config.json';
+// Uncomment Below 2 lines once server is setup
+// import request from 'sync-request';
+// import config from './config.json';
+import { echo } from './echo';
 
-const OK = 200;
-const port = config.port;
-const url = config.url;
+// Uncomment Below 3 lines once server is setup
+// const OK = 200;
+// const port = config.port;
+// const url = config.url;
 
+test('Filler', () => {
+  expect(echo('filler')).toBe('filler');
+});
+
+// Iteration 2
+// Uncomment Below lines once server is setup
 /*
-Iteration 2
-*/
 describe('HTTP tests using Jest', () => {
   test('Test successful echo', () => {
     const res = request(
@@ -38,3 +45,4 @@ describe('HTTP tests using Jest', () => {
     expect(bodyObj).toEqual({ error: 'error' });
   });
 });
+*/

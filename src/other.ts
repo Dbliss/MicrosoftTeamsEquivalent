@@ -1,6 +1,6 @@
 import {
-  setData,
-} from './dataStore.js';
+  setData, dataType
+} from './dataStore';
 
 // <Resets the internal data of the application to its initial state>
 
@@ -12,7 +12,7 @@ import {
 
 function clearV1() {
   // making a replica of the data structure wiht zero information
-  const emptyData = {
+  const emptyData: dataType = {
     user: [],
     channel: [],
   };

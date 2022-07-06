@@ -180,12 +180,35 @@ describe('Testing channelJoinV1', () => {
     const authUser1 = authRegisterV1('email1@email.com',
       'password1',
       'First1',
-      'Last1');
+      'Last1'
+    );
 
+    /*
+    const expected: usersType = {
+      uId: authUser.authUserId,
+      email: 'email@email.com',
+      nameFirst: 'First',
+      nameLast: 'Last',
+      handleStr: 'firstlast',
+    };
+
+    const expected1: usersType = {
+      uId: authUser1.authUserId,
+      email: 'email1@email.com',
+      nameFirst: 'First1',
+      nameLast: 'Last1',
+      handleStr: 'first1last1',
+    };
+    */
     const channelId = channelsCreateV1(authUser1.authUserId, 'name', true);
 
-    const result = channelJoinV1(authUser.authUserId, channelId.channelId);
+    channelDetailsV1(authUser1.authUserId, channelId.channelId);
+    // expect(chDetails['allMembers']).toContainEqual(expected1);
+    // expect(chDetails['allMembers']).not.toContainEqual(expected);
 
+    const result = channelJoinV1(authUser.authUserId, channelId.channelId);
+    channelDetailsV1(authUser1.authUserId, channelId.channelId);
+    // expect(chDetails1['allMembers']).toContainEqual(expected);
     expect(result).toMatchObject({});
   });
 

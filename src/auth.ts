@@ -1,3 +1,4 @@
+import validator from 'validator';
 import { getData, setData } from './dataStore';
 
 // Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.
@@ -16,8 +17,8 @@ import { getData, setData } from './dataStore';
 
 function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
   // check for valid email parameter
-  const emailTest = JSON.stringify(email);
-  if (emailTest.includes('@') !== true || emailTest.includes('.') !== true) {
+
+  if (validator.isEmail(email) !== true) {
     return { error: 'error' };
   }
 

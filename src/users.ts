@@ -13,11 +13,13 @@ import { getData } from './dataStore';
 function userProfileV1(authUserId: number, uId: number) {
   const data = getData();
   const returnUser = {
-    uId: 0,
-    email: '',
-    nameFirst: '',
-    nameLast: '',
-    handleStr: ''
+    user: {
+      uId: 0,
+      email: '',
+      nameFirst: '',
+      nameLast: '',
+      handleStr: ''
+    }
   };
   const error = { error: 'error' };
 
@@ -41,11 +43,11 @@ function userProfileV1(authUserId: number, uId: number) {
 
   // Setting the values of the returned user object with the necessary details
   const retuId = data.user[uIdIndex].authUserId;
-  returnUser.uId = retuId;
-  returnUser.email = data.user[uIdIndex].email;
-  returnUser.nameFirst = data.user[uIdIndex].nameFirst;
-  returnUser.nameLast = data.user[uIdIndex].nameLast;
-  returnUser.handleStr = data.user[uIdIndex].handle;
+  returnUser.user.uId = retuId;
+  returnUser.user.email = data.user[uIdIndex].email;
+  returnUser.user.nameFirst = data.user[uIdIndex].nameFirst;
+  returnUser.user.nameLast = data.user[uIdIndex].nameLast;
+  returnUser.user.handleStr = data.user[uIdIndex].handle;
 
   return returnUser;
 }

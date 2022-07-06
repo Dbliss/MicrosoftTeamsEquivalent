@@ -17,11 +17,13 @@ describe('Testing userProfileV1', () => {
 
     const result = userProfileV1(authUserId.authUserId, uId.authUserId);
     expect(result).toMatchObject({
-      uId: uId.authUserId,
-      email: 'email1@email.com',
-      nameFirst: 'First1',
-      nameLast: 'Last1',
-      handleStr: 'first1last1'
+      user: {
+        uId: uId.authUserId,
+        email: 'email1@email.com',
+        nameFirst: 'First1',
+        nameLast: 'Last1',
+        handleStr: 'first1last1'
+      }
     });
   });
 
@@ -62,11 +64,13 @@ describe('Testing userProfileV1', () => {
 
     const result = userProfileV1(authUserId.authUserId, authUserId.authUserId);
     expect(result).toMatchObject({
-      uId: authUserId.authUserId,
-      email: 'email@email.com',
-      nameFirst: 'First',
-      nameLast: 'Last',
-      handleStr: 'firstlast'
+      user: {
+        uId: authUserId.authUserId,
+        email: 'email@email.com',
+        nameFirst: 'First',
+        nameLast: 'Last',
+        handleStr: 'firstlast'
+      }
     });
   });
 });

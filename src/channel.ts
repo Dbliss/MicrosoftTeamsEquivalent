@@ -1,4 +1,19 @@
-import { getData, setData, channelType } from './dataStore';
+import { getData, setData, channelType, usersType } from './dataStore';
+
+type reternObjectType = {
+  name: string,
+  isPublic: boolean,
+  ownerMembers: usersType[],
+  allMembers: usersType[]
+};
+
+type tempMembersType = {
+  email: string,
+    handleStr: string,
+    nameFirst: string,
+    nameLast: string,
+    uId: number,
+};
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
 
@@ -48,16 +63,17 @@ function channelDetailsV1 (authUserId: number, channelId: number) {
   }
 
   // store relevant information from the user into a return object
-  const returnObject = {
+  const returnObject: reternObjectType = {
     name: '',
-    isPublic: '',
-    ownerMembers: {},
-    allMembers: {}
+    isPublic: false,
+    ownerMembers: [],
+    allMembers: []
   };
+
   returnObject.name = data.channel[channelIndex].name;
   returnObject.isPublic = data.channel[channelIndex].isPublic;
 
-  let tempMembers = [];
+  let tempMembers: tempMembersType[] = [];
 
   const channelOwners = data.channel[channelIndex].owners;
 
@@ -157,11 +173,11 @@ function channelJoinV1 (authUserId: number, channelId: number) {
     return error;
   }
 
-  const addingChannel = { cId: channelId, channelPermissionId: 2 };
+  const addingChannel = { cId: channelId, channelPermissionsId: 2 };
 
   // checking if the owner is a global owner and updating permissions if they are
   if (isGlobalMember === 1) {
-    addingChannel.channelPermissionId = 1;
+    addingChannel.channelPermissionsId = 1;
   }
 
   // setting the push object to the user needs to be added to the members array for
@@ -218,7 +234,7 @@ function channelInviteV1(authUserId: number, channelId: number, uId: number) {
 
   // checking the uId is valid
   for (const user of data.user) {
-    if (user === uId) {
+    if (user.authUserId === uId) {
       validUid = true;
     }
   }
@@ -233,17 +249,17 @@ function channelInviteV1(authUserId: number, channelId: number, uId: number) {
   //  return { error: 'error' };
   // }
   let flag = 0;
-  for (let i = 0; i < currentChannel.members.length; i++) {
-    for (const member of currentChannel.members) {
-      if (member[i].authUserId === uId) {
-        return { error: 'error' };
-      }
+  // for (let i = 0; i < currentChannel.members.length; i++) {
+  for (const member of currentChannel.members) {
+    if (member.authUserId === uId) {
+      return { error: 'error' };
+    }
 
-      if (member[i].authUserId === authUserId) {
-        flag = 1;
-      }
+    if (member.authUserId === authUserId) {
+      flag = 1;
     }
   }
+  // }
 
   // checking the authUserId is apart of the channel
   // if (currentChannel.members.includes(authUserId) === false) {
@@ -262,7 +278,7 @@ function channelInviteV1(authUserId: number, channelId: number, uId: number) {
       if (data.user[j].permissionId === 1) {
         isGlobalMember = 1;
       }
-      const pushObject = { cId: channelId, channelPermissionId: isGlobalMember };
+      const pushObject = { cId: channelId, channelPermissionsId: isGlobalMember };
       data.user[i].channels.push(pushObject);
     }
   }

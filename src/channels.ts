@@ -1,5 +1,9 @@
 
-import { getData, setData } from './dataStore';
+import { channelType, getData, setData, channelsType } from './dataStore';
+
+type storeChannelsType = {
+  channels: channelsType[],
+};
 
 // Function to create a new channel with the passed name and assign if it is public or not. User(authUserId) is added to the channel by default
 
@@ -29,7 +33,7 @@ function channelsCreateV1(authUserId: number, name: string, isPublic: boolean) {
     return { error: 'error' };
   }
 
-  const newChannel = {
+  const newChannel: channelType = {
     cId: Math.floor(Math.random() * Date.now()),
     name: name,
     isPublic: isPublic,
@@ -82,7 +86,7 @@ function channelsListV1(authUserId: number) {
     };
   }
 
-  const storeChannels = { channels: [] };
+  const storeChannels:storeChannelsType = { channels: [] };
   for (let j = 0; j < data.user[flag].channels.length; j++) {
     const channelId = data.user[flag].channels[j].cId;
 
@@ -128,7 +132,7 @@ function channelsListallV1(authUserId: number) {
     };
   }
 
-  const storeChannels = { channels: [] };
+  const storeChannels: storeChannelsType = { channels: [] };
 
   for (let j = 0; j < data.channel.length; j++) {
     storeChannels.channels.push({

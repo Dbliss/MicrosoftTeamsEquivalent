@@ -1,7 +1,7 @@
-import { clearV1 } from './other.js';
-import { channelsCreateV1, channelsListallV1 } from './channels.js';
-import { channelJoinV1 } from './channel.js';
-import { authRegisterV1 } from './auth.js';
+import { clearV1 } from './other';
+import { channelsCreateV1, channelsListallV1 } from './channels';
+import { channelJoinV1 } from './channel';
+import { authRegisterV1 } from './auth';
 
 describe('Testing clearV1', () => {
   test('Testing succesfull return of clearV1()', () => {

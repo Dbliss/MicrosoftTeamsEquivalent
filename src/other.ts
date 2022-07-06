@@ -1,6 +1,6 @@
 import {
   setData,
-} from './dataStore.js';
+} from './dataStore';
 
 // <Resets the internal data of the application to its initial state>
 

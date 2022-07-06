@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore.js';
+import { getData, setData, channelType } from './dataStore';
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
 
@@ -12,7 +12,7 @@ import { getData, setData } from './dataStore.js';
 // Returns <{error: error}> on <when channelId is invalid>
 // Returns <{error: error}> on <authorised user is not a member of the channel>
 
-function channelDetailsV1 (authUserId, channelId) {
+function channelDetailsV1 (authUserId: number, channelId: number) {
   const data = getData();
 
   const error = { error: 'error' };
@@ -48,7 +48,12 @@ function channelDetailsV1 (authUserId, channelId) {
   }
 
   // store relevant information from the user into a return object
-  const returnObject = {};
+  const returnObject = {
+    name: '',
+    isPublic: '',
+    ownerMembers: {},
+    allMembers: {}
+  };
   returnObject.name = data.channel[channelIndex].name;
   returnObject.isPublic = data.channel[channelIndex].isPublic;
 
@@ -107,7 +112,7 @@ function channelDetailsV1 (authUserId, channelId) {
 // Returns {error: error} on channelId does not refer to a valid channel,
 // Returns {error: error} on the authorised user is already a member of the channel
 
-function channelJoinV1 (authUserId, channelId) {
+function channelJoinV1 (authUserId: number, channelId: number) {
   const data = getData();
   const returnObject = {};
   const error = { error: 'error' };
@@ -189,14 +194,14 @@ function channelJoinV1 (authUserId, channelId) {
 // Returns <{error: error}> when uId refers to a user who is already a member of the channel
 // Returns <{error: error}> on authorised user is not a member of the channel
 
-function channelInviteV1(authUserId, channelId, uId) {
+function channelInviteV1(authUserId: number, channelId: number, uId: number) {
   // getting the dataset
   const data = getData();
 
   let validChannel = false;
   let validUid = false;
 
-  let currentChannel = {};
+  let currentChannel: channelType;
 
   // if no channels have been created return an error
   if (JSON.stringify(data.channel) === JSON.stringify([])) {
@@ -224,19 +229,35 @@ function channelInviteV1(authUserId, channelId, uId) {
   }
 
   // checking that the uId isnt already in the channel
-  if (currentChannel.members.includes(uId) === true) {
-    return { error: 'error' };
+  // if (currentChannel.members.includes(uId) === true) {
+  //  return { error: 'error' };
+  // }
+  let flag = 0;
+  for (let i = 0; i < currentChannel.members.length; i++) {
+    for (const member of currentChannel.members) {
+      if (member[i].authUserId === uId) {
+        return { error: 'error' };
+      }
+
+      if (member[i].authUserId === authUserId) {
+        flag = 1;
+      }
+    }
   }
 
   // checking the authUserId is apart of the channel
-  if (currentChannel.members.includes(authUserId) === false) {
+  // if (currentChannel.members.includes(authUserId) === false) {
+  //  return { error: 'error' };
+  // }
+  if (flag === 0) {
     return { error: 'error' };
   }
 
   // need to find which user uId is
+  let j = -1;
   for (let i = 0; i < data.user.length; i++) {
     if (data.user[i].authUserId === uId) {
-      const j = i;
+      j = i;
       let isGlobalMember = 2;
       if (data.user[j].permissionId === 1) {
         isGlobalMember = 1;
@@ -249,7 +270,7 @@ function channelInviteV1(authUserId, channelId, uId) {
   // need to find which channel channelId is
   for (let i = 0; i < data.channel.length; i++) {
     if (data.channel[i].cId === channelId) {
-      data.channel[k].members.push(data.user[j]);
+      data.channel[i].members.push(data.user[j]);
     }
   }
 
@@ -272,11 +293,11 @@ function channelInviteV1(authUserId, channelId, uId) {
 // Returns <{error: error}> start is greater than the total number of messages in the channel
 // Returns <{error: error}> on authorised user is not a member of the channel
 
-function channelMessagesV1 (authUserId, channelId, start) {
+function channelMessagesV1 (authUserId: number, channelId: number, start: number) {
   // getting the dataset
   const data = getData();
 
-  let currentChannel = {};
+  let currentChannel: channelType;
   const messages = [];
 
   // if no channels have been created return an error

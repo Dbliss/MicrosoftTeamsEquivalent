@@ -1,4 +1,4 @@
-import { getData } from './dataStore.js';
+import { getData } from './dataStore';
 
 // <For a valid user, returns information about their userId, email, first name, last name, and handle>
 
@@ -10,9 +10,15 @@ import { getData } from './dataStore.js';
 // Returns <{user}> on <valid input of authUserId and uId>
 // Returns <{error: error}> on <invalid input of authUserId or invalid uId>
 
-function userProfileV1(authUserId, uId) {
+function userProfileV1(authUserId: number, uId: number) {
   const data = getData();
-  const returnUser = {};
+  const returnUser = {
+    uId: 0,
+    email: '',
+    nameFirst: '',
+    nameLast: '',
+    handleStr: ''
+  };
   const error = { error: 'error' };
 
   // Finds the index of the object which contains the apropriate authUserId matching uId, in the user key array,

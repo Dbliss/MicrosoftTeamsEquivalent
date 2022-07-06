@@ -5,15 +5,15 @@ import {
   channelsCreateV1,
   channelsListV1,
   channelsListallV1,
-} from './channels.js';
+} from './channels';
 
 import {
   authRegisterV1,
-} from './auth.js';
+} from './auth';
 
 import {
   clearV1,
-} from './other.js';
+} from './other';
 
 describe('Testing channelsCreateV1', () => {
   test('Name length < 1', () => {

@@ -1,6 +1,6 @@
-import { authRegisterV1 } from './auth.js';
-import { userProfileV1 } from './users.js';
-import { clearV1 } from './other.js';
+import { authRegisterV1 } from './auth';
+import { userProfileV1 } from './users';
+import { clearV1 } from './other';
 describe('Testing userProfileV1', () => {
   test('Testing successful return of user object from userProfileV1', () => {
     clearV1();

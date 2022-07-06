@@ -5,22 +5,22 @@ import {
   channelJoinV1,
   channelInviteV1,
   channelMessagesV1,
-} from './channel.js';
+} from './channel';
 
 // importing other essential functions used in channel
 
 import {
   channelsCreateV1,
-} from './channels.js';
+} from './channels';
 
 import {
   authRegisterV1,
-} from './auth.js';
+} from './auth';
 
 import {
   clearV1,
-} from './other.js';
-import { getData, setData } from './dataStore.js';
+} from './other';
+import { getData, setData } from './dataStore';
 
 describe('Testing channelDetailsV1', () => {
   test('Testing successful return of channelDetailsV1', () => {

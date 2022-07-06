@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore.js';
+import { getData, setData } from './dataStore';
 
 // Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.
 // Arguments:
@@ -14,7 +14,7 @@ import { getData, setData } from './dataStore.js';
 // Returns { error: 'error' } on invalid nameFirst - nameFirst must be in between 1 and 50 characters inclusive
 // Returns { error: 'error' } on invalid nameLast - nameLast must be in between 1 and 50 characters inclusive
 
-function authRegisterV1(email, password, nameFirst, nameLast) {
+function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
   // check for valid email parameter
   const emailTest = JSON.stringify(email);
   if (emailTest.includes('@') !== true || emailTest.includes('.') !== true) {
@@ -84,18 +84,18 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
 // Returns { error: 'error' } on invalid email - email must already be registered in the database
 // Returns { error: 'error' } on invalid password - The password must match the one in the database under the specific email
 
-function authLoginV1(email, password) {
+function authLoginV1(email: string, password: string) {
   const data = getData();
   // counter to keep track of each index that is checked for dupe email
   let k = 0;
   for (let i = 0; i < data.user.length; i++) {
     // check to see if email is in index
-    if (email !== data.user[i].email) {
-      k++;
+    if (email === data.user[i].email) {
+      k = 1;
     }
   }
   // if the for loop as gone to the end and there is no matches then return error object
-  if (k === data.user.length - 1) {
+  if (k === 0) {
     return { error: 'error' };
   }
   for (let j = 0; j < data.user.length; j++) {

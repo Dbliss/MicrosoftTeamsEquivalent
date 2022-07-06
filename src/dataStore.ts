@@ -1,10 +1,12 @@
 // import { type } from 'os';
 
+// Storing info about which channel user is part of
 type channelsInUserType = {
   cId: number,
   channelPermissionsId: number,
 };
 
+// Storing User in data
 type userType = {
   email: string,
   password: string,
@@ -16,6 +18,7 @@ type userType = {
   permissionId: number,
 };
 
+// Used for output in channelDetails
 type usersType = {
   uId: number,
   email: string,
@@ -24,11 +27,13 @@ type usersType = {
   handleStr: string
 };
 
+// Used in channelsList and channelsAll
 type channelsType = {
   channelId: number,
   name: string,
 };
 
+// Storing channel information in data
 type channelType = {
   cId: number,
   name: string,

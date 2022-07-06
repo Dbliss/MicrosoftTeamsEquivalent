@@ -1,10 +1,10 @@
 import { getData, setData, channelType, usersType } from './dataStore';
 
-type reternObjectType = {
+type returnObjectType = {
   name: string,
   isPublic: boolean,
   ownerMembers: usersType[],
-  allMembers: usersType[]
+  allMembers: usersType[],
 };
 
 type tempMembersType = {
@@ -13,6 +13,10 @@ type tempMembersType = {
     nameFirst: string,
     nameLast: string,
     uId: number,
+};
+
+type errorType = {
+  error: string;
 };
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
@@ -30,7 +34,7 @@ type tempMembersType = {
 function channelDetailsV1 (authUserId: number, channelId: number) {
   const data = getData();
 
-  const error = { error: 'error' };
+  const error: errorType = { error: 'error' };
 
   // The code finds the index of the object which contains the apropriate authUserId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
@@ -63,7 +67,7 @@ function channelDetailsV1 (authUserId: number, channelId: number) {
   }
 
   // store relevant information from the user into a return object
-  const returnObject: reternObjectType = {
+  const returnObject: returnObjectType = {
     name: '',
     isPublic: false,
     ownerMembers: [],
@@ -145,6 +149,12 @@ function channelJoinV1 (authUserId: number, channelId: number) {
     return object.authUserId === authUserId;
   }); // code adapted from the website shorturl.at/eoJKY
 
+  // if neither the authUserId nor the channelId is valid then the function
+  // returns an error object
+  if ((userIndex === -1) || (channelIndex === -1)) {
+    return error;
+  }
+
   // Check to see if new user is a member
   let isGlobalMember = 0;
   if (data.user[userIndex].permissionId === 1) {
@@ -158,12 +168,6 @@ function channelJoinV1 (authUserId: number, channelId: number) {
     if (data.channel[channelIndex].members[i].authUserId === authUserId) {
       return error;
     }
-  }
-
-  // if neither the authUserId nor the channelId is valid then the function
-  // returns an error object
-  if ((userIndex === -1) || (channelIndex === -1)) {
-    return error;
   }
 
   // checking if the channel is public or not if not true then error is returned

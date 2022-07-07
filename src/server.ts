@@ -39,3 +39,8 @@ app.post('channels/create/v2', (req, res, next) => {
   const cId = channelsCreateV1(authUserId, name, isPublic);
   res.json(cId);
 });
+
+app.get('channels/list/v2', (req, res) => {
+  const channel = channelsListV1(+req.query.token);
+  res.json(channel);
+});

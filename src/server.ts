@@ -44,3 +44,8 @@ app.get('channels/list/v2', (req, res) => {
   const channel = channelsListV1(+req.query.token);
   res.json(channel);
 });
+
+app.get('channels/listall/v2', (req, res) => {
+  const channel = channelsListallV1(+req.query.token);
+  res.json(channel);
+});

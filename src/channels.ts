@@ -17,8 +17,14 @@ type storeChannelsType = {
 // Returns {error: 'error'} on invalid authUserId - Being authUserId does not exist
 // Returns {error: 'error'} on invalid name - name must be in between 1 and 20 characters inclusive
 
-function channelsCreateV1(authUserId: number, name: string, isPublic: boolean) {
+function channelsCreateV1(token: string, name: string, isPublic: boolean) {
   const data = getData();
+  let authUserId = -1;
+  for(let user of data.user) {
+    if(user.token === token) {
+      authUserId = user.authUserId;
+    }
+  }
   let validId = false;
   let flag = 0;
   // Validates the authUserId Passed
@@ -67,8 +73,16 @@ function channelsCreateV1(authUserId: number, name: string, isPublic: boolean) {
 //                        channelId: <ID of channel>,
 //                        name: <name of channel> },] } on valid inputs
 
-function channelsListV1(authUserId: number) {
+function channelsListV1(token: string) {
   const data = getData();
+  
+  let authUserId = -1;
+  for(let user of data.user) {
+    if(user.token === token) {
+      authUserId = user.authUserId;
+    }
+  }
+
   let validId = false;
   let flag = 0;
 
@@ -115,8 +129,16 @@ function channelsListV1(authUserId: number) {
 //                        channelId: <ID of channel>,
 //                        name: <name of channel> },] } on valid inputs
 
-function channelsListallV1(authUserId: number) {
+function channelsListallV1(token: string) {
   const data = getData();
+  
+  let authUserId = -1;
+  for(let user of data.user) {
+    if(user.token === token) {
+      authUserId = user.authUserId;
+    }
+  }
+
   let validId = false;
 
   // Validates the authUserId Passed

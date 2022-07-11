@@ -35,17 +35,17 @@ app.listen(PORT, HOST, () => {
 });
 
 app.post('channels/create/v2', (req, res, next) => {
-  const {authUserId, name, isPublic} = req.body;
-  const cId = channelsCreateV1(authUserId, name, isPublic);
+  const {token, name, isPublic} = req.body;
+  const cId = channelsCreateV1(token, name, isPublic);
   res.json(cId);
 });
 
 app.get('channels/list/v2', (req, res) => {
-  const channel = channelsListV1(+req.query.token);
+  const channel = channelsListV1(req.query.token as string);
   res.json(channel);
 });
 
 app.get('channels/listall/v2', (req, res) => {
-  const channel = channelsListallV1(+req.query.token);
+  const channel = channelsListallV1(req.query.token as string);
   res.json(channel);
 });

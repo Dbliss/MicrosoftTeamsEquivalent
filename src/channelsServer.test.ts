@@ -88,7 +88,7 @@ describe('Testing channelsCreateV1', () => {
             'Last');
         const registered = JSON.parse(String(auth.getBody()));
         
-        const res = callingChannelsCreate(registered.authUserId, '', false);
+        const res = callingChannelsCreate(registered.token, '', false);
         const result = JSON.parse(String(res.getBody()));
         expect(result).toMatchObject({ error: 'error' });
 
@@ -104,7 +104,7 @@ describe('Testing channelsCreateV1', () => {
         const registered = JSON.parse(String(auth.getBody()));
         
         const res = callingChannelsCreate(
-            registered.authUserId,
+            registered.token,
             'abcdefghijklmnopqrstuv',
             false);
         const result = JSON.parse(String(res.getBody()));
@@ -121,7 +121,7 @@ describe('Testing channelsCreateV1', () => {
         const registered = JSON.parse(String(auth.getBody()));
 
         const res = callingChannelsCreate(
-            registered.authUserId,
+            registered.token,
             'name',
             false);
         const result = JSON.parse(String(res.getBody()));
@@ -153,17 +153,17 @@ describe('Testing channelsListV1', () => {
         'Last');
         const registered = JSON.parse(String(auth.getBody()));
 
-      const channelId1 = callingChannelsCreate(registered.authUserId,
+      const channelId1 = callingChannelsCreate(registered.token,
         'name1',
         false);
         const channel1 = JSON.parse(String(channelId1.getBody()));
   
-      const channelId2 = callingChannelsCreate(registered.authUserId,
+      const channelId2 = callingChannelsCreate(registered.token,
         'name2',
         true);
         const channel2 = JSON.parse(String(channelId2.getBody()));
 
-      const result = callingChannelslist(registered.authUserId);
+      const result = callingChannelslist(registered.token);
       expect(result).toMatchObject({
         channels: [{
           channelId: channel1.channelId,
@@ -189,16 +189,16 @@ describe('Testing channelsListV1', () => {
           'Last2');
           const registered2 = JSON.parse(String(auth2.getBody()));
     
-        callingChannelsCreate(registered1.authUserId,
+        callingChannelsCreate(registered1.token,
           'name1',
           false);
     
-        const channelId = callingChannelsCreate(registered2.authUserId,
+        const channelId = callingChannelsCreate(registered2.token,
           'name2',
           true);
           const channel = JSON.parse(String(channelId.getBody()));
     
-        const result = callingChannelslist(registered2.authUserId);
+        const result = callingChannelslist(registered2.token);
         const result1 = JSON.parse(String(result.getBody()));
         expect(result1).toMatchObject({
           channels: [{
@@ -222,15 +222,15 @@ describe('Testing channelsListV1', () => {
           'Last2');
           const registered2 = JSON.parse(String(authUserId2.getBody()));
     
-        callingChannelsCreate(registered1.authUserId,
+        callingChannelsCreate(registered1.token,
           'name1',
           false);
     
-        callingChannelsCreate(registered1.authUserId,
+        callingChannelsCreate(registered1.token,
           'name2',
           true);
     
-        const result = callingChannelslist(registered2.authUserId);
+        const result = callingChannelslist(registered2.token);
         const result1 = JSON.parse(String(result.getBody()));
         expect(result1).toMatchObject({ channels: [] });
     });
@@ -242,7 +242,7 @@ describe('Testing channelsListV1', () => {
           'First',
           'Last');
           const registered = JSON.parse(String(authUserId1.getBody()));
-        callingChannelsCreate(registered.authUserId,
+        callingChannelsCreate(registered.token,
           'name1',
           false);
             
@@ -262,18 +262,18 @@ describe('Testing channelsListV1', () => {
           'Last');
           const registered = JSON.parse(String(authUserId.getBody()));
     
-        const channelId1 = callingChannelsCreate(registered.authUserId,
+        const channelId1 = callingChannelsCreate(registered.token,
           'name1',
           false);
           const channel1 = JSON.parse(String(channelId1.getBody()));
 
     
-        const channelId2 = callingChannelsCreate(registered.authUserId,
+        const channelId2 = callingChannelsCreate(registered.token,
           'name2',
           true);
           const channel2 = JSON.parse(String(channelId2.getBody()));
 
-        const channels = callingChannelslistAll(registered.authUserId);
+        const channels = callingChannelslistAll(registered.token);
         const result = JSON.parse(String(channels.getBody()));
         
         expect(result).toMatchObject({
@@ -302,17 +302,17 @@ describe('Testing channelsListV1', () => {
           'Last2');
           const registered2 = JSON.parse(String(authUserId2.getBody()));
     
-        const channelId1 = callingChannelsCreate(registered1.authUserId,
+        const channelId1 = callingChannelsCreate(registered1.token,
           'name1',
           false);
           const channel1 = JSON.parse(String(channelId1.getBody()));
     
-        const channelId2 = callingChannelsCreate(registered2.authUserId,
+        const channelId2 = callingChannelsCreate(registered2.token,
           'name2',
           true);
           const channel2 = JSON.parse(String(channelId2.getBody()));
     
-        const result =callingChannelslistAll(registered2.authUserId);
+        const result =callingChannelslistAll(registered2.token);
         const result1 = JSON.parse(String(result.getBody()));
         expect(result1).toMatchObject({
           channels: [{
@@ -340,17 +340,17 @@ describe('Testing channelsListV1', () => {
           'Last2');
           const registered2 = JSON.parse(String(authUserId2.getBody()));
     
-        const channelId1 = callingChannelsCreate(registered1.authUserId,
+        const channelId1 = callingChannelsCreate(registered1.token,
           'name1',
           false);
           const channel1 = JSON.parse(String(channelId1.getBody()));
     
-        const channelId2 = callingChannelsCreate(registered1.authUserId,
+        const channelId2 = callingChannelsCreate(registered1.token,
           'name2',
           true);
           const channel2 = JSON.parse(String(channelId2.getBody()));
     
-        const result = callingChannelslistAll(registered2.authUserId);
+        const result = callingChannelslistAll(registered2.token);
         const result1 = JSON.parse(String(result.getBody()));
         expect(result1).toMatchObject({
           channels: [{
@@ -373,7 +373,7 @@ describe('Testing channelsListV1', () => {
           const registered1 = JSON.parse(String(authUserId1.getBody()));
 
     
-        callingChannelsCreate(registered1.authUserId,
+        callingChannelsCreate(registered1.token,
           'name1',
           false);
     

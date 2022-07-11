@@ -16,6 +16,7 @@ type userType = {
   channels: channelsInUserType[],
   handle: string,
   permissionId: number,
+  token: string,
 };
 
 // Used for output in channelDetails

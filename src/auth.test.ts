@@ -5,19 +5,16 @@ const OK = 200;
 const port = config.port;
 const url = config.url;
 
-const del = (path, qs) => {
-  request(
-    'DELETE',
-    `${url}:${port}/${path}`,
-    {
-      qs: qs
-    }
-  );
-};
-
 describe('Test auth/register/v2', () => {
   test('Successfully returns authUserId', () => {
-    del('clear/v1', '');
+    request(
+      'DELETE',
+        `${url}:${port}/clear/v1`,
+        {
+          qs: {
+          },
+        }
+    );
     const res = request(
       'POST',
       `${url}:${port}/auth/register/v2`,
@@ -36,7 +33,14 @@ describe('Test auth/register/v2', () => {
   });
 
   test('Invalid email', () => {
-    del('clear/v1', '');
+    request(
+      'DELETE',
+        `${url}:${port}/clear/v1`,
+        {
+          qs: {
+          },
+        }
+    );
     const res = request(
       'POST',
       `${url}:${port}/auth/register/v2`,
@@ -55,7 +59,14 @@ describe('Test auth/register/v2', () => {
   });
 
   test('email taken by another user', () => {
-    del('clear/v1', '');
+    request(
+      'DELETE',
+        `${url}:${port}/clear/v1`,
+        {
+          qs: {
+          },
+        }
+    );
     const res = request(
       'POST',
       `${url}:${port}/auth/register/v2`,
@@ -87,7 +98,14 @@ describe('Test auth/register/v2', () => {
   });
 
   test('password length less than 6 characters', () => {
-    del('clear/v1', '');
+    request(
+      'DELETE',
+        `${url}:${port}/clear/v1`,
+        {
+          qs: {
+          },
+        }
+    );
     const res = request(
       'POST',
       `${url}:${port}/auth/register/v2`,
@@ -106,7 +124,14 @@ describe('Test auth/register/v2', () => {
   });
 
   test('length of first name not between 1 and 50 characters inclusive', () => {
-    del('clear/v1', '');
+    request(
+      'DELETE',
+        `${url}:${port}/clear/v1`,
+        {
+          qs: {
+          },
+        }
+    );
     const res = request(
       'POST',
       `${url}:${port}/auth/register/v2`,
@@ -140,7 +165,14 @@ describe('Test auth/register/v2', () => {
   });
 
   test('length of last name not between 1 and 50 characters inclusive', () => {
-    del('clear/v1', '');
+    request(
+      'DELETE',
+        `${url}:${port}/clear/v1`,
+        {
+          qs: {
+          },
+        }
+    );
     const res = request(
       'POST',
       `${url}:${port}/auth/register/v2`,
@@ -176,7 +208,14 @@ describe('Test auth/register/v2', () => {
 
 describe('Test auth/login/v2', () => {
   test('Login successful', () => {
-    del('clear/v1', '');
+    request(
+      'DELETE',
+        `${url}:${port}/clear/v1`,
+        {
+          qs: {
+          },
+        }
+    );
     const res = request(
       'POST',
       `${url}:${port}/auth/register/v2`,
@@ -207,7 +246,14 @@ describe('Test auth/login/v2', () => {
     expect(bodyObj).toMatchObject({ token: expect.any(String), authUserId: expect.any(Number) });
   });
   test('email does not belong to any user', () => {
-    del('clear/v1', '');
+    request(
+      'DELETE',
+        `${url}:${port}/clear/v1`,
+        {
+          qs: {
+          },
+        }
+    );
     const res = request(
       'POST',
       `${url}:${port}/auth/login/v2`,
@@ -225,7 +271,14 @@ describe('Test auth/login/v2', () => {
     expect(bodyObj).toMatchObject({ error: 'error' });
   });
   test('password is not correct', () => {
-    del('clear/v1', '');
+    request(
+      'DELETE',
+        `${url}:${port}/clear/v1`,
+        {
+          qs: {
+          },
+        }
+    );
     const res = request(
       'POST',
       `${url}:${port}/auth/register/v2`,

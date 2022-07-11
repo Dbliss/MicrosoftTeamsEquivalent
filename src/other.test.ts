@@ -5,16 +5,6 @@ const OK = 200;
 const port = config.port;
 const url = config.url;
 
-const del = (path, qs) => {
-  request(
-    'DELETE',
-      `${url}:${port}/${path}`,
-      {
-        qs: qs
-      }
-  );
-};
-
 describe('Testing clearV1', () => {
   test('Testing succesfull return of clearV1()', () => {
     const res = request(
@@ -32,8 +22,15 @@ describe('Testing clearV1', () => {
     /* const bodyObj = JSON.parse(res.body as string);
      const tokenTest = bodyObj.token; */
     expect(res.statusCode).toBe(OK);
-    del('clear/v1', '');
-    /* const res1 = request(
+    request(
+      'DELETE',
+        `${url}:${port}/clear/v1`,
+        {
+          qs: {
+          },
+        }
+    );
+    /* const res2 = request(
       'GET',
         `${url}:${port}/channels/listall/v2`,
         {
@@ -42,8 +39,8 @@ describe('Testing clearV1', () => {
           },
         }
     );
-    const bodyObj1 = JSON.parse(res1.body as string);
-    expect(res1.statusCode).toBe(OK);
+    const bodyObj1 = JSON.parse(res2.body as string);
+    expect(res2.statusCode).toBe(OK);
     expect(bodyObj1).toMatchObject({ channels: [] }); */
   });
 });

@@ -124,6 +124,7 @@ function authLoginV1(email: string, password: string) {
         };
         const token = tokenGenerate();
         data.user[j].token.push(token);
+        setData(data);
         return { token: token, authUserId: data.user[j].authUserId };
       } else {
         return { error: 'error' };
@@ -132,10 +133,31 @@ function authLoginV1(email: string, password: string) {
   }
 }
 
-// stub for auth/logout/v1
-const authLogoutV1 = (token) => {
-  
-  return {};
-}
+// Given an active token, invalidates the token to log the user out
+// Arguments:
+// token (string) - This is the token string the user uses to log out of their current session
+
+// Return values:
+// Returns {} on successful logout
+// Returns { error: 'error' } on invalid token - token must be stored under user's data
+
+const authLogoutV1 = (token: string) => {
+  const data = getData();
+  // validate token by searching through all tokens associated with all users
+  for (let i = 0; i < data.user.length; i++) {
+    for (let j = 0; j < data.user[i].token.length; j++) {
+      // if there is a match, invalidate it by splicing the value out
+      if (token === data.user[i].token[j]) {
+        const index = data.user[i].token.indexOf(token);
+        if (index > -1) {
+          data.user[i].token.splice(index, 1);
+          setData(data);
+          return {};
+        }
+      }
+    }
+  }
+  return { error: 'error' };
+};
 
 export { authRegisterV1, authLoginV1, authLogoutV1 };

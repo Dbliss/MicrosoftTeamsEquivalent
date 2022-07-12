@@ -325,7 +325,7 @@ describe('Test auth/login/v2', () => {
       `${url}:${port}/auth/logout/v1`,
       {
         body: JSON.stringify({
-          token:'',
+          token: '',
         }),
         headers: {
           'Content-type': 'application/json'

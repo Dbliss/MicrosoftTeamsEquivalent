@@ -219,14 +219,14 @@ describe('Testing channelJoinV1', () => {
       'First',
       'Last');
 
-    authRegisterV1('email1@email.com',
+    const authUser1 = authRegisterV1('email1@email.com',
       'password1',
       'First1',
       'Last1');
 
     const channelId = channelsCreateV1(authUser.authUserId, 'name', false);
 
-    const result = channelJoinV1(authUser.authUserId, channelId.channelId);
+    const result = channelJoinV1(authUser1.authUserId, channelId.channelId);
     expect(result).toMatchObject({ error: 'error' });
   });
 

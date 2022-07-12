@@ -2,7 +2,7 @@ import express from 'express';
 import { echo } from './echo';
 import morgan from 'morgan';
 import config from './config.json';
-import { authLoginV1, authRegisterV1 } from './auth';
+import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { clearV1 } from './other';
 
 // Set up web app, use JSON
@@ -43,6 +43,15 @@ app.post('/auth/login/v2', (req, res, next) => {
 app.delete('/clear/v1', (req, res, next) => {
   try {
     return res.json(clearV1());
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/auth/logout/v1', (req, res, next) => {
+  try {
+    const { token } = req.body;
+    return res.json(authLogoutV1(token));
   } catch (err) {
     next(err);
   }

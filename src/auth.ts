@@ -132,4 +132,10 @@ function authLoginV1(email: string, password: string) {
   }
 }
 
-export { authRegisterV1, authLoginV1 };
+// stub for auth/logout/v1
+const authLogoutV1 = (token) => {
+  
+  return {};
+}
+
+export { authRegisterV1, authLoginV1, authLogoutV1 };

@@ -2,7 +2,7 @@ import express from 'express';
 import { echo } from './echo';
 import morgan from 'morgan';
 import config from './config.json';
-import { authLoginV1, authRegisterV1 } from './auth';
+import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { clearV1 } from './other';
 
 import {
@@ -68,6 +68,15 @@ app.get('/channels/list/v2', (req, res) => {
 app.get('/channels/listall/v2', (req, res) => {
   const channel = channelsListallV1(req.query.token as string);
   res.json(channel);
+});
+
+app.post('/auth/logout/v1', (req, res, next) => {
+  try {
+    const { token } = req.body;
+    return res.json(authLogoutV1(token));
+  } catch (err) {
+    next(err);
+  }
 });
 
 // for logging errors

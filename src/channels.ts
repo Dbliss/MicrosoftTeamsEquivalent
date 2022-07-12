@@ -21,8 +21,10 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
   const data = getData();
   let authUserId = -1;
   for (const user of data.user) {
-    if (user.token === token) {
-      authUserId = user.authUserId;
+    for (const tokens of user.token) {
+      if (tokens === token) {
+        authUserId = user.authUserId;
+      }
     }
   }
   let validId = false;
@@ -78,8 +80,10 @@ function channelsListV1(token: string) {
 
   let authUserId = -1;
   for (const user of data.user) {
-    if (user.token === token) {
-      authUserId = user.authUserId;
+    for (const tokens of user.token) {
+      if (tokens === token) {
+        authUserId = user.authUserId;
+      }
     }
   }
 
@@ -134,8 +138,10 @@ function channelsListallV1(token: string) {
 
   let authUserId = -1;
   for (const user of data.user) {
-    if (user.token === token) {
-      authUserId = user.authUserId;
+    for (const tokens of user.token) {
+      if (tokens === token) {
+        authUserId = user.authUserId;
+      }
     }
   }
 

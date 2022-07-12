@@ -309,3 +309,31 @@ describe('Test auth/login/v2', () => {
     expect(bodyObj).toMatchObject({ error: 'error' });
   });
 });
+
+describe('Test auth/login/v2', () => {
+  test('Invalid token is passed in', () => {
+    request(
+      'DELETE',
+        `${url}:${port}/clear/v1`,
+        {
+          qs: {
+          },
+        }
+    );
+    const res = request(
+      'POST',
+      `${url}:${port}/auth/logout/v1`,
+      {
+        body: JSON.stringify({
+          token: '',
+        }),
+        headers: {
+          'Content-type': 'application/json'
+        },
+      }
+    );
+    const bodyObj = JSON.parse(res.body as string);
+    expect(res.statusCode).toBe(OK);
+    expect(bodyObj).toMatchObject({ error: 'error' });
+  });
+});

@@ -30,7 +30,7 @@ describe('Testing channelDetailsV1', () => {
       'First',
       'Last');
 
-    const channelId = channelsCreateV1(authUser.authUserId, 'name', true);
+    const channelId = channelsCreateV1(authUser.token, 'name', true);
     const result = channelDetailsV1(authUser.authUserId, channelId.channelId);
     expect(result).toMatchObject({
       name: 'name',
@@ -64,7 +64,7 @@ describe('Testing channelDetailsV1', () => {
       'First1',
       'Last1');
 
-    const channelId = channelsCreateV1(authUser.authUserId, 'name', true);
+    const channelId = channelsCreateV1(authUser.token, 'name', true);
 
     channelJoinV1(authUser1.authUserId, channelId.channelId);
 
@@ -103,7 +103,7 @@ describe('Testing channelDetailsV1', () => {
       'First',
       'Last');
 
-    channelsCreateV1(authUser.authUserId, 'name', true);
+    channelsCreateV1(authUser.token, 'name', true);
 
     const result = channelDetailsV1(-9999, -9999);
     expect(result).toMatchObject({ error: 'error' });
@@ -129,7 +129,7 @@ describe('Testing channelDetailsV1', () => {
       'First',
       'Last');
 
-    const channelId = channelsCreateV1(authUser.authUserId, 'name', true);
+    const channelId = channelsCreateV1(authUser.token, 'name', true);
 
     const userId = -9999;
 
@@ -149,7 +149,7 @@ describe('Testing channelDetailsV1', () => {
       'First2',
       'Last2');
 
-    const channelId = channelsCreateV1(authUser1.authUserId, 'name', true);
+    const channelId = channelsCreateV1(authUser1.token, 'name', true);
 
     const result = channelDetailsV1(authUser2.authUserId, channelId.channelId);
     expect(result).toMatchObject({ error: 'error' });
@@ -164,7 +164,7 @@ describe('Testing channelJoinV1', () => {
       'First',
       'Last');
 
-    const channelId = channelsCreateV1(authUser.authUserId, 'name', true);
+    const channelId = channelsCreateV1(authUser.token, 'name', true);
 
     const result = channelJoinV1(authUser.authUserId, channelId.channelId);
     expect(result).toMatchObject({ error: 'error' });
@@ -200,7 +200,7 @@ describe('Testing channelJoinV1', () => {
       handleStr: 'first1last1',
     };
     */
-    const channelId = channelsCreateV1(authUser1.authUserId, 'name', true);
+    const channelId = channelsCreateV1(authUser1.token, 'name', true);
 
     channelDetailsV1(authUser1.authUserId, channelId.channelId);
     // expect(chDetails['allMembers']).toContainEqual(expected1);
@@ -224,7 +224,7 @@ describe('Testing channelJoinV1', () => {
       'First1',
       'Last1');
 
-    const channelId = channelsCreateV1(authUser.authUserId, 'name', false);
+    const channelId = channelsCreateV1(authUser.token, 'name', false);
 
     const result = channelJoinV1(authUser.authUserId, channelId.channelId);
     expect(result).toMatchObject({ error: 'error' });
@@ -242,7 +242,7 @@ describe('Testing channelJoinV1', () => {
       'First1',
       'Last1');
 
-    const channelId = channelsCreateV1(globalMember.authUserId, 'name', false);
+    const channelId = channelsCreateV1(globalMember.token, 'name', false);
 
     const result = channelJoinV1(globalOwner.authUserId, channelId.channelId);
     expect(result).toMatchObject({});
@@ -266,7 +266,7 @@ describe('Testing channelInvite1', () => {
     clearV1();
     const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
 
-    const channelId = channelsCreateV1(authUserId.authUserId, 'name', false);
+    const channelId = channelsCreateV1(authUserId.token, 'name', false);
 
     const result = channelInviteV1(authUserId.authUserId, channelId.channelId, authUserId.authUserId);
 
@@ -281,7 +281,7 @@ describe('Testing channelInvite1', () => {
 
     const uId = authRegisterV1('email3@email.com', 'password3', 'First3', 'Last3');
 
-    const channelId = channelsCreateV1(authUserId.authUserId, 'name', false);
+    const channelId = channelsCreateV1(authUserId.token, 'name', false);
 
     const result = channelInviteV1(authUserId2.authUserId, channelId.channelId, uId.authUserId);
 
@@ -295,7 +295,7 @@ describe('Testing channelInvite1', () => {
 
     const uId = authRegisterV1('email3@email.com', 'password3', 'First3', 'Last3');
 
-    const channelId = channelsCreateV1(authUserId.authUserId, 'name', false);
+    const channelId = channelsCreateV1(authUserId.token, 'name', false);
 
     const result = channelInviteV1(authUserId.authUserId, channelId.channelId, uId.authUserId);
 
@@ -317,7 +317,7 @@ describe('Testing channelMessages1', () => {
     clearV1();
     const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
 
-    const channelId = channelsCreateV1(authUserId.authUserId, 'name', false);
+    const channelId = channelsCreateV1(authUserId.token, 'name', false);
 
     const result = channelMessagesV1(authUserId.authUserId, channelId.channelId, 9999999);
 
@@ -330,7 +330,7 @@ describe('Testing channelMessages1', () => {
 
     const authUserId2 = authRegisterV1('email2@email.com', 'password2', 'First2', 'Last2');
 
-    const channelId = channelsCreateV1(authUserId.authUserId, 'name', false);
+    const channelId = channelsCreateV1(authUserId.token, 'name', false);
 
     const result = channelMessagesV1(authUserId2.authUserId, channelId.channelId, 0);
 
@@ -342,7 +342,7 @@ describe('Testing channelMessages1', () => {
 
     const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
 
-    const channelId = channelsCreateV1(authUserId.authUserId, 'name', false);
+    const channelId = channelsCreateV1(authUserId.token, 'name', false);
 
     const result = channelMessagesV1(authUserId.authUserId, channelId.channelId, 0);
 
@@ -354,7 +354,7 @@ describe('Testing channelMessages1', () => {
     const data = getData();
     const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
 
-    const channelId = channelsCreateV1(authUserId.authUserId, 'name', false);
+    const channelId = channelsCreateV1(authUserId.token, 'name', false);
 
     data.channel[0].messages = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 
@@ -370,7 +370,7 @@ describe('Testing channelMessages1', () => {
     const data = getData();
     const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
 
-    const channelId = channelsCreateV1(authUserId.authUserId, 'name', false);
+    const channelId = channelsCreateV1(authUserId.token, 'name', false);
 
     data.channel[0].messages = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
       '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',

@@ -20,8 +20,8 @@ type storeChannelsType = {
 function channelsCreateV1(token: string, name: string, isPublic: boolean) {
   const data = getData();
   let authUserId = -1;
-  for(let user of data.user) {
-    if(user.token === token) {
+  for (const user of data.user) {
+    if (user.token === token) {
       authUserId = user.authUserId;
     }
   }
@@ -75,10 +75,10 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
 
 function channelsListV1(token: string) {
   const data = getData();
-  
+
   let authUserId = -1;
-  for(let user of data.user) {
-    if(user.token === token) {
+  for (const user of data.user) {
+    if (user.token === token) {
       authUserId = user.authUserId;
     }
   }
@@ -131,10 +131,10 @@ function channelsListV1(token: string) {
 
 function channelsListallV1(token: string) {
   const data = getData();
-  
+
   let authUserId = -1;
-  for(let user of data.user) {
-    if(user.token === token) {
+  for (const user of data.user) {
+    if (user.token === token) {
       authUserId = user.authUserId;
     }
   }

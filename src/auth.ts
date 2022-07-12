@@ -59,6 +59,16 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   if (data.user === []) {
     permissionId = 1;
   }
+  // generate token and store
+  const rand = () => {
+    return Math.random().toString(36).substr(2);
+  };
+  const tokenGenerate = () => {
+    return rand() + rand();
+  };
+
+  const token = tokenGenerate();
+
   const j = data.user.length;
   data.user[j] = {
     email: email,
@@ -69,10 +79,12 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     channels: [],
     handle: handleName,
     permissionId: permissionId,
+    token: token,
   };
+  // data.user[j].token.push(token);
   setData(data);
 
-  return { authUserId: uID };
+  return { token: token, authUserId: uID };
 }
 
 // Given a registered user's email and password, returns their `authUserId` value
@@ -103,7 +115,16 @@ function authLoginV1(email: string, password: string) {
     if (email === data.user[j].email) {
       // check to see if password matches email in database
       if (password === data.user[j].password) {
-        return { authUserId: data.user[j].authUserId };
+        // generate token and store
+        const rand = () => {
+          return Math.random().toString(36).substr(2);
+        };
+        const tokenGenerate = () => {
+          return rand() + rand();
+        };
+        const token = tokenGenerate();
+        data.user[j].token = token;
+        return { token: token, authUserId: data.user[j].authUserId };
       } else {
         return { error: 'error' };
       }

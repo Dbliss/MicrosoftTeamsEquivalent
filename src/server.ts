@@ -11,6 +11,12 @@ import {
   channelsListallV1,
 } from './channels';
 
+import {
+  dmCreate,
+  dmList,
+  dmRemove,
+} from './dm';
+
 // Set up web app, use JSON
 const app = express();
 app.use(express.json());
@@ -54,7 +60,7 @@ app.delete('/clear/v1', (req, res, next) => {
   }
 });
 
-app.post('/channels/create/v2', (req, res, next) => {
+app.post('/channels/create/v2', (req, res) => {
   const { token, name, isPublic } = req.body;
   const cId = channelsCreateV1(token, name, isPublic);
   res.json(cId);
@@ -78,6 +84,24 @@ app.post('/auth/logout/v1', (req, res, next) => {
     next(err);
   }
 });
+
+app.post('/dm/create/v1', (req, res, next) => {
+  const { token, uIds } = req.body;
+  const dmId = dmCreate(token, uIds);
+  res.json(dmId);
+});
+
+app.get('/dm/list/v1', (req, res) => {
+  const dms = dmList(req.query.token as string);
+  res.json(dms);
+});
+
+app.delete('/dm/remove/v1', (req, res) => {
+  const remove = dmRemove(req.query.token as string, parseInt(req.query.dmId as string));
+  res.json(remove);
+});
+
+
 
 // for logging errors
 app.use(morgan('dev'));

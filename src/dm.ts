@@ -142,3 +142,8 @@ function dmRemove (token: string, dmId: number) {
     setData(data);
     return {};
 }
+
+
+
+
+export {dmCreate, dmList, dmRemove};

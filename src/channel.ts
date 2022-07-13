@@ -379,6 +379,36 @@ function channelMessagesV1 (authUserId: number, channelId: number, start: number
 }
 
 const channelLeaveV1 = (token: string, channelId: number) => {
+  const data = getData();
+  const error = { error: 'error' }
+  // check to see if valid token
+  let isTokenValid = false;
+  let authUserId = -1;
+  for (const user of data.user) {
+    for (const tokens of user.token) {
+      if (tokens === token) {
+        isTokenValid = true;
+        const authUserId = user.authUserId;
+      }
+    }
+  }
+  if (isTokenValid === false) {
+    return error;
+  }
+
+  // check to see if channelId is valid
+  let iscIdValid = false;
+  for (const channel of data.channel) {
+    if (channel.cId === channelId) {
+      iscIdValid = true;
+      let channelIndex = channel;
+    }
+  }
+  if (iscIdValid === false) {
+    return error;
+  }
+
+
   return {};
 }
 

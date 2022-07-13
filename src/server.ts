@@ -101,8 +101,6 @@ app.delete('/dm/remove/v1', (req, res) => {
   res.json(remove);
 });
 
-
-
 // for logging errors
 app.use(morgan('dev'));
 

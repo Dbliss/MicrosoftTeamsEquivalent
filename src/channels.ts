@@ -19,10 +19,10 @@ type storeChannelsType = {
 
 function channelsCreateV1(token: string, name: string, isPublic: boolean) {
   const data = getData();
-  
+
   let validToken = 0;
   let flag = 0;
-  for(let i = 0; i < data.user.length; i++) {
+  for (let i = 0; i < data.user.length; i++) {
     for (const tokens of data.user[i].token) {
       if (tokens === token) {
         validToken = 1;
@@ -75,7 +75,7 @@ function channelsListV1(token: string) {
 
   let validToken = 0;
   let flag = 0;
-  for(let i = 0; i < data.user.length; i++) {
+  for (let i = 0; i < data.user.length; i++) {
     for (const tokens of data.user[i].token) {
       if (tokens === token) {
         validToken = 1;
@@ -123,7 +123,7 @@ function channelsListallV1(token: string) {
   const data = getData();
 
   let validToken = 0;
-  for(let i = 0; i < data.user.length; i++) {
+  for (let i = 0; i < data.user.length; i++) {
     for (const tokens of data.user[i].token) {
       if (tokens === token) {
         validToken = 1;

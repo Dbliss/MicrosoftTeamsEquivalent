@@ -122,8 +122,8 @@ function callingClear () {
   return res;
 }
 
-describe("Testing dmCreate", () => {
-  test("Valid parameters", () => {
+describe('Testing dmCreate', () => {
+  test('Valid parameters, adding 1 user in dm', () => {
     callingClear();
 
     const auth1 = callingAuthRegister('email@email.com',
@@ -142,7 +142,36 @@ describe("Testing dmCreate", () => {
     expect(result).toMatchObject({ dmId: expect.any(Number) });
   });
 
-  test("Invalid uId", () => {
+  test('Valid parameters, adding 2 users in dm', () => {
+    callingClear();
+
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    const registered2 = JSON.parse(String(auth2.getBody()));
+
+    const auth3 = callingAuthRegister('email3@email.com',
+      'password3',
+      'First3',
+      'Last3');
+    const registered3 = JSON.parse(String(auth3.getBody()));
+
+    const res = callingDmCreate(registered1.token, [registered2.authUserId, registered3.authUserId]);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject({ dmId: expect.any(Number) });
+
+    const res2 = callingDmList(registered1.token);
+    const result2 = JSON.parse(String(res2.getBody()));
+    expect(result2).toMatchObject([{ dmId: result.dmId, name: "'first2last2, first3last3, firstlast'" }]);
+  });
+
+  test('Invalid uId', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -155,7 +184,7 @@ describe("Testing dmCreate", () => {
     expect(result).toMatchObject({ error: 'error' });
   });
 
-  test("Repeat uIds", () => {
+  test('Repeat uIds', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -173,13 +202,13 @@ describe("Testing dmCreate", () => {
     expect(result).toMatchObject({ error: 'error' });
   });
 
-  test("Invalid token", () => {
+  test('Invalid token', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
       'First',
       'Last');
-    const registered1 = JSON.parse(String(auth1.getBody()));
+
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
@@ -192,31 +221,30 @@ describe("Testing dmCreate", () => {
   });
 });
 
-describe("Testing dmList", () => {
-  test("Invalid token", () => {
+describe('Testing dmList', () => {
+  test('Invalid token', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
       'First',
       'Last');
-    const registered1 = JSON.parse(String(auth1.getBody()));
-    
+
     const res = callingDmList('-9999');
     const result = JSON.parse(String(res.getBody()));
     expect(result).toMatchObject({ error: 'error' });
   });
 
-  test("Valid Parameters, 1 dm, Listing by owner", () => {
+  test('Valid Parameters, 1 dm, Listing by owner', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
-      'First',
+      'abc',
       'Last');
     const registered1 = JSON.parse(String(auth1.getBody()));
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
-      'First2',
-      'Last2');
+      'dad',
+      'mom');
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -224,10 +252,10 @@ describe("Testing dmList", () => {
 
     const res = callingDmList(registered1.token);
     const result = JSON.parse(String(res.getBody()));
-    expect(result).toBe([{ dmId: dm1.dmId, name: "'firstlast, first2last2'" }]);
+    expect(result).toStrictEqual([{ dmId: dm1.dmId, name: "'abclast, dadmom'" }]);
   });
 
-  test("Valid Parameters, 1 dm, Listing by member", () => {
+  test('Valid Parameters, 1 dm, Listing by member', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -245,10 +273,10 @@ describe("Testing dmList", () => {
 
     const res = callingDmList(registered2.token);
     const result = JSON.parse(String(res.getBody()));
-    expect(result).toBe([{ dmId: dm1.dmId, name: "'firstlast, first2last2'" }]);
+    expect(result).toStrictEqual([{ dmId: dm1.dmId, name: "'first2last2, firstlast'" }]);
   });
 
-  test("Valid Parameters, 2 dm, Listing by member", () => {
+  test('Valid Parameters, 2 dm, Listing by member', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -276,45 +304,44 @@ describe("Testing dmList", () => {
     const res = callingDmList(registered3.token);
     const result = JSON.parse(String(res.getBody()));
     expect(result).toMatchObject([
-      { dmId: dmCreated1.dmId, name: "'firstlast, first3last3'" },
+      { dmId: dmCreated1.dmId, name: "'first3last3, firstlast'" },
       { dmId: dmCreated2.dmId, name: "'first2last2, first3last3'" }]);
   });
 });
 
-describe("Testing dmRemove", () => {
-  test("Invalid token", () => {
+describe('Testing dmRemove', () => {
+  test('Invalid token', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
       'First',
       'Last');
     const registered1 = JSON.parse(String(auth1.getBody()));
-    
+
     const dm = callingDmList(registered1.token);
     const dm1 = JSON.parse(String(dm.getBody()));
-    
-    const res = callingDmRemove('-9999',dm1.dmId);
+
+    const res = callingDmRemove('-9999', dm1.dmId);
     const result = JSON.parse(String(res.getBody()));
     expect(result).toMatchObject({ error: 'error' });
   });
 
-  test("Invalid dmId", () => {
+  test('Invalid dmId', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
       'First',
       'Last');
     const registered1 = JSON.parse(String(auth1.getBody()));
-    
-    const dm = callingDmList(registered1.token);
-    const dm1 = JSON.parse(String(dm.getBody()));
-    
-    const res = callingDmRemove(registered1.token,-9999);
+
+    callingDmList(registered1.token);
+
+    const res = callingDmRemove(registered1.token, -9999);
     const result = JSON.parse(String(res.getBody()));
     expect(result).toMatchObject({ error: 'error' });
   });
 
-  test("User not the owner of dm", () => {
+  test('User not the owner of dm', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -335,7 +362,7 @@ describe("Testing dmRemove", () => {
     expect(result).toMatchObject({ error: 'error' });
   });
 
-  test("Valid dmId, but user not part of dm", () => {
+  test('Valid dmId, but user not part of dm', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -351,14 +378,15 @@ describe("Testing dmRemove", () => {
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
     const dm1 = JSON.parse(String(dm.getBody()));
 
-    const leave = callingDmLeave(registered1.token, dm1.dmId);
+    // ** Un comment when dmLeave is implemented
+    // const leave = callingDmLeave(registered1.token, dm1.dmId);
 
     const res = callingDmRemove(registered1.token, dm1.dmId);
     const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    // expect(result).toMatchObject({ error: 'error' });
   });
 
-  test("Valid Parameters", () => {
+  test('Valid Parameters', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -376,22 +404,22 @@ describe("Testing dmRemove", () => {
 
     const res = callingDmRemove(registered1.token, dm1.dmId);
     const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject( {} );
+    expect(result).toMatchObject({});
 
     const res2 = callingDmList(registered1.token);
     const result2 = JSON.parse(String(res2.getBody()));
-    expect(result2).toBe( [] );
+    expect(result2).toStrictEqual([]);
   });
 });
 
-describe("Testing dmDetails", () => {
+describe('Testing dmDetails', () => {
 
 });
 
-describe("Testing dmLeave", () => {
+describe('Testing dmLeave', () => {
 
 });
 
-describe("Testing dmMessages", () => {
+describe('Testing dmMessages', () => {
 
 });

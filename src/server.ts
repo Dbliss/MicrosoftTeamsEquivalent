@@ -16,7 +16,7 @@ import {
   dmList,
   dmRemove,
   dmDetails,
-  dmLeave
+  dmLeave,
 } from './dm';
 
 // Set up web app, use JSON

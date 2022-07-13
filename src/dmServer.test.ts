@@ -671,6 +671,21 @@ describe('Testing dmLeave', () => {
     const res = callingDmLeave(registered2.token, dm1.dmId);
     const result = JSON.parse(String(res.getBody()));
     expect(result).toMatchObject( {} );
+
+    const res2 = callingDmDetails(registered1.token, dm1.dmId);
+    const result2 = JSON.parse(String(res2.getBody()));
+    expect(result2).toMatchObject({ 
+      name: "'first2last2, firstlast'", 
+      members: [
+        {
+          uId: registered1.authUserId,
+          email: 'email@email.com',
+          nameFirst: 'First',
+          nameLast: 'Last',
+          handleStr: 'firstlast',
+        }
+      ] 
+    });
   });
 });
 

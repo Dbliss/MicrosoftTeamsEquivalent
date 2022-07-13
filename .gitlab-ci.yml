@@ -2,6 +2,7 @@ image: comp1531/basic:latest
 
 stages:
   - checks
+  - style
 
 before_script:
   - npm install
@@ -24,3 +25,8 @@ typecheck:
   stage: checks
   script:
     - npm run tsc
+
+lint:
+  stage: style
+  script:
+    - npm run lint

@@ -23,6 +23,57 @@ app.get('/echo', (req, res, next) => {
   }
 });
 
+app.post('/auth/register/v2', (req, res, next) => {
+  try {
+    const { email, password, nameFirst, nameLast } = req.body;
+    return res.json(authRegisterV1(email, password, nameFirst, nameLast));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/auth/login/v2', (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    return res.json(authLoginV1(email, password));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.delete('/clear/v1', (req, res, next) => {
+  try {
+    return res.json(clearV1());
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channels/create/v2', (req, res, next) => {
+  const { token, name, isPublic } = req.body;
+  const cId = channelsCreateV1(token, name, isPublic);
+  res.json(cId);
+});
+
+app.get('/channels/list/v2', (req, res) => {
+  const channel = channelsListV1(req.query.token as string);
+  res.json(channel);
+});
+
+app.get('/channels/listall/v2', (req, res) => {
+  const channel = channelsListallV1(req.query.token as string);
+  res.json(channel);
+});
+
+app.post('/auth/logout/v1', (req, res, next) => {
+  try {
+    const { token } = req.body;
+    return res.json(authLogoutV1(token));
+  } catch (err) {
+    next(err);
+  }
+});
+
 // for logging errors
 app.use(morgan('dev'));
 

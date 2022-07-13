@@ -19,8 +19,8 @@ describe('Testing clearV1', () => {
           },
         }
     );
-    /* const bodyObj = JSON.parse(res.body as string);
-     const tokenTest = bodyObj.token; */
+    const bodyObj = JSON.parse(res.body as string);
+    const tokenTest = bodyObj.token;
     expect(res.statusCode).toBe(OK);
     request(
       'DELETE',
@@ -30,17 +30,17 @@ describe('Testing clearV1', () => {
           },
         }
     );
-    /* const res2 = request(
+    const res2 = request(
       'GET',
         `${url}:${port}/channels/listall/v2`,
         {
           qs: {
-            token: 'tokenTest',
+            token: tokenTest,
           },
         }
     );
     const bodyObj1 = JSON.parse(res2.body as string);
     expect(res2.statusCode).toBe(OK);
-    expect(bodyObj1).toMatchObject({ channels: [] }); */
+    expect(bodyObj1).toMatchObject({ channels: [] });
   });
 });

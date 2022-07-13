@@ -123,8 +123,10 @@ function authLoginV1(email: string, password: string) {
           return rand() + rand();
         };
         const token = tokenGenerate();
+
         data.user[j].token.push(token);
         setData(data);
+
         return { token: token, authUserId: data.user[j].authUserId };
       } else {
         return { error: 'error' };

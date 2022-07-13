@@ -16,14 +16,14 @@ import {
 } from './other';
 
 describe('Testing channelsCreateV1', () => {
-  test('Name length < 1', () => {
+  test(Name length < 1, () => {
     clearV1();
     const authUserId = authRegisterV1('email@email.com',
       'password',
       'First',
       'Last');
 
-    const result = channelsCreateV1(authUserId.token, '', false);
+    const result = channelsCreateV1(authUserId.authUserId, '', false);
     expect(result).toMatchObject({ error: 'error' });
   });
 
@@ -34,7 +34,7 @@ describe('Testing channelsCreateV1', () => {
       'First',
       'Last');
 
-    const result = channelsCreateV1(authUserId.token,
+    const result = channelsCreateV1(authUserId.authUserId,
       'abcdefghijklmnopqrstuv',
       false);
 
@@ -48,7 +48,7 @@ describe('Testing channelsCreateV1', () => {
       'First',
       'Last');
 
-    const result = channelsCreateV1(authUserId.token,
+    const result = channelsCreateV1(authUserId.authUserId,
       'name',
       false);
 
@@ -62,7 +62,7 @@ describe('Testing channelsCreateV1', () => {
       'First',
       'Last');
 
-    const result = channelsCreateV1('-9999',
+    const result = channelsCreateV1(-9999,
       'name',
       false);
 
@@ -78,15 +78,15 @@ describe('Testing channelsListV1', () => {
       'First',
       'Last');
 
-    const channelId1 = channelsCreateV1(authUserId.token,
+    const channelId1 = channelsCreateV1(authUserId.authUserId,
       'name1',
       false);
 
-    const channelId2 = channelsCreateV1(authUserId.token,
+    const channelId2 = channelsCreateV1(authUserId.authUserId,
       'name2',
       true);
 
-    const result = channelsListV1(authUserId.token);
+    const result = channelsListV1(authUserId.authUserId);
     expect(result).toMatchObject({
       channels: [{
         channelId: channelId1.channelId,
@@ -111,15 +111,15 @@ describe('Testing channelsListV1', () => {
       'First2',
       'Last2');
 
-    channelsCreateV1(authUserId1.token,
+    channelsCreateV1(authUserId1.authUserId,
       'name1',
       false);
 
-    const channelId2 = channelsCreateV1(authUserId2.token,
+    const channelId2 = channelsCreateV1(authUserId2.authUserId,
       'name2',
       true);
 
-    const result = channelsListV1(authUserId2.token);
+    const result = channelsListV1(authUserId2.authUserId);
     expect(result).toMatchObject({
       channels: [{
         channelId: channelId2.channelId,
@@ -140,15 +140,15 @@ describe('Testing channelsListV1', () => {
       'First2',
       'Last2');
 
-    channelsCreateV1(authUserId1.token,
+    channelsCreateV1(authUserId1.authUserId,
       'name1',
       false);
 
-    channelsCreateV1(authUserId1.token,
+    channelsCreateV1(authUserId1.authUserId,
       'name2',
       true);
 
-    const result = channelsListV1(authUserId2.token);
+    const result = channelsListV1(authUserId2.authUserId);
     expect(result).toMatchObject({ channels: [] });
   });
 
@@ -159,11 +159,11 @@ describe('Testing channelsListV1', () => {
       'First',
       'Last');
 
-    channelsCreateV1(authUserId1.token,
+    channelsCreateV1(authUserId1.authUserId,
       'name1',
       false);
 
-    const result = channelsListV1('-99999');
+    const result = channelsListV1(-99999);
     expect(result).toMatchObject({ channels: [] });
   });
 });
@@ -176,15 +176,15 @@ describe('Testing channelsListallV1', () => {
       'First',
       'Last');
 
-    const channelId1 = channelsCreateV1(authUserId.token,
+    const channelId1 = channelsCreateV1(authUserId.authUserId,
       'name1',
       false);
 
-    const channelId2 = channelsCreateV1(authUserId.token,
+    const channelId2 = channelsCreateV1(authUserId.authUserId,
       'name2',
       true);
 
-    const result = channelsListallV1(authUserId.token);
+    const result = channelsListallV1(authUserId.authUserId);
     expect(result).toMatchObject({
       channels: [{
         channelId: channelId1.channelId,
@@ -209,15 +209,15 @@ describe('Testing channelsListallV1', () => {
       'First2',
       'Last2');
 
-    const channelId1 = channelsCreateV1(authUserId1.token,
+    const channelId1 = channelsCreateV1(authUserId1.authUserId,
       'name1',
       false);
 
-    const channelId2 = channelsCreateV1(authUserId2.token,
+    const channelId2 = channelsCreateV1(authUserId2.authUserId,
       'name2',
       true);
 
-    const result = channelsListallV1(authUserId2.token);
+    const result = channelsListallV1(authUserId2.authUserId);
     expect(result).toMatchObject({
       channels: [{
         channelId: channelId1.channelId,
@@ -242,15 +242,15 @@ describe('Testing channelsListallV1', () => {
       'First2',
       'Last2');
 
-    const channelId1 = channelsCreateV1(authUserId1.token,
+    const channelId1 = channelsCreateV1(authUserId1.authUserId,
       'name1',
       false);
 
-    const channelId2 = channelsCreateV1(authUserId1.token,
+    const channelId2 = channelsCreateV1(authUserId1.authUserId,
       'name2',
       true);
 
-    const result = channelsListallV1(authUserId2.token);
+    const result = channelsListallV1(authUserId2.authUserId);
     expect(result).toMatchObject({
       channels: [{
         channelId: channelId1.channelId,
@@ -270,11 +270,11 @@ describe('Testing channelsListallV1', () => {
       'First',
       'Last');
 
-    channelsCreateV1(authUserId1.token,
+    channelsCreateV1(authUserId1.authUserId,
       'name1',
       false);
 
-    const result = channelsListallV1('-99999');
+    const result = channelsListallV1(-99999);
     expect(result).toMatchObject({ channels: [] });
   });
 });

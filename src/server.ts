@@ -5,6 +5,12 @@ import config from './config.json';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { clearV1 } from './other';
 
+import {
+  channelsCreateV1,
+  channelsListV1,
+  channelsListallV1,
+} from './channels';
+
 // Set up web app, use JSON
 const app = express();
 app.use(express.json());
@@ -46,6 +52,22 @@ app.delete('/clear/v1', (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+app.post('/channels/create/v2', (req, res, next) => {
+  const { token, name, isPublic } = req.body;
+  const cId = channelsCreateV1(token, name, isPublic);
+  res.json(cId);
+});
+
+app.get('/channels/list/v2', (req, res) => {
+  const channel = channelsListV1(req.query.token as string);
+  res.json(channel);
+});
+
+app.get('/channels/listall/v2', (req, res) => {
+  const channel = channelsListallV1(req.query.token as string);
+  res.json(channel);
 });
 
 app.post('/auth/logout/v1', (req, res, next) => {

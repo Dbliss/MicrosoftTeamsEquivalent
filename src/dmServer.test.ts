@@ -318,7 +318,13 @@ describe('Testing dmRemove', () => {
       'Last');
     const registered1 = JSON.parse(String(auth1.getBody()));
 
-    const dm = callingDmList(registered1.token);
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    const registered2 = JSON.parse(String(auth2.getBody()));
+
+    const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
     const dm1 = JSON.parse(String(dm.getBody()));
 
     const res = callingDmRemove('-9999', dm1.dmId);
@@ -333,8 +339,6 @@ describe('Testing dmRemove', () => {
       'First',
       'Last');
     const registered1 = JSON.parse(String(auth1.getBody()));
-
-    callingDmList(registered1.token);
 
     const res = callingDmRemove(registered1.token, -9999);
     const result = JSON.parse(String(res.getBody()));
@@ -413,11 +417,261 @@ describe('Testing dmRemove', () => {
 });
 
 describe('Testing dmDetails', () => {
+  test('invalid token', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
 
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    const registered2 = JSON.parse(String(auth2.getBody()));
+
+    const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
+    const dm1 = JSON.parse(String(dm.getBody()));
+
+    const res = callingDmDetails('-9999', dm1.dmId);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject({ error: 'error' });
+  });
+
+  test('invalid dmId', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
+
+    const res = callingDmDetails(registered1.token, -9999);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject({ error: 'error' });
+  });
+
+  test('dmId valid, user not a member', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
+
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    const registered2 = JSON.parse(String(auth2.getBody()));
+
+    const auth3 = callingAuthRegister('email3@email.com',
+      'password3',
+      'First3',
+      'Last3');
+    const registered3 = JSON.parse(String(auth3.getBody()));
+
+    const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
+    const dm1 = JSON.parse(String(dm.getBody()));
+
+    const res = callingDmDetails(registered3.authUserId, dm1.dmId);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject({ error: 'error' });
+  });
+
+  test('valid parameters', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
+
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    const registered2 = JSON.parse(String(auth2.getBody()));
+
+    const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
+    const dm1 = JSON.parse(String(dm.getBody()));
+
+    const res = callingDmDetails(registered2.authUserId, dm1.dmId);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject({ 
+      name: "'first2last2, firstlast'", 
+      members: [
+        {
+          uId: registered1.authUserId,
+          email: 'email@email.com',
+          nameFirst: 'First',
+          nameLast: 'Last',
+          handleStr: 'firstlast',},
+        {
+          uId: registered2.authUserId,
+          email: 'email2@email.com',
+          nameFirst: 'Frist2',
+          nameLast: 'Last2',
+          handleStr: 'first2last2',
+        }] 
+    });
+  });
+
+  test('valid parameters, multiple dms', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
+
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    const registered2 = JSON.parse(String(auth2.getBody()));
+
+    const auth3 = callingAuthRegister('email3@email.com',
+      'password3',
+      'First3',
+      'Last3');
+    const registered3 = JSON.parse(String(auth3.getBody()));
+
+    const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
+    const dm1 = JSON.parse(String(dm.getBody()));
+
+    const dm2 = callingDmCreate(registered1.token, [registered3.authUserId]);
+    const dm3 = JSON.parse(String(dm2.getBody()));
+
+    const res = callingDmDetails(registered1.authUserId, dm1.dmId);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject({ 
+      name: "'first2last2, firstlast'", 
+      members: [
+        {
+          uId: registered1.authUserId,
+          email: 'email@email.com',
+          nameFirst: 'First',
+          nameLast: 'Last',
+          handleStr: 'firstlast',},
+        {
+          uId: registered2.authUserId,
+          email: 'email2@email.com',
+          nameFirst: 'Frist2',
+          nameLast: 'Last2',
+          handleStr: 'first2last2',
+        }] 
+    });
+
+  });
 });
 
 describe('Testing dmLeave', () => {
+  test('invalid token', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
 
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    const registered2 = JSON.parse(String(auth2.getBody()));
+
+    const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
+    const dm1 = JSON.parse(String(dm.getBody()));
+
+    const res = callingDmLeave('-9999', dm1.dmId);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject({ error: 'error' });
+  });
+
+  test('invalid dmId', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
+
+    const res = callingDmLeave(registered1.token, -9999);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject({ error: 'error' });
+  });
+
+  test('dmId valid, user not a member', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
+
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    const registered2 = JSON.parse(String(auth2.getBody()));
+
+    const auth3 = callingAuthRegister('email3@email.com',
+      'password3',
+      'First3',
+      'Last3');
+    const registered3 = JSON.parse(String(auth3.getBody()));
+
+    const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
+    const dm1 = JSON.parse(String(dm.getBody()));
+
+    const res = callingDmLeave(registered3.token, dm1.dmId);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject({ error: 'error' });
+  });
+
+  test('valid parameters, owner leaves', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
+
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    const registered2 = JSON.parse(String(auth2.getBody()));
+
+    const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
+    const dm1 = JSON.parse(String(dm.getBody()));
+    const res = callingDmLeave(registered1.token, dm1.dmId);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject( {} );
+  });
+
+  test('valid parameters, member leaves', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
+
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    const registered2 = JSON.parse(String(auth2.getBody()));
+
+    const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
+    const dm1 = JSON.parse(String(dm.getBody()));
+    const res = callingDmLeave(registered2.token, dm1.dmId);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject( {} );
+  });
 });
 
 describe('Testing dmMessages', () => {

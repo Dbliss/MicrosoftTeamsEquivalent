@@ -171,27 +171,28 @@ function dmDetails(token: string, dmId: number) {
   let isMember = 0;
   let looper = 0;
   let dmIndex = 0;
-  for(const dm of data.dm) {
-    if(dm.dmId === dmId) {
+
+  for (const dm of data.dm) {
+    if (dm.dmId === dmId) {
       dmIndex = looper;
       validDmId = 1;
-      for(const member of dm.members) {
-        if(member === data.user[flag].authUserId) {
+      for (const member of dm.members) {
+        if (member === data.user[flag].authUserId) {
           isMember = 1;
         }
       }
     }
     looper++;
   }
-  
-  if(validDmId === 0 || isMember === 0) {
+
+  if (validDmId === 0 || isMember === 0) {
     return { error: 'error' };
   }
 
-  let tempMembers = [];
-  for(const member of data.dm[dmIndex].members) {
-    for(const user of data.user) {
-      if(user.authUserId === member) {
+  const tempMembers = [];
+  for (const member of data.dm[dmIndex].members) {
+    for (const user of data.user) {
+      if (user.authUserId === member) {
         tempMembers.push({
           uId: user.authUserId,
           email: user.email,
@@ -203,10 +204,8 @@ function dmDetails(token: string, dmId: number) {
     }
   }
 
-  return {name: data.dm[dmIndex].name, members: tempMembers};
+  return ({ name: data.dm[dmIndex].name, members: tempMembers });
 }
-
-
 
 function dmLeave(token: string, dmId: number) {
   const data = getData();
@@ -227,14 +226,14 @@ function dmLeave(token: string, dmId: number) {
   }
 
   let validDmId = 0;
-  let isMember = 0;
+  const isMember = 0;
   let dmIndex = 0;
   let memberIndex = 0;
-  for(const dm of data.dm) {
-    if(dm.dmId === dmId) {
+  for (const dm of data.dm) {
+    if (dm.dmId === dmId) {
       validDmId = 1;
-      for(const member of dm.members) {
-        if(member === data.user[flag].authUserId) {
+      for (const member of dm.members) {
+        if (member === data.user[flag].authUserId) {
           data.dm[dmIndex].members.splice(memberIndex, 1);
         }
         memberIndex++;
@@ -242,11 +241,11 @@ function dmLeave(token: string, dmId: number) {
     }
     dmIndex++;
   }
-  
-  if(validDmId === 0 || isMember === 0) {
+
+  if (validDmId === 0 || isMember === 0) {
     return { error: 'error' };
   }
-
+  setData(data);
   return {};
 }
 

@@ -19,25 +19,20 @@ type storeChannelsType = {
 
 function channelsCreateV1(token: string, name: string, isPublic: boolean) {
   const data = getData();
-  let authUserId = -1;
-  for (const user of data.user) {
-    for (const tokens of user.token) {
+  
+  let validToken = 0;
+  let flag = 0;
+  for(let i = 0; i < data.user.length; i++) {
+    for (const tokens of data.user[i].token) {
       if (tokens === token) {
-        authUserId = user.authUserId;
+        validToken = 1;
+        flag = i;
       }
     }
   }
-  let validId = false;
-  let flag = 0;
-  // Validates the authUserId Passed
-  for (let i = 0; i < data.user.length; i++) {
-    if (data.user[i].authUserId === authUserId) {
-      validId = true;
-      flag = i;
-    }
-  }
+
   // Returns error message when authUserId or name is invalid
-  if (validId === false || name.length < 1 || name.length > 20) {
+  if (validToken === 0 || name.length < 1 || name.length > 20) {
     return { error: 'error' };
   }
 
@@ -78,27 +73,18 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
 function channelsListV1(token: string) {
   const data = getData();
 
-  let authUserId = -1;
-  for (const user of data.user) {
-    for (const tokens of user.token) {
+  let validToken = 0;
+  let flag = 0;
+  for(let i = 0; i < data.user.length; i++) {
+    for (const tokens of data.user[i].token) {
       if (tokens === token) {
-        authUserId = user.authUserId;
+        validToken = 1;
+        flag = i;
       }
     }
   }
 
-  let validId = false;
-  let flag = 0;
-
-  // Validates the authUserId Passed
-  for (let i = 0; i < data.user.length; i++) {
-    if (data.user[i].authUserId === authUserId) {
-      validId = true;
-      flag = i;
-    }
-  }
-
-  if (validId === false) {
+  if (validToken === 0) {
     return {
       channels: []
     };
@@ -136,25 +122,16 @@ function channelsListV1(token: string) {
 function channelsListallV1(token: string) {
   const data = getData();
 
-  let authUserId = -1;
-  for (const user of data.user) {
-    for (const tokens of user.token) {
+  let validToken = 0;
+  for(let i = 0; i < data.user.length; i++) {
+    for (const tokens of data.user[i].token) {
       if (tokens === token) {
-        authUserId = user.authUserId;
+        validToken = 1;
       }
     }
   }
 
-  let validId = false;
-
-  // Validates the authUserId Passed
-  for (let i = 0; i < data.user.length; i++) {
-    if (data.user[i].authUserId === authUserId) {
-      validId = true;
-    }
-  }
-
-  if (validId === false) {
+  if (validToken === 0) {
     return {
       channels: []
     };

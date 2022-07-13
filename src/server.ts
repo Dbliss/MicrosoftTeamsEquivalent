@@ -15,6 +15,8 @@ import {
   dmCreate,
   dmList,
   dmRemove,
+  dmDetails,
+  dmLeave
 } from './dm';
 
 // Set up web app, use JSON
@@ -85,7 +87,7 @@ app.post('/auth/logout/v1', (req, res, next) => {
   }
 });
 
-app.post('/dm/create/v1', (req, res, next) => {
+app.post('/dm/create/v1', (req, res) => {
   const { token, uIds } = req.body;
   const dmId = dmCreate(token, uIds);
   res.json(dmId);
@@ -99,6 +101,17 @@ app.get('/dm/list/v1', (req, res) => {
 app.delete('/dm/remove/v1', (req, res) => {
   const remove = dmRemove(req.query.token as string, parseInt(req.query.dmId as string));
   res.json(remove);
+});
+
+app.get('/dm/details/v1', (req, res) => {
+  const dms = dmDetails(req.query.token as string, parseInt(req.query.dmId as string));
+  res.json(dms);
+});
+
+app.post('/dm/leave/v1', (req, res) => {
+  const { token, dmId } = req.body;
+  const leave = dmLeave(token, dmId);
+  res.json(leave);
 });
 
 // for logging errors

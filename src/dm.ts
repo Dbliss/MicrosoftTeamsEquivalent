@@ -149,4 +149,12 @@ function dmRemove (token: string, dmId: number) {
   return {};
 }
 
-export { dmCreate, dmList, dmRemove };
+function dmDetails(token: string, dmId: number) {
+
+}
+
+function dmLeave(token: string, dmId: number) {
+
+}
+
+export { dmCreate, dmList, dmRemove, dmDetails, dmLeave };

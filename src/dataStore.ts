@@ -8,6 +8,7 @@ type channelsInUserType = {
 
 // Storing User in data
 type userType = {
+  token: string[];
   email: string,
   password: string,
   nameFirst: string,

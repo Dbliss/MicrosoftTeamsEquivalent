@@ -378,4 +378,17 @@ function channelMessagesV1 (authUserId: number, channelId: number, start: number
   return { messages, start, end };
 }
 
-export { channelDetailsV1, channelJoinV1, channelInviteV1, channelMessagesV1 };
+const channelLeaveV1 = (token: string, channelId: number) => {
+  return {};
+}
+
+const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
+  return {};
+}
+
+const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => {
+  return {};
+}
+
+
+export { channelDetailsV1, channelJoinV1, channelInviteV1, channelMessagesV1, channelLeaveV1, channelAddOwnerV1, channelRemoveOwnerV1 };

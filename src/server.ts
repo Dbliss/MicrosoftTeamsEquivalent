@@ -3,7 +3,9 @@ import { echo } from './echo';
 import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
-import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
+import { 
+  authLoginV1, authRegisterV1, authLogoutV1 
+} from './auth';
 import { clearV1 } from './other';
 
 import {
@@ -11,6 +13,12 @@ import {
   channelsListV1,
   channelsListallV1,
 } from './channels';
+
+import {
+  channelLeaveV1,
+  channelAddOwnerV1,
+  channelRemoveOwnerV1,
+} from './channel';
 
 // Set up web app, use JSON
 const app = express();
@@ -82,6 +90,32 @@ app.post('/auth/logout/v1', (req, res, next) => {
   }
 });
 
+app.post('/channel/leave/v1', (req, res, next) => {
+  try {
+    const { token, channelId } = req.body;
+    return res.json(channelLeaveV1(token, channelId));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channel/addowner/v1', (req, res, next) => {
+  try {
+    const { token, channelId, uId } = req.body;
+    return res.json(channelAddOwnerV1(token, channelId, uId));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channel/removeowner/v1', (req, res, next) => {
+  try {
+    const { token, channelId, uId } = req.body;
+    return res.json(channelRemoveOwnerV1(token, channelId, uId));
+  } catch (err) {
+    next(err);
+  }
+});
 // for logging errors
 app.use(morgan('dev'));
 

@@ -20,7 +20,7 @@ type errorType = {
 };
 
 function messageSendV1(token: string, channelId: number, message: string) {
-    
+    let messageId = 0;
     return { messageId };
 }
 

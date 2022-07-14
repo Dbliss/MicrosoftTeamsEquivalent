@@ -172,4 +172,4 @@ function channelsListallV1(token: string) {
   return storeChannels;
 }
 
-export { channelsCreateV1, channelsListV1, channelsListallV1 };
+export { channelsCreateV2, channelsListV1, channelsListallV1 };

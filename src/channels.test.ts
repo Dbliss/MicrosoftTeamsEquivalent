@@ -2,7 +2,7 @@
 
 // Importing functions from channels.js file
 import {
-  channelsCreateV1,
+  channelsCreateV2,
   channelsListV1,
   channelsListallV1,
 } from './channels';
@@ -15,7 +15,7 @@ import {
   clearV1,
 } from './other';
 
-describe('Testing channelsCreateV1', () => {
+describe('Testing channelsCreateV2', () => {
   test('Name length < 1', () => {
     clearV1();
     const authUserId = authRegisterV1('email@email.com',

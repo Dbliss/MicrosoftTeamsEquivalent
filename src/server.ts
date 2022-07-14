@@ -4,6 +4,8 @@ import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
+import { channelInviteV2, channelMessagesV2 } from './channel';
+import { channelsCreateV2 } from './channels';
 import { clearV1 } from './other';
 
 import {
@@ -44,6 +46,33 @@ app.post('/auth/login/v2', (req, res, next) => {
   try {
     const { email, password } = req.body;
     return res.json(authLoginV1(email, password));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channels/create/v2', (req, res, next) => {
+  try {
+    const { authUserId, name, isPublic } = req.body;
+    return res.json(channelsCreateV2(authUserId, name, isPublic));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channel/invite/v2', (req, res, next) => {
+  try {
+    const { token, channelId, uId } = req.body;
+    return res.json(channelInviteV2(token, channelId, uId));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/channel/messages/v2', (req, res, next) => {
+  try {
+    const { token, channelId, start } = req.body;
+    return res.json(channelMessagesV2(token, channelId, start));
   } catch (err) {
     next(err);
   }

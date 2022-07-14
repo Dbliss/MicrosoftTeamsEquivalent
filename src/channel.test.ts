@@ -1,16 +1,17 @@
+import request from 'sync-request';
+import config from './config.json';
+
 // Importing the functions from channel.js file
 
 import {
   channelDetailsV1,
   channelJoinV1,
-  channelInviteV1,
-  channelMessagesV1,
 } from './channel';
 
 // importing other essential functions used in channel
 
 import {
-  channelsCreateV1,
+  channelsCreateV2,
 } from './channels';
 
 import {
@@ -21,6 +22,89 @@ import {
   clearV1,
 } from './other';
 import { getData, setData } from './dataStore';
+
+const OK = 200;
+const port = config.port;
+const url = config.url;
+
+function callingClear () {
+  const res = request(
+    'DELETE',
+  `${url}:${port}/clear/V1`);
+  return res;
+}
+
+
+function callingChannelsCreate (authUserId: number, name: string, isPublic: boolean) {
+  const res = request(
+    'POST',
+        `${url}:${port}/channels/create/v2`,
+        {
+          body: JSON.stringify({
+            authUserId: authUserId,
+            name: name,
+            isPublic: isPublic
+          }),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
+}
+
+function callingAuthRegister (email: string, password: string, nameFirst: string, nameLast: string) {
+  const res = request(
+    'POST',
+        `${url}:${port}/auth/register/v2`,
+        {
+          body: JSON.stringify({
+            email: email,
+            password: password,
+            nameFirst: nameFirst,
+            nameLast: nameLast
+          }),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
+}
+
+function callingChannelInvite (token:string, channelId: number, uId: number) {
+  const res = request(
+    'POST',
+        `${url}:${port}/channel/invite/v2`,
+        {
+          body: JSON.stringify({
+            token: token,
+            channelId: channelId,
+            uId: uId,
+          }),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
+}
+
+function callingChannelMessages (token:string, channelId: number, start: number) {
+  const res = request(
+    'GET',
+        `${url}:${port}/channel/messages/v2`,
+        {
+          qs: {
+            token: token,
+            channelId: channelId,
+            start: start,
+          }
+        }
+  );
+  return res;
+}
+
 
 describe('Testing channelDetailsV1', () => {
   test('Testing successful return of channelDetailsV1', () => {
@@ -251,116 +335,186 @@ describe('Testing channelJoinV1', () => {
 
 describe('Testing channelInvite1', () => {
   test('channelId does not refer to a valid channel', () => {
-    clearV1();
+    const res = callingClear();
+    expect (res.statusCode).toBe(OK);
 
-    const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const bodyObj1 = JSON.parse(res1.body as string);
+    expect (res1.statusCode).toBe(OK);
 
-    const uId = authRegisterV1('email2@email.com', 'password2', 'First2', 'Last2');
+    const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    const bodyObj2 = JSON.parse(res2.body as string);
+    expect (res2.statusCode).toBe(OK);
 
-    const result = channelInviteV1(authUserId.authUserId, -678678785675, uId.authUserId);
+    const res3 = callingChannelInvite(bodyObj1.token, -31231451, bodyObj2.authUserId);
+    const bodyObj3 = JSON.parse(res3.body as string);
+    expect (res3.statusCode).toBe(OK);
 
-    expect(result).toMatchObject({ error: 'error' });
+    expect(bodyObj3).toMatchObject({ error: 'error' });
   });
 
   test('Uid refers to a user who is already a member of the channel', () => {
-    clearV1();
-    const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
+    const res = callingClear();
+    expect (res.statusCode).toBe(OK);
 
-    const channelId = channelsCreateV1(authUserId.token, 'name', false);
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect (res1.statusCode).toBe(OK);
+    const bodyObj1 = JSON.parse(res1.body as string);
 
-    const result = channelInviteV1(authUserId.authUserId, channelId.channelId, authUserId.authUserId);
+    const res2 = callingChannelsCreate(bodyObj1.authUserId, 'channel1', true);
+    expect (res2.statusCode).toBe(OK);
+    const bodyObj2 = JSON.parse(res2.body as string);
+    const res3 = callingChannelInvite(bodyObj1.token, -31231451, bodyObj1.authUserId);
+    expect (res3.statusCode).toBe(OK);
+    const bodyObj3 = JSON.parse(res3.body as string);
 
-    expect(result).toMatchObject({ error: 'error' });
+    expect(bodyObj3).toMatchObject({ error: 'error' });
   });
 
-  test('ChannelId is valid and the authorised user is not a member of the channel', () => {
-    clearV1();
-    const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
+  test('ChannelId is valid and the token user is not a member of the channel', () => {
+    const res = callingClear();
+    expect (res.statusCode).toBe(OK);
 
-    const authUserId2 = authRegisterV1('email2@email.com', 'password2', 'First2', 'Last2');
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect (res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
 
-    const uId = authRegisterV1('email3@email.com', 'password3', 'First3', 'Last3');
+    const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    expect (res2.statusCode).toBe(OK);
+    const user2 = JSON.parse(res2.body as string);
 
-    const channelId = channelsCreateV1(authUserId.token, 'name', false);
+    const res3 = callingAuthRegister('email3@gmail.com', 'password3', 'first3', 'last3');
+    expect (res3.statusCode).toBe(OK);
+    const user3 = JSON.parse(res3.body as string);
 
-    const result = channelInviteV1(authUserId2.authUserId, channelId.channelId, uId.authUserId);
+    const res4 = callingChannelsCreate(user1.authUserId, 'channel1', true);
+    expect (res4.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res4.body as string);
 
-    expect(result).toMatchObject({ error: 'error' });
+    const res5 = callingChannelInvite(user2.token, channel1.channelId, user3.authUserId);
+    expect (res5.statusCode).toBe(OK);
+    const bodyObj5 = JSON.parse(res5.body as string);
+
+    expect(bodyObj5).toMatchObject({ error: 'error' });
   });
 
   test('no errors', () => {
-    clearV1();
+    const res = callingClear();
+    expect (res.statusCode).toBe(OK);
 
-    const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect (res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
 
-    const uId = authRegisterV1('email3@email.com', 'password3', 'First3', 'Last3');
+    const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    expect (res2.statusCode).toBe(OK);
+    const user2 = JSON.parse(res2.body as string);
 
-    const channelId = channelsCreateV1(authUserId.token, 'name', false);
+    const res3 = callingChannelsCreate(user1.authUserId, 'channel1', true);
+    expect (res3.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res3.body as string);
 
-    const result = channelInviteV1(authUserId.authUserId, channelId.channelId, uId.authUserId);
+    const res5 = callingChannelInvite(user1.token, channel1.channelId, user2.authUserId);
+    expect (res5.statusCode).toBe(OK);
+    const bodyObj5 = JSON.parse(res5.body as string);
 
-    expect(result).toMatchObject({});
+    expect(bodyObj5).toMatchObject({});
   });
 });
 
 describe('Testing channelMessages1', () => {
   test('channelId does not refer to a valid channel', () => {
-    clearV1();
-    const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
+    const res = callingClear();
+    expect (res.statusCode).toBe(OK);
 
-    const result = channelMessagesV1(authUserId.authUserId, -6786545456, 0);
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect (res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
 
-    expect(result).toMatchObject({ error: 'error' });
+    const res5 = callingChannelMessages(user1.token, -53453252, 0);
+    expect (res5.statusCode).toBe(OK);
+    const bodyObj5 = JSON.parse(res5.body as string);
+
+    expect(bodyObj5).toMatchObject({ error: 'error' });
   });
 
   test('start is greater than the total number of messages in the channel', () => {
-    clearV1();
-    const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
+    const res = callingClear();
+    expect (res.statusCode).toBe(OK);
 
-    const channelId = channelsCreateV1(authUserId.token, 'name', false);
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect (res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
 
-    const result = channelMessagesV1(authUserId.authUserId, channelId.channelId, 9999999);
+    const res3 = callingChannelsCreate(user1.authUserId, 'channel1', true);
+    expect (res3.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res3.body as string);
 
-    expect(result).toMatchObject({ error: 'error' });
+    const res5 = callingChannelMessages(user1.token, channel1.channelId, 99999);
+    expect (res5.statusCode).toBe(OK);
+    const bodyObj5 = JSON.parse(res5.body as string);
+
+    expect(bodyObj5).toMatchObject({ error: 'error' });
   });
 
   test('ChannelId is valid and the authorised user is not a member of the channel', () => {
-    clearV1();
-    const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
+    const res = callingClear();
+    expect (res.statusCode).toBe(OK);
 
-    const authUserId2 = authRegisterV1('email2@email.com', 'password2', 'First2', 'Last2');
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect (res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
 
-    const channelId = channelsCreateV1(authUserId.token, 'name', false);
+    const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    expect (res2.statusCode).toBe(OK);
+    const user2 = JSON.parse(res2.body as string);
 
-    const result = channelMessagesV1(authUserId2.authUserId, channelId.channelId, 0);
+    const res3 = callingChannelsCreate(user1.authUserId, 'channel1', true);
+    expect (res3.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res3.body as string);
 
-    expect(result).toMatchObject({ error: 'error' });
+    const res5 = callingChannelMessages(user2.token, channel1.channelId, 0);
+    expect (res5.statusCode).toBe(OK);
+    const bodyObj5 = JSON.parse(res5.body as string);
+
+    expect(bodyObj5).toMatchObject({ error: 'error' });
   });
-
+  
   test('no errors', () => {
-    clearV1();
+    const res = callingClear();
+    expect (res.statusCode).toBe(OK);
 
-    const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect (res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
 
-    const channelId = channelsCreateV1(authUserId.token, 'name', false);
+    const res3 = callingChannelsCreate(user1.authUserId, 'channel1', true);
+    expect (res3.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res3.body as string);
 
-    const result = channelMessagesV1(authUserId.authUserId, channelId.channelId, 0);
+    const res5 = callingChannelMessages(user1.token, channel1.channelId, 0);
+    expect (res5.statusCode).toBe(OK);
+    const bodyObj5 = JSON.parse(res5.body as string);
 
-    expect(result).toEqual({ messages: [], start: 0, end: -1 });
+    console.log(channel1.channelId);
+    console.log(user1);
+
+    expect(bodyObj5).toEqual({ messages: [], start: 0, end: -1 });
   });
-
+  
+  /**
   test('multiple messages success', () => {
     clearV1();
     const data = getData();
     const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
 
-    const channelId = channelsCreateV1(authUserId.token, 'name', false);
+    const channelId = channelsCreateV2(authUserId.token, 'name', false);
 
     data.channel[0].messages = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 
     setData(data);
 
-    const result = channelMessagesV1(authUserId.authUserId, channelId.channelId, 0);
+    const result = channelMessagesV1(authUserId.token, channelId.channelId, 0);
 
     expect(result).toEqual({ messages: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], start: 0, end: -1 });
   });
@@ -370,7 +524,7 @@ describe('Testing channelMessages1', () => {
     const data = getData();
     const authUserId = authRegisterV1('email@email.com', 'password', 'First', 'Last');
 
-    const channelId = channelsCreateV1(authUserId.token, 'name', false);
+    const channelId = channelsCreateV2(authUserId.token, 'name', false);
 
     data.channel[0].messages = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
       '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
@@ -381,7 +535,7 @@ describe('Testing channelMessages1', () => {
 
     setData(data);
 
-    const result = channelMessagesV1(authUserId.authUserId, channelId.channelId, 0);
+    const result = channelMessagesV1(authUserId.token, channelId.channelId, 0);
 
     expect(result).toEqual({
       messages: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
@@ -393,4 +547,6 @@ describe('Testing channelMessages1', () => {
       end: 50
     });
   });
+*/
 });
+

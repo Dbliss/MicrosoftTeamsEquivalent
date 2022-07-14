@@ -1,5 +1,4 @@
-// Importing functions from channels.js file
-import { token } from 'morgan';
+
 import request from 'sync-request';
 import config from './config.json';
 
@@ -715,7 +714,7 @@ describe('Testing dmLeave', () => {
 });
 
 describe('Testing dmMessages', () => {
-  test("Invalid Token", () => {
+  test('Invalid Token', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -734,11 +733,10 @@ describe('Testing dmMessages', () => {
 
     const res = callingDmMessages('-99999', dm1.dmId, 0);
     const res1 = JSON.parse(String(res.getBody()));
-    expect(res1).toMatchObject({error: 'error'});
-
+    expect(res1).toMatchObject({ error: 'error' });
   });
 
-  test("Invalid dmId", () => {
+  test('Invalid dmId', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -752,15 +750,14 @@ describe('Testing dmMessages', () => {
       'Last2');
     const registered2 = JSON.parse(String(auth2.getBody()));
 
-    const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
-    const dm1 = JSON.parse(String(dm.getBody()));
+    callingDmCreate(registered1.token, [registered2.authUserId]);
 
     const res = callingDmMessages(registered1.token, -99999, 0);
     const res1 = JSON.parse(String(res.getBody()));
-    expect(res1).toMatchObject({error: 'error'});
+    expect(res1).toMatchObject({ error: 'error' });
   });
 
-  test("Invalid Start", () => {
+  test('Invalid Start', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -779,12 +776,12 @@ describe('Testing dmMessages', () => {
 
     const res = callingDmMessages(registered1.token, dm1.dmId, 1);
     const res1 = JSON.parse(String(res.getBody()));
-    expect(res1).toMatchObject({error: 'error'});
-    });
+    expect(res1).toMatchObject({ error: 'error' });
+  });
 
-    test("User not member of DM", () => {
-      callingClear();
-      const auth1 = callingAuthRegister('email@email.com',
+  test('User not member of DM', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
       'password',
       'First',
       'Last');
@@ -807,113 +804,110 @@ describe('Testing dmMessages', () => {
 
     const res = callingDmMessages(registered3.token, dm1.dmId, 0);
     const res1 = JSON.parse(String(res.getBody()));
-    expect(res1).toMatchObject({error: 'error'});
-    });
+    expect(res1).toMatchObject({ error: 'error' });
+  });
 
-    test("Valid Parameters, 55 messgaes send, Receave 50", () => {
-      callingClear();
-      const auth1 = callingAuthRegister('email@email.com',
-        'password',
-        'First',
-        'Last');
-      const registered1 = JSON.parse(String(auth1.getBody()));
+  test('Valid Parameters, 55 messgaes send, Receave 50', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
 
-      const auth2 = callingAuthRegister('email2@email.com',
-        'password2',
-        'First2',
-        'Last2');
-      const registered2 = JSON.parse(String(auth2.getBody()));
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    const registered2 = JSON.parse(String(auth2.getBody()));
 
-      const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
-      const dm1 = JSON.parse(String(dm.getBody()));
+    const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
+    const dm1 = JSON.parse(String(dm.getBody()));
 
-      for(let i = 0; i < 55; i++) {
-        const message = callingMessageSendDm(registered1.token, dm1.dmId, JSON.stringify(i));
-        const message1 = JSON.parse(String(message.getBody()));
-        expect(message1).toMatchObject({messageId: expect.any(Number)});
-      }
+    for (let i = 0; i < 55; i++) {
+      const message = callingMessageSendDm(registered1.token, dm1.dmId, JSON.stringify(i));
+      const message1 = JSON.parse(String(message.getBody()));
+      expect(message1).toMatchObject({ messageId: expect.any(Number) });
+    }
 
-      const res = callingDmMessages(registered1.token, dm1.dmI, 0);
-      const result = JSON.parse(String(res.getBody()));
-      expect(result).toMatchObject({
-        messages: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+    const res = callingDmMessages(registered1.token, dm1.dmI, 0);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject({
+      messages: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
         '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
         '21', '22', '23', '24', '25', '26', '27', '28', '29', '30',
         '31', '32', '33', '34', '35', '36', '37', '38', '39', '40',
         '41', '42', '43', '44', '45', '46', '47', '48', '49'],
-        start: 0,
-        end: 50,
-      })
+      start: 0,
+      end: 50,
     });
+  });
 
-    test("Valid Parameters, 10 messgaes send, Get 10", () => {
-      callingClear();
-      const auth1 = callingAuthRegister('email@email.com',
-        'password',
-        'First',
-        'Last');
-      const registered1 = JSON.parse(String(auth1.getBody()));
+  test('Valid Parameters, 10 messgaes send, Get 10', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
 
-      const auth2 = callingAuthRegister('email2@email.com',
-        'password2',
-        'First2',
-        'Last2');
-      const registered2 = JSON.parse(String(auth2.getBody()));
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    const registered2 = JSON.parse(String(auth2.getBody()));
 
-      const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
-      const dm1 = JSON.parse(String(dm.getBody()));
+    const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
+    const dm1 = JSON.parse(String(dm.getBody()));
 
-      for(let i = 0; i < 10; i++) {
-        const message = callingMessageSendDm(registered1.token, dm1.dmId, JSON.stringify(i));
-        const message1 = JSON.parse(String(message.getBody()));
-        expect(message1).toMatchObject({messageId: expect.any(Number)});
-      }
+    for (let i = 0; i < 10; i++) {
+      const message = callingMessageSendDm(registered1.token, dm1.dmId, JSON.stringify(i));
+      const message1 = JSON.parse(String(message.getBody()));
+      expect(message1).toMatchObject({ messageId: expect.any(Number) });
+    }
 
-      const res = callingDmMessages(registered1.token, dm1.dmI, 0);
-      const result = JSON.parse(String(res.getBody()));
-      expect(result).toMatchObject({
-        messages: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-        start: 0,
-        end: -1,
-      })
+    const res = callingDmMessages(registered1.token, dm1.dmI, 0);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject({
+      messages: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      start: 0,
+      end: -1,
     });
+  });
 
-    test("Valid Parameters, 55 messgaes send, Start at 10", () => {
-      callingClear();
-      const auth1 = callingAuthRegister('email@email.com',
-        'password',
-        'First',
-        'Last');
-      const registered1 = JSON.parse(String(auth1.getBody()));
+  test('Valid Parameters, 55 messgaes send, Start at 10', () => {
+    callingClear();
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    const registered1 = JSON.parse(String(auth1.getBody()));
 
-      const auth2 = callingAuthRegister('email2@email.com',
-        'password2',
-        'First2',
-        'Last2');
-      const registered2 = JSON.parse(String(auth2.getBody()));
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    const registered2 = JSON.parse(String(auth2.getBody()));
 
-      const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
-      const dm1 = JSON.parse(String(dm.getBody()));
+    const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
+    const dm1 = JSON.parse(String(dm.getBody()));
 
-      for(let i = 0; i < 55; i++) {
-        const message = callingMessageSendDm(registered1.token, dm1.dmId, JSON.stringify(i));
-        const message1 = JSON.parse(String(message.getBody()));
-        expect(message1).toMatchObject({messageId: expect.any(Number)});
-      }
+    for (let i = 0; i < 55; i++) {
+      const message = callingMessageSendDm(registered1.token, dm1.dmId, JSON.stringify(i));
+      const message1 = JSON.parse(String(message.getBody()));
+      expect(message1).toMatchObject({ messageId: expect.any(Number) });
+    }
 
-      const res = callingDmMessages(registered1.token, dm1.dmI, 10);
-      const result = JSON.parse(String(res.getBody()));
-      expect(result).toMatchObject({
-        messages: [ '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
+    const res = callingDmMessages(registered1.token, dm1.dmI, 10);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toMatchObject({
+      messages: ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
         '21', '22', '23', '24', '25', '26', '27', '28', '29', '30',
         '31', '32', '33', '34', '35', '36', '37', '38', '39', '40',
         '41', '42', '43', '44', '45', '46', '47', '48', '49', '50',
         '51', '52', '53', '54'],
-        start: 0,
-        end: -1,
-      })
+      start: 0,
+      end: -1,
     });
-
-
-
+  });
 });

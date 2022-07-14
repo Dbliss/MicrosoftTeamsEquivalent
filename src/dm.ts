@@ -1,4 +1,4 @@
-import { reverse } from 'dns';
+
 import { getData, setData, dmType } from './dataStore';
 
 function dmCreate (token: string, uIds: number[]) {
@@ -253,7 +253,7 @@ function dmLeave(token: string, dmId: number) {
 }
 
 function dmMessages (token: string, dmId: number, start: number) {
-  let data = getData();
+  const data = getData();
   let validToken = 0;
   let flag = 0;
   for (let i = 0; i < data.user.length; i++) {
@@ -273,7 +273,6 @@ function dmMessages (token: string, dmId: number, start: number) {
   let isMember = 0;
   let looper = 0;
   let dmIndex = 0;
-  let memberIndex = 0;
   for (const dm of data.dm) {
     if (dm.dmId === dmId) {
       validDmId = 1;
@@ -282,7 +281,6 @@ function dmMessages (token: string, dmId: number, start: number) {
         if (member === data.user[flag].authUserId) {
           isMember = 1;
         }
-        memberIndex++;
       }
     }
     looper++;
@@ -293,24 +291,22 @@ function dmMessages (token: string, dmId: number, start: number) {
   }
 
   data.dm[dmIndex].messages.reverse();
-  let returnMessages = [];
+  const returnMessages = [];
   let end = 0;
   let returnEnd = start + 50;
-  
-  if((start + 50) > data.dm[dmIndex].messages.length) {
+
+  if ((start + 50) > data.dm[dmIndex].messages.length) {
     end = data.dm[dmIndex].messages.length;
     returnEnd = -1;
-  }
-  else {
+  } else {
     end = start + 50;
   }
 
-  for(let i = start; i < end; i++) {
+  for (let i = start; i < end; i++) {
     returnMessages.push(data.dm[dmIndex].messages[i]);
   }
 
-  return {messages: returnMessages, start: start, end: returnEnd};
-
+  return { messages: returnMessages, start: start, end: returnEnd };
 }
 
 export { dmCreate, dmList, dmRemove, dmDetails, dmLeave, dmMessages };

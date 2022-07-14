@@ -52,6 +52,23 @@ function requestChannelsCreate(token: string, name: string, isPublic: boolean) {
 }
 
 describe('channel/leave/v1', () => {
+    test('Success', () => {
+        callingClear();
+        const owner = requestAuthRegister(
+            'email@email.com',
+            'password123',
+            'first',
+            'last',
+        );
+        const tokenTest = owner.token;
+        const channelIdTest = requestChannelsCreate(
+            tokenTest,
+            'name',
+            false,
+        );
+        const bodyObj = requestChannelLeave(tokenTest, channelIdTest);
+        expect(bodyObj).toMatchObject({});
+    })
     test('Invalid token', () => {
         callingClear();
         const bodyObj = requestChannelLeave('', 1);
@@ -99,6 +116,30 @@ describe('channel/leave/v1', () => {
 });
 
 describe('channel/addowner/v1', () => {
+    test('success', () => {
+        const user = requestAuthRegister(
+            'email@email.com',
+            'password123',
+            'first',
+            'last',
+        )
+        const tokenTest = user.token;
+        const uId = user.authUserId;
+        const owner = requestAuthRegister(
+            'email1@email.com',
+            'password123',
+            'first1',
+            'last1',
+        )
+        const tokenTest1 = owner.token;
+        const channelIdTest = requestChannelsCreate(
+            tokenTest1,
+            'name',
+            false,
+        );
+        const bodyObj = requestAddOwner(tokenTest, channelIdTest, uId);
+        expect(bodyObj).toMatchObject({});
+    })
     test('invalid token', () => {
         callingClear();
         const user = requestAuthRegister(
@@ -213,6 +254,7 @@ describe('channel/addowner/v1', () => {
         expect(bodyObj).toMatchObject({ error: 'error' });
     });
     test('channelId is valid, authorised user does not have owner permissions in the channel', () => {
+        callingClear();
         const owner = requestAuthRegister(
             'email@email.com',
             'password123',
@@ -243,6 +285,42 @@ describe('channel/addowner/v1', () => {
 });
 
 describe('channel/removeowner/v1', () => {
+    test('success', () => {
+        callingClear();
+        const user = requestAuthRegister(
+            'email@email.com',
+            'password123',
+            'first',
+            'last',
+        )
+        const tokenTest = user.token;
+        const userId = user.authUserId;
+        const owner = requestAuthRegister(
+            'email1@email.com',
+            'password123',
+            'first1',
+            'last1',
+        )
+        const tokenTest1 = owner.token;
+        const userId1 = owner.authUserId;
+        const channelIdTest = requestChannelsCreate(
+            tokenTest1,
+            'name',
+            false,
+        );
+        requestAddOwner(
+            tokenTest,
+            channelIdTest,
+            userId,
+        );
+        const bodyObj = requestRemoveOwner(
+            tokenTest1,
+            -1,
+            userId1,
+        );
+        expect(bodyObj).toMatchObject({});
+
+    })
     test('invalid token', () => {
         callingClear();
         const user = requestAuthRegister(
@@ -357,6 +435,7 @@ describe('channel/removeowner/v1', () => {
         expect(bodyObj).toMatchObject({ error: 'error' });
     });
     test('channelId is valid, authorised user does not have owner permissions in the channel', () => {
+        callingClear();
         const owner = requestAuthRegister(
             'email@email.com',
             'password123',

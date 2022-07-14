@@ -1,4 +1,4 @@
-import { getData, setData, channelType, usersType } from './dataStore';
+import { getData, setData, channelType, usersType, userType } from './dataStore';
 
 type returnObjectType = {
   name: string,
@@ -18,6 +18,28 @@ type tempMembersType = {
 type errorType = {
   error: string;
 };
+
+type newMemberType = {
+  uId: number,
+  email: string,
+  nameFirst: string,
+  nameLast: string,
+  handleStr: string,
+}
+
+function extractUserDetails (user: newMemberType) {
+
+
+  const returnUser = {user: 
+  {uId: user.uId,
+  email: user.email,
+  nameFirst: user.nameFirst,
+  nameLast: user.nameLast,
+  handleStr: user.handleStr,}
+  }
+  return returnUser;
+}
+
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
 
@@ -495,14 +517,19 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
   }
 
   // add user as owner of channel
-  const newOwner = { 
-    uId: data.user[userIndex].authUserId,
+  const newOwner = {
+    authUserId: data.user[userIndex].authUserId,
     email: data.user[userIndex].email,
     nameFirst: data.user[userIndex].nameFirst,
     nameLast: data.user[userIndex].nameLast,
-    handleStr: data.user[userIndex].handle, 
+    handle: data.user[userIndex].handle,
+    password: data.user[userIndex].password,
+    channels: [...data.user[userIndex].channels],
+    permissionId: data.user[userIndex].permissionId,
+    token: [...data.user[userIndex].token],
+  };
   
-  }
+  
 
   data.channel[channelIndex].owners.push(newOwner);
   setData(data);

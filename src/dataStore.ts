@@ -34,6 +34,11 @@ type channelsType = {
   name: string,
 };
 
+type messageType = {
+  messageId: number,
+  message: string
+};
+
 // Storing channel information in data
 type channelType = {
   cId: number,
@@ -41,7 +46,7 @@ type channelType = {
   isPublic: boolean,
   owners: userType[],
   members: userType[],
-  messages: string[],
+  messages: messageType[],
 };
 
 type dataType = {
@@ -81,4 +86,4 @@ function setData(newData: dataType) {
   data = newData;
 }
 
-export { getData, setData, dataType, userType, channelType, channelsType, usersType };
+export { getData, setData, dataType, userType, channelType, channelsType, usersType, messageType };

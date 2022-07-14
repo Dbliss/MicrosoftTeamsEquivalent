@@ -214,7 +214,7 @@ function channelJoinV1 (authUserId: number, channelId: number) {
 // Returns <{error: error}> when uId refers to a user who is already a member of the channel
 // Returns <{error: error}> on authorised user is not a member of the channel
 
-function channelInviteV1(authUserId: number, channelId: number, uId: number) {
+function channelInviteV2(token: string, channelId: number, uId: number) {
   // getting the dataset
   const data = getData();
 
@@ -249,26 +249,19 @@ function channelInviteV1(authUserId: number, channelId: number, uId: number) {
   }
 
   // checking that the uId isnt already in the channel
-  // if (currentChannel.members.includes(uId) === true) {
-  //  return { error: 'error' };
-  // }
   let flag = 0;
-  // for (let i = 0; i < currentChannel.members.length; i++) {
   for (const member of currentChannel.members) {
     if (member.authUserId === uId) {
       return { error: 'error' };
     }
-
-    if (member.authUserId === authUserId) {
-      flag = 1;
+    for (const tokenn of member.token) {
+      if (tokenn === token) {
+        flag = 1;
+      }
     }
   }
-  // }
 
-  // checking the authUserId is apart of the channel
-  // if (currentChannel.members.includes(authUserId) === false) {
-  //  return { error: 'error' };
-  // }
+  // checking the user with token is apart of the channel
   if (flag === 0) {
     return { error: 'error' };
   }
@@ -313,7 +306,7 @@ function channelInviteV1(authUserId: number, channelId: number, uId: number) {
 // Returns <{error: error}> start is greater than the total number of messages in the channel
 // Returns <{error: error}> on authorised user is not a member of the channel
 
-function channelMessagesV1 (authUserId: number, channelId: number, start: number) {
+function channelMessagesV2 (token: string, channelId: number, start: number) {
   // getting the dataset
   const data = getData();
 
@@ -334,7 +327,7 @@ function channelMessagesV1 (authUserId: number, channelId: number, start: number
     }
   }
 
-  // checking valid inputted channelId and uId
+  // checking valid inputted channelId
   if (validChannel === false) {
     return { error: 'error' };
   }
@@ -344,22 +337,16 @@ function channelMessagesV1 (authUserId: number, channelId: number, start: number
     return { error: 'error' };
   }
 
-  // checking the authUserId is a member of the channel
-  let flag = false;
-  for (const user of data.user) {
-    if (user.authUserId === authUserId) {
-      /* if (user.channels.includes(channelId) === false) {
-                return {error: 'error'};
-            } */
-
-      for (const channel of user.channels) {
-        if (channel.cId === channelId) {
-          flag = true;
-        }
+  // checking the user with token is apart of the channel
+  let flag = 0;
+  for (const member of currentChannel.members) {
+    for (const tokenn of member.token) {
+      if (tokenn === token) {
+        flag = 1;
       }
     }
   }
-  if (flag === false) {
+  if (flag === 0) {
     return { error: 'error' };
   }
 
@@ -378,4 +365,4 @@ function channelMessagesV1 (authUserId: number, channelId: number, start: number
   return { messages, start, end };
 }
 
-export { channelDetailsV1, channelJoinV1, channelInviteV1, channelMessagesV1 };
+export { channelDetailsV1, channelJoinV1, channelInviteV2, channelMessagesV2 };

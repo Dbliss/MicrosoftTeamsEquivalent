@@ -8,7 +8,7 @@ const port = config.port;
 function callingChannelsCreate (token: string, name: string, isPublic: boolean) {
   const res = request(
     'POST',
-        `${url}:${port}/channels/create/v2`,
+        `${url}:${port}/channels/create/v1`,
         {
           body: JSON.stringify({
             token: token,

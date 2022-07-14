@@ -20,6 +20,7 @@ type storeChannelsType = {
 function channelsCreateV1(token: string, name: string, isPublic: boolean) {
   const data = getData();
 
+  // Checking if token is valid and taking out the userId of the user
   let validToken = 0;
   let flag = 0;
   for (let i = 0; i < data.user.length; i++) {
@@ -31,11 +32,12 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
     }
   }
 
-  // Returns error message when authUserId or name is invalid
+  // Returns error message when token or name is invalid
   if (validToken === 0 || name.length < 1 || name.length > 20) {
     return { error: 'error' };
   }
 
+  // New channel to be saved in data
   const newChannel: channelType = {
     cId: Math.floor(Math.random() * Date.now()),
     name: name,
@@ -46,6 +48,7 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
   };
 
   data.channel.push(newChannel);
+  // Saving channel information of the channel user is part of in the user data 
   const pushObject = {
     cId: newChannel.cId,
     channelPermissionsId: 1
@@ -73,6 +76,7 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
 function channelsListV1(token: string) {
   const data = getData();
 
+  // Checking if token is valid and taking out the userId of the user
   let validToken = 0;
   let flag = 0;
   for (let i = 0; i < data.user.length; i++) {
@@ -84,12 +88,14 @@ function channelsListV1(token: string) {
     }
   }
 
+  // return empty channel if the token is invalid
   if (validToken === 0) {
     return {
       channels: []
     };
   }
 
+  // Loop through the channels and save the ones user is part of in an array
   const storeChannels:storeChannelsType = { channels: [] };
   for (let j = 0; j < data.user[flag].channels.length; j++) {
     const channelId = data.user[flag].channels[j].cId;
@@ -122,6 +128,7 @@ function channelsListV1(token: string) {
 function channelsListallV1(token: string) {
   const data = getData();
 
+  // Checking if token is valid and taking out the userId of the user
   let validToken = 0;
   for (let i = 0; i < data.user.length; i++) {
     for (const tokens of data.user[i].token) {
@@ -137,8 +144,8 @@ function channelsListallV1(token: string) {
     };
   }
 
+  // Loop though data to store all the channels in a array
   const storeChannels: storeChannelsType = { channels: [] };
-
   for (let j = 0; j < data.channel.length; j++) {
     storeChannels.channels.push({
       channelId: data.channel[j].cId,

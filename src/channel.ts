@@ -321,21 +321,22 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
 
   // checking the channelId is valid and setting currentChannel to the valid channel
   let validChannel = false;
-  for (let i = 0; i < data.channel.length; i++){
-    if (data.channel[i].cId === channelId){
+  for (let channel of data.channel){
+    if (channel.cId === channelId){
       validChannel = true;
-      currentChannel = data.channel[i];
+      currentChannel = channel;
     }
   }
-  let x = data.channel[0].cId;
+
+
   // checking valid inputted channelId
   if (validChannel === false) {
-    return { channelId };
+    return { error: 'error' };
   }
   
   // checking that start is not greater than the total number of messages in the channel
   if (currentChannel.messages.length < start) {
-    return { error: 'error3' };
+    return { error: 'error' };
   }
 
 
@@ -349,7 +350,7 @@ for (const member of currentChannel.members) {
   }
 }
 if (flag === 0) {
-  return { error: 'error4' };
+  return { error: 'error' };
 }
 
   let j = 0;

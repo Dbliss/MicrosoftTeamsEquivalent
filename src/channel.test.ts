@@ -35,13 +35,13 @@ function callingClear () {
 }
 
 
-function callingChannelsCreate (authUserId: number, name: string, isPublic: boolean) {
+function callingChannelsCreate (token: string, name: string, isPublic: boolean) {
   const res = request(
     'POST',
         `${url}:${port}/channels/create/v2`,
         {
           body: JSON.stringify({
-            authUserId: authUserId,
+            token: token,
             name: name,
             isPublic: isPublic
           }),
@@ -114,7 +114,7 @@ describe('Testing channelDetailsV1', () => {
       'First',
       'Last');
 
-    const channelId = channelsCreateV1(authUser.token, 'name', true);
+    const channelId = channelsCreateV2(authUser.token, 'name', true);
     const result = channelDetailsV1(authUser.authUserId, channelId.channelId);
     expect(result).toMatchObject({
       name: 'name',
@@ -148,7 +148,7 @@ describe('Testing channelDetailsV1', () => {
       'First1',
       'Last1');
 
-    const channelId = channelsCreateV1(authUser.token, 'name', true);
+    const channelId = channelsCreateV2(authUser.token, 'name', true);
 
     channelJoinV1(authUser1.authUserId, channelId.channelId);
 
@@ -187,7 +187,7 @@ describe('Testing channelDetailsV1', () => {
       'First',
       'Last');
 
-    channelsCreateV1(authUser.token, 'name', true);
+    channelsCreateV2(authUser.token, 'name', true);
 
     const result = channelDetailsV1(-9999, -9999);
     expect(result).toMatchObject({ error: 'error' });
@@ -213,7 +213,7 @@ describe('Testing channelDetailsV1', () => {
       'First',
       'Last');
 
-    const channelId = channelsCreateV1(authUser.token, 'name', true);
+    const channelId = channelsCreateV2(authUser.token, 'name', true);
 
     const userId = -9999;
 
@@ -223,7 +223,7 @@ describe('Testing channelDetailsV1', () => {
 
   test('channelId is valid but authUserId is not a member of the channel', () => {
     clearV1();
-    const authUser1 = authRegisterV1('email@email.com',
+    const authUser1 = authRegisterV1('email@email.com', 
       'password',
       'First',
       'Last');
@@ -233,7 +233,7 @@ describe('Testing channelDetailsV1', () => {
       'First2',
       'Last2');
 
-    const channelId = channelsCreateV1(authUser1.token, 'name', true);
+    const channelId = channelsCreateV2(authUser1.token, 'name', true);
 
     const result = channelDetailsV1(authUser2.authUserId, channelId.channelId);
     expect(result).toMatchObject({ error: 'error' });
@@ -248,7 +248,7 @@ describe('Testing channelJoinV1', () => {
       'First',
       'Last');
 
-    const channelId = channelsCreateV1(authUser.token, 'name', true);
+    const channelId = channelsCreateV2(authUser.token, 'name', true);
 
     const result = channelJoinV1(authUser.authUserId, channelId.channelId);
     expect(result).toMatchObject({ error: 'error' });
@@ -284,7 +284,7 @@ describe('Testing channelJoinV1', () => {
       handleStr: 'first1last1',
     };
     */
-    const channelId = channelsCreateV1(authUser1.token, 'name', true);
+    const channelId = channelsCreateV2(authUser1.token, 'name', true);
 
     channelDetailsV1(authUser1.authUserId, channelId.channelId);
     // expect(chDetails['allMembers']).toContainEqual(expected1);
@@ -308,7 +308,7 @@ describe('Testing channelJoinV1', () => {
       'First1',
       'Last1');
 
-    const channelId = channelsCreateV1(authUser.token, 'name', false);
+    const channelId = channelsCreateV2(authUser.token, 'name', false);
 
     const result = channelJoinV1(authUser.authUserId, channelId.channelId);
     expect(result).toMatchObject({ error: 'error' });
@@ -326,7 +326,7 @@ describe('Testing channelJoinV1', () => {
       'First1',
       'Last1');
 
-    const channelId = channelsCreateV1(globalMember.token, 'name', false);
+    const channelId = channelsCreateV2(globalMember.token, 'name', false);
 
     const result = channelJoinV1(globalOwner.authUserId, channelId.channelId);
     expect(result).toMatchObject({});
@@ -361,7 +361,7 @@ describe('Testing channelInvite1', () => {
     expect (res1.statusCode).toBe(OK);
     const bodyObj1 = JSON.parse(res1.body as string);
 
-    const res2 = callingChannelsCreate(bodyObj1.authUserId, 'channel1', true);
+    const res2 = callingChannelsCreate(bodyObj1.token, 'channel1', true);
     expect (res2.statusCode).toBe(OK);
     const bodyObj2 = JSON.parse(res2.body as string);
     const res3 = callingChannelInvite(bodyObj1.token, -31231451, bodyObj1.authUserId);
@@ -371,7 +371,7 @@ describe('Testing channelInvite1', () => {
     expect(bodyObj3).toMatchObject({ error: 'error' });
   });
 
-  test('ChannelId is valid and the token user is not a member of the channel', () => {
+  test('channelId is valid and the token user is not a member of the channel', () => {
     const res = callingClear();
     expect (res.statusCode).toBe(OK);
 
@@ -387,7 +387,7 @@ describe('Testing channelInvite1', () => {
     expect (res3.statusCode).toBe(OK);
     const user3 = JSON.parse(res3.body as string);
 
-    const res4 = callingChannelsCreate(user1.authUserId, 'channel1', true);
+    const res4 = callingChannelsCreate(user1.token, 'channel1', true);
     expect (res4.statusCode).toBe(OK);
     const channel1 = JSON.parse(res4.body as string);
 
@@ -410,7 +410,7 @@ describe('Testing channelInvite1', () => {
     expect (res2.statusCode).toBe(OK);
     const user2 = JSON.parse(res2.body as string);
 
-    const res3 = callingChannelsCreate(user1.authUserId, 'channel1', true);
+    const res3 = callingChannelsCreate(user1.token, 'channel1', true);
     expect (res3.statusCode).toBe(OK);
     const channel1 = JSON.parse(res3.body as string);
 
@@ -446,7 +446,7 @@ describe('Testing channelMessages1', () => {
     expect (res1.statusCode).toBe(OK);
     const user1 = JSON.parse(res1.body as string);
 
-    const res3 = callingChannelsCreate(user1.authUserId, 'channel1', true);
+    const res3 = callingChannelsCreate(user1.token, 'channel1', true);
     expect (res3.statusCode).toBe(OK);
     const channel1 = JSON.parse(res3.body as string);
 
@@ -457,7 +457,7 @@ describe('Testing channelMessages1', () => {
     expect(bodyObj5).toMatchObject({ error: 'error' });
   });
 
-  test('ChannelId is valid and the authorised user is not a member of the channel', () => {
+  test('channelId is valid and the authorised user is not a member of the channel', () => {
     const res = callingClear();
     expect (res.statusCode).toBe(OK);
 
@@ -469,7 +469,7 @@ describe('Testing channelMessages1', () => {
     expect (res2.statusCode).toBe(OK);
     const user2 = JSON.parse(res2.body as string);
 
-    const res3 = callingChannelsCreate(user1.authUserId, 'channel1', true);
+    const res3 = callingChannelsCreate(user1.token, 'channel1', true);
     expect (res3.statusCode).toBe(OK);
     const channel1 = JSON.parse(res3.body as string);
 
@@ -488,16 +488,13 @@ describe('Testing channelMessages1', () => {
     expect (res1.statusCode).toBe(OK);
     const user1 = JSON.parse(res1.body as string);
 
-    const res3 = callingChannelsCreate(user1.authUserId, 'channel1', true);
+    const res3 = callingChannelsCreate(user1.token, 'channel1', true);
     expect (res3.statusCode).toBe(OK);
     const channel1 = JSON.parse(res3.body as string);
 
     const res5 = callingChannelMessages(user1.token, channel1.channelId, 0);
     expect (res5.statusCode).toBe(OK);
     const bodyObj5 = JSON.parse(res5.body as string);
-
-    console.log(channel1.channelId);
-    console.log(user1);
 
     expect(bodyObj5).toEqual({ messages: [], start: 0, end: -1 });
   });

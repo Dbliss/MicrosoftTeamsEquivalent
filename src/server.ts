@@ -9,7 +9,6 @@ import { channelsCreateV2 } from './channels';
 import { clearV1 } from './other';
 
 import {
-  channelsCreateV1,
   channelsListV1,
   channelsListallV1,
 } from './channels';
@@ -51,14 +50,6 @@ app.post('/auth/login/v2', (req, res, next) => {
   }
 });
 
-app.post('/channels/create/v2', (req, res, next) => {
-  try {
-    const { authUserId, name, isPublic } = req.body;
-    return res.json(channelsCreateV2(authUserId, name, isPublic));
-  } catch (err) {
-    next(err);
-  }
-});
 
 app.post('/channel/invite/v2', (req, res, next) => {
   try {
@@ -69,10 +60,14 @@ app.post('/channel/invite/v2', (req, res, next) => {
   }
 });
 
+
 app.get('/channel/messages/v2', (req, res, next) => {
   try {
-    const { token, channelId, start } = req.body;
-    return res.json(channelMessagesV2(token, channelId, start));
+    const token = req.query.token as string;
+    const channelId = req.query.channelId;
+
+    const start = req.query.start;
+    return res.json(channelMessagesV2(token, Number(channelId), Number(start)));
   } catch (err) {
     next(err);
   }
@@ -88,7 +83,7 @@ app.delete('/clear/v1', (req, res, next) => {
 
 app.post('/channels/create/v2', (req, res, next) => {
   const { token, name, isPublic } = req.body;
-  const cId = channelsCreateV1(token, name, isPublic);
+  const cId = channelsCreateV2(token, name, isPublic);
   res.json(cId);
 });
 

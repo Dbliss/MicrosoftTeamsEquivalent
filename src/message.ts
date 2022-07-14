@@ -27,7 +27,7 @@ function messageSendV1(token: string, channelId: number, message: string) {
 
 function messageEditV1(token: string, channelId: number, message: string) {
     
-    return { messageId };
+    return {};
 }
 
 

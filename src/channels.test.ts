@@ -2,7 +2,7 @@
 
 // Importing functions from channels.js file
 import {
-  channelsCreateV2,
+  channelsCreateV1,
   channelsListV1,
   channelsListallV1,
 } from './channels';
@@ -15,7 +15,7 @@ import {
   clearV1,
 } from './other';
 
-describe('Testing channelsCreateV2', () => {
+describe('Testing channelsCreateV1', () => {
   test('Name length < 1', () => {
     clearV1();
     const authUserId = authRegisterV1('email@email.com',
@@ -23,7 +23,7 @@ describe('Testing channelsCreateV2', () => {
       'First',
       'Last');
 
-    const result = channelsCreateV2(authUserId.token, '', false);
+    const result = channelsCreateV1(authUserId.token, '', false);
     expect(result).toMatchObject({ error: 'error' });
   });
 
@@ -34,7 +34,7 @@ describe('Testing channelsCreateV2', () => {
       'First',
       'Last');
 
-    const result = channelsCreateV2(authUserId.token,
+    const result = channelsCreateV1(authUserId.token,
       'abcdefghijklmnopqrstuv',
       false);
 
@@ -48,7 +48,7 @@ describe('Testing channelsCreateV2', () => {
       'First',
       'Last');
 
-    const result = channelsCreateV2(authUserId.token,
+    const result = channelsCreateV1(authUserId.token,
       'name',
       false);
 
@@ -62,7 +62,7 @@ describe('Testing channelsCreateV2', () => {
       'First',
       'Last');
 
-    const result = channelsCreateV2('-9999',
+    const result = channelsCreateV1('-9999',
       'name',
       false);
 
@@ -78,11 +78,11 @@ describe('Testing channelsListV1', () => {
       'First',
       'Last');
 
-    const channelId1 = channelsCreateV2(authUserId.token,
+    const channelId1 = channelsCreateV1(authUserId.token,
       'name1',
       false);
 
-    const channelId2 = channelsCreateV2(authUserId.token,
+    const channelId2 = channelsCreateV1(authUserId.token,
       'name2',
       true);
 
@@ -111,11 +111,11 @@ describe('Testing channelsListV1', () => {
       'First2',
       'Last2');
 
-    channelsCreateV2(authUserId1.token,
+    channelsCreateV1(authUserId1.token,
       'name1',
       false);
 
-    const channelId2 = channelsCreateV2(authUserId2.token,
+    const channelId2 = channelsCreateV1(authUserId2.token,
       'name2',
       true);
 
@@ -140,11 +140,11 @@ describe('Testing channelsListV1', () => {
       'First2',
       'Last2');
 
-    channelsCreateV2(authUserId1.token,
+    channelsCreateV1(authUserId1.token,
       'name1',
       false);
 
-    channelsCreateV2(authUserId1.token,
+    channelsCreateV1(authUserId1.token,
       'name2',
       true);
 
@@ -159,7 +159,7 @@ describe('Testing channelsListV1', () => {
       'First',
       'Last');
 
-    channelsCreateV2(authUserId1.token,
+    channelsCreateV1(authUserId1.token,
       'name1',
       false);
 
@@ -176,11 +176,11 @@ describe('Testing channelsListallV1', () => {
       'First',
       'Last');
 
-    const channelId1 = channelsCreateV2(authUserId.token,
+    const channelId1 = channelsCreateV1(authUserId.token,
       'name1',
       false);
 
-    const channelId2 = channelsCreateV2(authUserId.token,
+    const channelId2 = channelsCreateV1(authUserId.token,
       'name2',
       true);
 
@@ -209,11 +209,11 @@ describe('Testing channelsListallV1', () => {
       'First2',
       'Last2');
 
-    const channelId1 = channelsCreateV2(authUserId1.token,
+    const channelId1 = channelsCreateV1(authUserId1.token,
       'name1',
       false);
 
-    const channelId2 = channelsCreateV2(authUserId2.token,
+    const channelId2 = channelsCreateV1(authUserId2.token,
       'name2',
       true);
 
@@ -242,11 +242,11 @@ describe('Testing channelsListallV1', () => {
       'First2',
       'Last2');
 
-    const channelId1 = channelsCreateV2(authUserId1.token,
+    const channelId1 = channelsCreateV1(authUserId1.token,
       'name1',
       false);
 
-    const channelId2 = channelsCreateV2(authUserId1.token,
+    const channelId2 = channelsCreateV1(authUserId1.token,
       'name2',
       true);
 
@@ -270,7 +270,7 @@ describe('Testing channelsListallV1', () => {
       'First',
       'Last');
 
-    channelsCreateV2(authUserId1.token,
+    channelsCreateV1(authUserId1.token,
       'name1',
       false);
 

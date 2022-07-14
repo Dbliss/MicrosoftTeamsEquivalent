@@ -11,7 +11,7 @@ import {
 // importing other essential functions used in channel
 
 import {
-  channelsCreateV2,
+  channelsCreateV1,
 } from './channels';
 
 import {
@@ -36,7 +36,7 @@ function callingClear () {
 function callingChannelsCreate (token: string, name: string, isPublic: boolean) {
   const res = request(
     'POST',
-        `${url}:${port}/channels/create/v2`,
+        `${url}:${port}/channels/create/v1`,
         {
           body: JSON.stringify({
             token: token,
@@ -102,89 +102,6 @@ function callingChannelMessages (token:string, channelId: number, start: number)
   );
   return res;
 }
-
-const OK = 200;
-const port = config.port;
-const url = config.url;
-
-function callingClear () {
-  const res = request(
-    'DELETE',
-  `${url}:${port}/clear/V1`);
-  return res;
-}
-
-
-function callingChannelsCreate (token: string, name: string, isPublic: boolean) {
-  const res = request(
-    'POST',
-        `${url}:${port}/channels/create/v2`,
-        {
-          body: JSON.stringify({
-            token: token,
-            name: name,
-            isPublic: isPublic
-          }),
-          headers: {
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
-
-function callingAuthRegister (email: string, password: string, nameFirst: string, nameLast: string) {
-  const res = request(
-    'POST',
-        `${url}:${port}/auth/register/v2`,
-        {
-          body: JSON.stringify({
-            email: email,
-            password: password,
-            nameFirst: nameFirst,
-            nameLast: nameLast
-          }),
-          headers: {
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
-
-function callingChannelInvite (token:string, channelId: number, uId: number) {
-  const res = request(
-    'POST',
-        `${url}:${port}/channel/invite/v2`,
-        {
-          body: JSON.stringify({
-            token: token,
-            channelId: channelId,
-            uId: uId,
-          }),
-          headers: {
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
-
-function callingChannelMessages (token:string, channelId: number, start: number) {
-  const res = request(
-    'GET',
-        `${url}:${port}/channel/messages/v2`,
-        {
-          qs: {
-            token: token,
-            channelId: channelId,
-            start: start,
-          }
-        }
-  );
-  return res;
-}
-
 
 describe('Testing channelDetailsV1', () => {
   test('Testing successful return of channelDetailsV1', () => {
@@ -194,7 +111,7 @@ describe('Testing channelDetailsV1', () => {
       'First',
       'Last');
 
-    const channelId = channelsCreateV2(authUser.token, 'name', true);
+    const channelId = channelsCreateV1(authUser.token, 'name', true);
     const result = channelDetailsV1(authUser.authUserId, channelId.channelId);
     expect(result).toMatchObject({
       name: 'name',
@@ -228,7 +145,7 @@ describe('Testing channelDetailsV1', () => {
       'First1',
       'Last1');
 
-    const channelId = channelsCreateV2(authUser.token, 'name', true);
+    const channelId = channelsCreateV1(authUser.token, 'name', true);
 
     channelJoinV1(authUser1.authUserId, channelId.channelId);
 
@@ -267,7 +184,7 @@ describe('Testing channelDetailsV1', () => {
       'First',
       'Last');
 
-    channelsCreateV2(authUser.token, 'name', true);
+    channelsCreateV1(authUser.token, 'name', true);
 
     const result = channelDetailsV1(-9999, -9999);
     expect(result).toMatchObject({ error: 'error' });
@@ -293,7 +210,7 @@ describe('Testing channelDetailsV1', () => {
       'First',
       'Last');
 
-    const channelId = channelsCreateV2(authUser.token, 'name', true);
+    const channelId = channelsCreateV1(authUser.token, 'name', true);
 
     const userId = -9999;
 
@@ -303,7 +220,7 @@ describe('Testing channelDetailsV1', () => {
 
   test('channelId is valid but authUserId is not a member of the channel', () => {
     clearV1();
-    const authUser1 = authRegisterV1('email@email.com', 
+    const authUser1 = authRegisterV1('email@email.com',
       'password',
       'First',
       'Last');
@@ -313,7 +230,7 @@ describe('Testing channelDetailsV1', () => {
       'First2',
       'Last2');
 
-    const channelId = channelsCreateV2(authUser1.token, 'name', true);
+    const channelId = channelsCreateV1(authUser1.token, 'name', true);
 
     const result = channelDetailsV1(authUser2.authUserId, channelId.channelId);
     expect(result).toMatchObject({ error: 'error' });
@@ -328,7 +245,7 @@ describe('Testing channelJoinV1', () => {
       'First',
       'Last');
 
-    const channelId = channelsCreateV2(authUser.token, 'name', true);
+    const channelId = channelsCreateV1(authUser.token, 'name', true);
 
     const result = channelJoinV1(authUser.authUserId, channelId.channelId);
     expect(result).toMatchObject({ error: 'error' });
@@ -364,7 +281,7 @@ describe('Testing channelJoinV1', () => {
       handleStr: 'first1last1',
     };
     */
-    const channelId = channelsCreateV2(authUser1.token, 'name', true);
+    const channelId = channelsCreateV1(authUser1.token, 'name', true);
 
     channelDetailsV1(authUser1.authUserId, channelId.channelId);
     // expect(chDetails['allMembers']).toContainEqual(expected1);
@@ -388,7 +305,7 @@ describe('Testing channelJoinV1', () => {
       'First1',
       'Last1');
 
-    const channelId = channelsCreateV2(authUser.token, 'name', false);
+    const channelId = channelsCreateV1(authUser.token, 'name', false);
 
     const result = channelJoinV1(authUser.authUserId, channelId.channelId);
     expect(result).toMatchObject({ error: 'error' });
@@ -406,7 +323,7 @@ describe('Testing channelJoinV1', () => {
       'First1',
       'Last1');
 
-    const channelId = channelsCreateV2(globalMember.token, 'name', false);
+    const channelId = channelsCreateV1(globalMember.token, 'name', false);
 
     const result = channelJoinV1(globalOwner.authUserId, channelId.channelId);
     expect(result).toMatchObject({});
@@ -578,6 +495,4 @@ describe('Testing channelMessages1', () => {
 
     expect(bodyObj5).toEqual({ messages: [], start: 0, end: -1 });
   });
-
 });
-

@@ -1,3 +1,4 @@
+/**
 import { getData, setData, channelType, usersType } from './dataStore';
 
 type returnObjectType = {
@@ -20,18 +21,15 @@ type errorType = {
 };
 
 function messageSendV1(token: string, channelId: number, message: string) {
-    let messageId = 0;
-    return { messageId };
+  const messageId = 0;
+  return { messageId };
 }
-
 
 function messageEditV1(token: string, channelId: number, message: string) {
-    
-    return {};
+  return {};
 }
-
 
 function messageRemoveV1(token: string, messageId: number) {
-    
-    return {};
+  return {};
 }
+*/

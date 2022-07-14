@@ -321,8 +321,8 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
 
   // checking the channelId is valid and setting currentChannel to the valid channel
   let validChannel = false;
-  for (let channel of data.channel){
-    if (channel.cId === channelId){
+  for (const channel of data.channel) {
+    if (channel.cId === channelId) {
       validChannel = true;
       currentChannel = channel;
     }
@@ -332,7 +332,7 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
   if (validChannel === false) {
     return { error: 'error' };
   }
-  
+
   // checking that start is not greater than the total number of messages in the channel
   if (currentChannel.messages.length < start) {
     return { error: 'error' };

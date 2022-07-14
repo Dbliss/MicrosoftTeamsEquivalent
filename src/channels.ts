@@ -17,7 +17,7 @@ type storeChannelsType = {
 // Returns {error: 'error'} on invalid authUserId - Being authUserId does not exist
 // Returns {error: 'error'} on invalid name - name must be in between 1 and 20 characters inclusive
 
-function channelsCreateV2(token: string, name: string, isPublic: boolean) {
+function channelsCreateV1(token: string, name: string, isPublic: boolean) {
   const data = getData();
   let authUserId = -1;
   for (const user of data.user) {
@@ -172,4 +172,4 @@ function channelsListallV1(token: string) {
   return storeChannels;
 }
 
-export { channelsCreateV2, channelsListV1, channelsListallV1 };
+export { channelsCreateV1, channelsListV1, channelsListallV1 };

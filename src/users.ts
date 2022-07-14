@@ -118,7 +118,7 @@ function updateUserInfo(data, channels, user) { // need to typescript channels a
 function usersAllV1 (token: string) {
   const data = getData();
   // Checks if the token exists and returns the index of the user which has that token,
-  // if noy found then returns -1
+  // if not found then returns -1
   const tokenIndex = data.user.findIndex(object => {
     for (const tokenElem of object.token) {
         if(tokenElem === token) {

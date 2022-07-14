@@ -88,61 +88,82 @@ app.post('/auth/logout/v1', (req, res, next) => {
 
 //WRAPPING CHANNEL FUNCTIONS - channelDetailsV1 (GET) and channelJoinV1 (POST)
 
-app.get('/channel/details/v2', (req, res) => { 
-  const token = req.query.token;
-  const channelId = req.query.channelId;
-  console.log(token);
-  return res.json(channelDetailsV1(String(token), Number(channelId))); 
+app.get('/channel/details/v2', (req, res, next) => {
+  try {
+    const token = req.query.token;
+    const channelId = req.query.channelId;
+    return res.json(channelDetailsV1(String(token), Number(channelId)));
+  } catch (err) {
+    next(err);
+  } 
+   
                                                                            
 });
 
-app.post('/channel/join/v2', (req, res) => {
-  const {token, channelId} = req.body;
-  return res.json(channelJoinV1(String(token), Number(channelId)));
+app.post('/channel/join/v2', (req, res, next) => {
+  try {
+    const {token, channelId} = req.body;
+    return res.json(channelJoinV1(token, channelId));
+  } catch (err) {
+    next(err);
+  }
+  
 
    
 });
 
-//WRAPPING USERS FUNCTIONS - userProfileV1 (GET), user/profile/setname/v1 (PUT), user/profile/setemail/v1 (PUT),
-// user/profile/sethandle/v1 (PUT), users/all/v1 (GET)
 
-app.get('/user/profile/v2', (req, res/*, next*/) => { //what is this next thing in the get request?
-  const token = req.query.token;
-  const uId = req.query.uId;
-  return res.json(userProfileV1(String(token), Number(uId))); //might need to change input
-                                                                           // to take in tokens not numbers
+app.get('/user/profile/v2', (req, res, next) => {
+  try {
+    const token = req.query.token;
+    const uId = req.query.uId;
+    return res.json(userProfileV1(String(token), Number(uId)));
+  } catch (err) {
+    next(err);
+  }
+
 });
 
-app.get('/users/all/v1', (req, res/*, next*/) => { //what is this next thing in the get request?
-  const token = req.query.token;
-  return res.json(usersAllV1(String(token))); //might need to change input
-                                                                           // to take in tokens not numbers
+app.get('/users/all/v1', (req, res, next) => { 
+  try {
+    const token = req.query.token;
+    return res.json(usersAllV1(String(token)));
+  } catch (err) {
+    next(err);
+  }
+
 });
 
-app.put('/user/profile/setname/v1', (req, res) => {
-
-  const { token, nameFirst, nameLast } = req.body
+app.put('/user/profile/setname/v1', (req, res, next) => {
+  try {
+    const { token, nameFirst, nameLast } = req.body
   
-  return res.json(userProfileSetNameV1(String(token),String(nameFirst), String(nameLast)));
+    return res.json(userProfileSetNameV1(token, nameFirst, nameLast));
+  } catch (err) {
+    next(err);
+  }
+  
 });
 
-app.put('/user/profile/setemail/v1', (req, res) => {
-
-  const { token, email } = req.body
-  return res.json(userProfileSetEmailV1(String(token), String(email)));
+app.put('/user/profile/setemail/v1', (req, res, next) => {
+  try {
+    const { token, email } = req.body
+    return res.json(userProfileSetEmailV1(token, email));
+  } catch (err) {
+    next(err);
+  }
+  
 });
 
-app.put('/user/profile/sethandle/v1', (req, res) => {
-
-  const { token, handleStr } = req.body  
-  return res.json(userProfileSetHandleV1(String(token), String(handleStr)));
+app.put('/user/profile/sethandle/v1', (req, res, next) => {
+  try {
+    const { token, handleStr } = req.body  
+    return res.json(userProfileSetHandleV1(token, handleStr));
+  } catch (err) {
+    next(err);
+  }
+  
 });
-
-
-
-
-
-
 
 
 // for logging errors

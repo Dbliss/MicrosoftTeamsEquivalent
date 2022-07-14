@@ -157,7 +157,7 @@ describe('HTTP tests for channelDetailsV2', () => {
     
         const res = callingChannelDetails(authorised.token, channelId.channelId);
         const result = JSON.parse(String(res.getBody()));
-        expect(result.statusCode).toBe(OK);
+
         expect(result).toMatchObject({
           name: 'name',
           isPublic: true,
@@ -266,13 +266,13 @@ describe('Testing channelJoinV1', () => {
         const authUser = JSON.parse(String(callingAuthRegister('email@email.com',
           'password',
           'First',
-          'Last'))).getBody();
+          'Last').getBody()));
     
         const authUser1 = JSON.parse(String(callingAuthRegister('email1@email.com',
           'password1',
           'First1',
           'Last1'
-        ))).getBody();
+        ).getBody()));
     
         
         const expected = {
@@ -291,16 +291,16 @@ describe('Testing channelJoinV1', () => {
           handleStr: 'first1last1',
         };
         
-        const channelId = JSON.parse(String(callingChannelsCreate(authUser1.token, 'name', true))).getBody();
+        const channelId = JSON.parse(String(callingChannelsCreate(authUser1.token, 'name', true).getBody()));
     
-        const chDetails = JSON.parse(String(callingChannelDetails(authUser1.token, channelId.channelId))).getBody();
+        const chDetails = JSON.parse(String(callingChannelDetails(authUser1.token, channelId.channelId).getBody()));
         expect(chDetails['allMembers']).toContainEqual(expected1);
         expect(chDetails['allMembers']).not.toContainEqual(expected);
     
-        const result = JSON.parse(String(callingChannelJoin(authUser.token, channelId.channelId))).getBody();
+        const result = JSON.parse(String(callingChannelJoin(authUser.token, channelId.channelId).getBody()));
         expect(result).toMatchObject({});
 
-        const chDetails1 = JSON.parse(String(callingChannelDetails(authUser1.token, channelId.channelId))).getBody();
+        const chDetails1 = JSON.parse(String(callingChannelDetails(authUser1.token, channelId.channelId).getBody()));
         expect(chDetails1['allMembers']).toContainEqual(expected);
       });
     
@@ -310,16 +310,16 @@ describe('Testing channelJoinV1', () => {
       const authUser = JSON.parse(String(callingAuthRegister('email@email.com',
         'password',
         'First',
-        'Last'))).getBody();
+        'Last').getBody()));
 
       const authUser1 = JSON.parse(String(callingAuthRegister('email1@email.com',
         'password1',
         'First1',
-        'Last1'))).getBody();
+        'Last1').getBody()));
 
-      const channelId = JSON.parse(String(callingChannelsCreate(authUser.token, 'name', false))).getBody();
+      const channelId = JSON.parse(String(callingChannelsCreate(authUser.token, 'name', false).getBody()));
 
-      const result = JSON.parse(String(callingChannelJoin(authUser1.token, channelId.channelId))).getBody();
+      const result = JSON.parse(String(callingChannelJoin(authUser1.token, channelId.channelId).getBody()));
       expect(result).toMatchObject({ error: 'error' });
     });
 
@@ -328,16 +328,16 @@ describe('Testing channelJoinV1', () => {
       const globalOwner = JSON.parse(String(callingAuthRegister('email@email.com',
         'password',
         'First',
-        'Last'))).getBody();
+        'Last').getBody()));
   
       const globalMember = JSON.parse(String(callingAuthRegister('email1@email.com',
         'password1',
         'First1',
-        'Last1'))).getBody();
+        'Last1').getBody()));
   
-      const channelId = JSON.parse(String(callingChannelsCreate(globalMember.authUserId, 'name', false))).getBody();
+      const channelId = JSON.parse(String(callingChannelsCreate(globalMember.authUserId, 'name', false).getBody()));
   
-      const result = JSON.parse(String(callingChannelJoin(globalOwner.token, channelId.channelId))).getBody();
+      const result = JSON.parse(String(callingChannelJoin(globalOwner.token, channelId.channelId).getBody()));
       expect(result).toMatchObject({});
     });
 

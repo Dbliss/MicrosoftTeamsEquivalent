@@ -5,7 +5,7 @@ import config from './config.json';
 import cors from 'cors';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { channelInviteV2, channelMessagesV2 } from './channel';
-import { channelsCreateV2 } from './channels';
+import { channelsCreateV1 } from './channels';
 import { clearV1 } from './other';
 
 import {
@@ -50,7 +50,6 @@ app.post('/auth/login/v2', (req, res, next) => {
   }
 });
 
-
 app.post('/channel/invite/v2', (req, res, next) => {
   try {
     const { token, channelId, uId } = req.body;
@@ -59,7 +58,6 @@ app.post('/channel/invite/v2', (req, res, next) => {
     next(err);
   }
 });
-
 
 app.get('/channel/messages/v2', (req, res, next) => {
   try {
@@ -81,9 +79,9 @@ app.delete('/clear/v1', (req, res, next) => {
   }
 });
 
-app.post('/channels/create/v2', (req, res, next) => {
+app.post('/channels/create/v1', (req, res, next) => {
   const { token, name, isPublic } = req.body;
-  const cId = channelsCreateV2(token, name, isPublic);
+  const cId = channelsCreateV1(token, name, isPublic);
   res.json(cId);
 });
 

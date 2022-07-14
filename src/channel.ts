@@ -254,7 +254,7 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
     if (member.authUserId === uId) {
       return { error: 'error' };
     }
-    for (let tokenn of member.token) {
+    for (const tokenn of member.token) {
       if (tokenn === token) {
         flag = 1;
       }
@@ -328,7 +328,6 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
     }
   }
 
-
   // checking valid inputted channelId
   if (validChannel === false) {
     return { error: 'error' };
@@ -339,19 +338,18 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
     return { error: 'error' };
   }
 
-
-// checking the user with token is apart of the channel
-let flag = 0;
-for (const member of currentChannel.members) {
-  for (let tokenn of member.token) {
-    if (tokenn === token) {
-      flag = 1;
+  // checking the user with token is apart of the channel
+  let flag = 0;
+  for (const member of currentChannel.members) {
+    for (const tokenn of member.token) {
+      if (tokenn === token) {
+        flag = 1;
+      }
     }
   }
-}
-if (flag === 0) {
-  return { error: 'error' };
-}
+  if (flag === 0) {
+    return { error: 'error' };
+  }
 
   let j = 0;
   for (let i = start; i < currentChannel.messages.length && j < 50; i++) {

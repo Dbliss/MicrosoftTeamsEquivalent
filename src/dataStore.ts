@@ -50,6 +50,7 @@ type dmType = {
   name: string,
   members: number[],
   owners: number[],
+  messages: string[]
 }
 
 type dataType = {

@@ -17,6 +17,7 @@ import {
   dmRemove,
   dmDetails,
   dmLeave,
+  dmMessages,
 } from './dm';
 
 // Set up web app, use JSON
@@ -112,6 +113,11 @@ app.post('/dm/leave/v1', (req, res) => {
   const { token, dmId } = req.body;
   const leave = dmLeave(token, dmId);
   res.json(leave);
+});
+
+app.get('/dm/messages/v1', (req, res) => {
+  const messages = dmMessages(req.query.token as string, parseInt(req.query.dmId as string), parseInt(req.query.start as string));
+  res.json(messages);
 });
 
 // for logging errors

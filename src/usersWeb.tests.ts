@@ -1,8 +1,8 @@
 import request from 'sync-request';
-
+import config from './config.json'
 const OK = 200;
-const port = "3200";
-const url = "http://127.0.0.1";
+const port = config.port;
+const url = config.url;
 
 // function callingChannelDetails (token: string, channelId: number) {
 //     const res = request(
@@ -39,19 +39,20 @@ const url = "http://127.0.0.1";
 function callingClear () {
     const res = request(
         'DELETE',
-        `${url}:${port}/channel/details/v2`,
+        `${url}:${port}/clear/v1`,
         {
             qs: {
                 
             }
         }
     );
+    expect(res.statusCode).toBe(OK);
 }
 
 function callingUserProfile (token: string, uId: number) {
     const res = request(
         'GET',
-        `${url}:${port}user/profile/v2`,
+        `${url}:${port}/user/profile/v2`,
         {
             qs: {
                 token: token,
@@ -59,6 +60,7 @@ function callingUserProfile (token: string, uId: number) {
             }
         }
     );
+    expect(res.statusCode).toBe(OK);
     return res;
 }
 
@@ -72,6 +74,7 @@ function callingUsersAll (token: string) {
             }
         }
     );
+    expect(res.statusCode).toBe(OK);
     return res;
 }
 
@@ -90,6 +93,7 @@ function callingUserProfileSetName (token: string, nameFirst:string, nameLast:st
             },
         }
     );
+    expect(res.statusCode).toBe(OK);
     return res;
 }
 
@@ -107,6 +111,7 @@ function callingUserProfileSetEmail (token: string, email: string) {
             },
         }
     );
+    expect(res.statusCode).toBe(OK);
     return res;
 }
 
@@ -124,13 +129,14 @@ function callingUserProfileSetHandle (token: string, handleStr: string) {
             },
         }
     );
+    expect(res.statusCode).toBe(OK);
     return res;
 }
 
 function callingAuthRegister (email:string, password:string, nameFirst:string, nameLast:string) {
     const res = request(
         'POST',
-        `${url}:${port}/channel/details/v2`,
+        `${url}:${port}/auth/register/v2`,
         {
             body: JSON.stringify({
                 email: email,
@@ -143,6 +149,7 @@ function callingAuthRegister (email:string, password:string, nameFirst:string, n
             },
         }
     );
+    expect(res.statusCode).toBe(OK);
     return res;
 }
 
@@ -179,7 +186,7 @@ describe('Testing userProfileV1', () => {
         'First1',
         'Last1').getBody()));
   
-      const result = callingUserProfile(authUserId.authUserId, uId.authUserId);
+      const result = JSON.parse(String(callingUserProfile(authUserId.authUserId, uId.authUserId))).getBody();
       expect(result).toMatchObject({
         user: {
           uId: uId.authUserId,
@@ -199,7 +206,7 @@ describe('Testing userProfileV1', () => {
         'Last').getBody()));
   
       const uId = -9999;
-      const result = callingUserProfile(authUserId.authUserId, uId);
+      const result = JSON.parse(String(callingUserProfile(authUserId.authUserId, uId))).getBody();
       expect(result).toMatchObject({ error: 'error' });
     });
   
@@ -215,7 +222,7 @@ describe('Testing userProfileV1', () => {
         'First1',
         'Last1').getBody()));
   
-      const result = callingUserProfile("-9999", uId.authUserId); // Double check this, I changed the input to a string number
+      const result = JSON.parse(String(callingUserProfile("-9999", uId.authUserId))).getBody(); // Double check this, I changed the input to a string number
       expect(result).toMatchObject({ error: 'error' });
     });
   
@@ -226,7 +233,7 @@ describe('Testing userProfileV1', () => {
         'First',
         'Last').getBody()));
   
-      const result = callingUserProfile(authUserId.authUserId, authUserId.authUserId);
+      const result = JSON.parse(String(callingUserProfile(authUserId.authUserId, authUserId.authUserId))).getBody();
       expect(result).toMatchObject({
         user: {
           uId: authUserId.authUserId,
@@ -260,7 +267,7 @@ describe('Testing users/all/v1', () => {
             'First2',
             'Last2').getBody()));
   
-      const result = callingUsersAll(authUserId.token[0]);
+      const result = JSON.parse(String(callingUsersAll(authUserId.token))).getBody();
       expect(result).toMatchObject({
         users: [{
             uId: authUserId.authUserId,
@@ -288,26 +295,9 @@ describe('Testing users/all/v1', () => {
     });
 
     test('Testing error return when invalid token is given', () => {
-        callingClear();
-        const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
-        'password',
-        'First',
-        'Last').getBody()));
-
-        const uId = JSON.parse(String(callingAuthRegister(
-        'email1@email.com',
-        'password1',
-        'First1',
-        'Last1').getBody()));
-
-        const uId2 = JSON.parse(String(callingAuthRegister(
-            'email2@email.com',
-            'password2',
-            'First2',
-            'Last2').getBody()));
-  
-      const result = JSON.parse(String(callingUsersAll('!@#$'))).getBody();
-      expect(result).toMatchObject({error: 'error'}); // assuming that an invlaid token is given that it produces an error this 
+        callingClear(); 
+        const result = JSON.parse(String(callingUsersAll(''))).getBody();
+        expect(result).toMatchObject({error: 'error'}); // assuming that an invlaid token is given that it produces an error this 
                                                       // condition is not given in the spec
     });
   
@@ -323,8 +313,8 @@ describe('Testing user/profile/setname/v1', () => {
         'First',
         'Last').getBody()));
   
-        const result = JSON.parse(String(callingUserProfileSetName(authUserId.token[0], 'NewFirstName', 'NewLastName'))).getBody();
-        const edited = JSON.parse(String(callingUserProfile(authUserId.token[0], authUserId.uId))).getBody();
+        const result = JSON.parse(String(callingUserProfileSetName(authUserId.token, 'NewFirstName', 'NewLastName'))).getBody();
+        const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.uId))).getBody();
         expect(result).toMatchObject({});
         expect(edited).toMatchObject({
             uId: authUserId.authUserId,
@@ -333,7 +323,7 @@ describe('Testing user/profile/setname/v1', () => {
             nameLast: 'NewLastName',
             handleStr: 'firstlast', // ASSUME: despite changing the first and last anme of the user the handleStr 
                                     // will remain the same
-        })
+        });
         
 
     });
@@ -345,8 +335,8 @@ describe('Testing user/profile/setname/v1', () => {
         'First',
         'Last').getBody()));
 
-        const result = JSON.parse(String(callingUserProfileSetName(authUserId.token[0], '', 'NewLastName'))).getBody();
-        const edited = JSON.parse(String(callingUserProfile(authUserId.token[0], authUserId.uId))).getBody();
+        const result = JSON.parse(String(callingUserProfileSetName(authUserId.token, '', 'NewLastName'))).getBody();
+        const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.uId))).getBody();
         expect(result).toMatchObject({error: 'error'});
         expect(edited).toMatchObject({
             uId: authUserId.authUserId,
@@ -357,8 +347,8 @@ describe('Testing user/profile/setname/v1', () => {
         });
 
         const bigFirstName = '510000000000000000000000000000000000000000000000000';
-        const result1 = JSON.parse(String(callingUserProfileSetName(authUserId.token[0], bigFirstName, 'NewLastName'))).getBody();
-        const edited1 = JSON.parse(String(callingUserProfile(authUserId.token[0], authUserId.uId))).getBody();
+        const result1 = JSON.parse(String(callingUserProfileSetName(authUserId.token, bigFirstName, 'NewLastName'))).getBody();
+        const edited1 = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.uId))).getBody();
         expect(result1).toMatchObject({error: 'error'});
         expect(edited1).toMatchObject({
             uId: authUserId.authUserId,
@@ -376,8 +366,8 @@ describe('Testing user/profile/setname/v1', () => {
         'First',
         'Last').getBody()));
 
-        const result = JSON.parse(String(callingUserProfileSetName(authUserId.token[0], 'NewFirstName', ''))).getBody();
-        const edited = JSON.parse(String(callingUserProfile(authUserId.token[0], authUserId.uId))).getBody();
+        const result = JSON.parse(String(callingUserProfileSetName(authUserId.token, 'NewFirstName', ''))).getBody();
+        const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.uId))).getBody();
         expect(result).toMatchObject({error: 'error'});
         expect(edited).toMatchObject({
             uId: authUserId.authUserId,
@@ -388,8 +378,8 @@ describe('Testing user/profile/setname/v1', () => {
         });
 
         const bigLastName = '510000000000000000000000000000000000000000000000000';
-        const result1 = JSON.parse(String(callingUserProfileSetName(authUserId.token[0], 'NewFirstName', bigLastName))).getBody();
-        const edited1 = JSON.parse(String(callingUserProfile(authUserId.token[0], authUserId.uId))).getBody();
+        const result1 = JSON.parse(String(callingUserProfileSetName(authUserId.token, 'NewFirstName', bigLastName))).getBody();
+        const edited1 = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.uId))).getBody();
         expect(result1).toMatchObject({error: 'error'});
         expect(edited1).toMatchObject({
             uId: authUserId.authUserId,
@@ -402,12 +392,7 @@ describe('Testing user/profile/setname/v1', () => {
 
     test('Testing error return when invalid token is given', () => {
         callingClear();
-        const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
-        'password',
-        'First',
-        'Last').getBody()));
-  
-        const result = JSON.parse(String(callingUserProfileSetName('!@#$', 'NewFirst', 'NewLast'))).getBody();
+        const result = JSON.parse(String(callingUserProfileSetName('', 'NewFirst', 'NewLast'))).getBody();
         expect(result).toMatchObject({error: 'error'}); // assuming that an invlaid token is given that it produces an error this 
                                                       // condition is not given in the spec
     });

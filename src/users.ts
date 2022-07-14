@@ -229,6 +229,6 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   const updatedUser = extractUserDetails(data.user[tokenIndex]);
   const userChannels = data.user[tokenIndex].channels;
   updateUserInfo(data, userChannels, updatedUser);
-
+  setData(data);
 }
-export { userProfileV1 };
+export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1 , userProfileSetHandleV1};

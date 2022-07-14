@@ -3,6 +3,7 @@ import { echo } from './echo';
 import morgan from 'morgan';
 import config from './config.json';
 import { channelDetailsV1, channelJoinV1 } from './channel';
+import { usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1} from './users';
 
 // Set up web app, use JSON
 const app = express();
@@ -26,8 +27,10 @@ app.get('/echo', (req, res, next) => {
 app.get('channel/details/v2', (req, res/*, next*/) => { //what is this next thing in the get request?
   const token = req.query.token;
   const channelId = req.query.channelId;
-  return res.json(channelDetailsV1(Number(req.query.token), Number(req.query.channelId))); //might need to change channelDetails input
+  console.log(token);
+  return res.json(channelDetailsV1(String(token), Number(channelId))); //might need to change channelDetails input
                                                                            // to taken in tokens not numbers
+
   // const data = req.query.echo as string;
   // return res.json(echo(data));
 
@@ -48,15 +51,13 @@ app.post('channel/join/v2', (req, res) => {
 app.get('user/profile/v2', (req, res/*, next*/) => { //what is this next thing in the get request?
   const token = req.query.token;
   const uId = req.query.uId;
-  return res.json(userProfileV1(Number(req.query.token), Number(req.query.uId))); //might need to change input
+  return res.json(userProfileV1(String(req.query.token), Number(req.query.uId))); //might need to change input
                                                                            // to take in tokens not numbers
-
-
 });
 
 app.get('users/all/v1', (req, res/*, next*/) => { //what is this next thing in the get request?
   const token = req.query.token;
-  return res.json(usersAllV1(String(req.query.token))); //might need to change input
+  return res.json(usersAllV1(String(token))); //might need to change input
                                                                            // to take in tokens not numbers
 });
 

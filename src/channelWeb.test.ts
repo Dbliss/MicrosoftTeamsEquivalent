@@ -1,11 +1,4 @@
-import request from 'sync-request';
-import {
-    channelDetailsV1,
-    channelJoinV1,
-    channelInviteV1,
-    channelMessagesV1,
-  } from './channel';
-  
+import request from 'sync-request'; 
   // importing other essential functions used in channel
   
   import {
@@ -22,12 +15,12 @@ import {
   import { getData, setData } from './dataStore';
 
 
-
-
-const OK = 200;
-const port = "3200";
-const url = "http://127.0.0.1";
-
+  import config from './config.json';
+  
+  const OK = 200;
+  const port = config.port;
+  const url = config.url;
+  
 function callingChannelDetails (token: string, channelId: number) {
     const res = request(
         'GET',
@@ -39,6 +32,7 @@ function callingChannelDetails (token: string, channelId: number) {
             }
         }
     );
+    expect(res.statusCode).toBe(OK);
     return res;
 }
 
@@ -46,7 +40,7 @@ function callingChannelDetails (token: string, channelId: number) {
 function callingChannelJoin (token: string, channelId: number) {
     const res = request(
         'POST',
-        `${url}:${port}/channel/details/v2`,
+        `${url}:${port}/channel/join/v2`,
         {
             body: JSON.stringify({
                 token: token,
@@ -57,25 +51,28 @@ function callingChannelJoin (token: string, channelId: number) {
             },
         }
     );
+    expect(res.statusCode).toBe(OK);
     return res;
 }
 
 function callingClear () {
     const res = request(
         'DELETE',
-        `${url}:${port}/channel/details/v2`,
+        `${url}:${port}/clear/v1`,
         {
             qs: {
                 
             }
         }
     );
+    expect(res.statusCode).toBe(OK);
+    return res;
 }
 
 function callingAuthRegister (email:string, password:string, nameFirst:string, nameLast:string) {
     const res = request(
         'POST',
-        `${url}:${port}/channel/details/v2`,
+        `${url}:${port}/auth/register/v2`,
         {
             body: JSON.stringify({
                 email: email,
@@ -88,13 +85,14 @@ function callingAuthRegister (email:string, password:string, nameFirst:string, n
             },
         }
     );
+    expect(res.statusCode).toBe(OK);
     return res;
 }
 
 function callingChannelsCreate (token: string, name: string, isPublic: boolean) {
     const res = request(
         'POST',
-        `${url}:${port}/channel/details/v2`,
+        `${url}:${port}/channels/create/v2`,
         {
             body: JSON.stringify({
                 token: token,
@@ -106,6 +104,7 @@ function callingChannelsCreate (token: string, name: string, isPublic: boolean) 
             },
         }
     );
+    expect(res.statusCode).toBe(OK);
     return res;
 }
 

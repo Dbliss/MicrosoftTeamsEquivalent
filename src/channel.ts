@@ -260,7 +260,6 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
       }
     }
   }
-  // }
 
   // checking the user with token is apart of the channel
   if (flag === 0) {

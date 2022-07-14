@@ -13,6 +13,12 @@ import {
   channelsListallV1,
 } from './channels';
 
+import {
+  messageSendV1,
+  messageEditV1,
+  messageRemoveV1
+} from './message';
+
 // Set up web app, use JSON
 const app = express();
 app.use(express.json());
@@ -99,6 +105,34 @@ app.post('/auth/logout/v1', (req, res, next) => {
   try {
     const { token } = req.body;
     return res.json(authLogoutV1(token));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/message/send/v1', (req, res, next) => {
+  try {
+    const { token, channelId, message } = req.body;
+    return res.json(messageSendV1(token, channelId, message));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/message/edit/v1', (req, res, next) => {
+  try {
+    const { token, channelId, message } = req.body;
+    return res.json(messageEditV1(token, channelId, message));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.delete('/message/remove/v1', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const messageId = req.query.messageId;
+    return res.json(messageRemoveV1(token, Number(messageId)));
   } catch (err) {
     next(err);
   }

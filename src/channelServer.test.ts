@@ -305,7 +305,7 @@ describe('channel/removeowner/v1', () => {
         );
         expect(bodyObj).toMatchObject({ error: 'error' });
     });
-    test('uId refers to user who is not a member of the channel', () => {
+    test('uId refers to user who is not an owner of the channel', () => {
         callingClear();
         const owner = requestAuthRegister(
             'email@email.com',
@@ -334,7 +334,7 @@ describe('channel/removeowner/v1', () => {
         );
         expect(bodyObj).toMatchObject({ error: 'error' });
     });
-    test('uId refers to an owner of the channel', () => {
+    test('uId refers to the only owner of the channel', () => {
         callingClear();
         const owner = requestAuthRegister(
             'email@email.com',

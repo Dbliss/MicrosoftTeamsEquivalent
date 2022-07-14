@@ -495,15 +495,88 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
   }
 
   // add user as owner of channel
+  const newOwner = { 
+    uId: data.user[userIndex].authUserId,
+    email: data.user[userIndex].email,
+    nameFirst: data.user[userIndex].nameFirst,
+    nameLast: data.user[userIndex].nameLast,
+    handleStr: data.user[userIndex].handle, 
   
+  }
 
-
-
+  data.channel[channelIndex].owners.push(newOwner);
+  setData(data);
 
   return {};
 }
 
 const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => {
+  const data = getData();
+  // check if valid token
+  let isTokenValid = false;
+  for (const user of data.user) {
+    for (const tokens of user.token) {
+      if (tokens === token) {
+        let isTokenValid = true;
+      }
+    }
+  }
+  // check if valid channel id
+  let isChannelIdValid = false;
+  let channelIndex = -1;
+  for (let i = 0; i < data.channel.length; i++) {
+    if (data.channel[i].cId === channelId) {
+      let isChannelIdValid = true;
+      let channelIndex = i;
+    }
+  }
+  if (isChannelIdValid === false) {
+    return error;
+  }
+  // check if uId is valid
+  let isUserIdValid = false;
+  let userIndex = -1;
+  for (let j = 0; j < data.user.length; j++) {
+    if (data.user[j].authUserId === uId) {
+      let isUserIdValid = true;
+      let userIndex = j;
+    }
+  }
+  if (isUserIdValid === false) {
+    return error;
+  }
+
+  // check to see if owner is in channel
+  let isOwnerValid = false;
+  let ownerIndex = -1;
+  for (let k = 0; k < data.channel[channelIndex].members.length; k++) {
+    if (data.channel[channelIndex].owners[k].authUserId === uId) {
+      let isOwnerValid = true;
+      let ownerIndex = k;
+    }
+  }
+  if (isOwnerValid === false) {
+    return error;
+  }
+
+  // user only owner in channel
+  if (data.channel[channelIndex].owners.length === 1) {
+    return error;
+  }
+
+  // check to see if user has owner permissions 
+  for (let m = 0; m < data.user[userIndex].channels.length; m++) {
+    if (data.user[userIndex].channels[m].cId === channelId) {
+      if (data.user[userIndex].channels[m].channelPermissionsId === 2) {
+        return error;
+      } 
+    }
+  }
+  // remove owner from array 
+  if (ownerIndex > -1) {
+    data.channel[channelIndex].owners.splice(ownerIndex, 1);
+    setData(data);
+  } 
   return {};
 }
 

@@ -88,24 +88,18 @@ app.post('/auth/logout/v1', (req, res, next) => {
 
 //WRAPPING CHANNEL FUNCTIONS - channelDetailsV1 (GET) and channelJoinV1 (POST)
 
-app.get('/channel/details/v2', (req, res/*, next*/) => { //what is this next thing in the get request?
+app.get('/channel/details/v2', (req, res) => { 
   const token = req.query.token;
   const channelId = req.query.channelId;
   console.log(token);
-  return res.json(channelDetailsV1(String(token), Number(channelId))); //might need to change channelDetails input
-                                                                           // to taken in tokens not numbers
-
-  // const data = req.query.echo as string;
-  // return res.json(echo(data));
-
+  return res.json(channelDetailsV1(String(token), Number(channelId))); 
+                                                                           
 });
 
 app.post('/channel/join/v2', (req, res) => {
-  const body = JSON.parse(req.body);
-  const token = body.token;
-  const channelId = body.channelId;
-  return res.json(channelJoinV1(token, channelId));
-  // return res.json(echo(data));
+  const {token, channelId} = req.body;
+  return res.json(channelJoinV1(String(token), Number(channelId)));
+
    
 });
 
@@ -129,19 +123,19 @@ app.put('/user/profile/setname/v1', (req, res) => {
 
   const { token, nameFirst, nameLast } = req.body
   
-  return res.json(userProfileSetNameV1(token, nameFirst, nameLast));
+  return res.json(userProfileSetNameV1(String(token),String(nameFirst), String(nameLast)));
 });
 
 app.put('/user/profile/setemail/v1', (req, res) => {
 
   const { token, email } = req.body
-  return res.json(userProfileSetEmailV1(token, email));
+  return res.json(userProfileSetEmailV1(String(token), String(email)));
 });
 
 app.put('/user/profile/sethandle/v1', (req, res) => {
 
   const { token, handleStr } = req.body  
-  return res.json(userProfileSetHandleV1(token, handleStr));
+  return res.json(userProfileSetHandleV1(String(token), String(handleStr)));
 });
 
 

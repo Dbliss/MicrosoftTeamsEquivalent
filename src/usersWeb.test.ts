@@ -40,11 +40,6 @@ function callingClear () {
     const res = request(
         'DELETE',
         `${url}:${port}/clear/v1`,
-        {
-            qs: {
-                
-            }
-        }
     );
     expect(res.statusCode).toBe(OK);
 }
@@ -409,8 +404,8 @@ describe('Testing user/profile/setemail/v1', () => {
         'First',
         'Last').getBody()));
   
-        const result = JSON.parse(String(callingUserProfileSetEmail(authUserId.token[0], 'newemail@email.com'))).getBody();
-        const edited = JSON.parse(String(callingUserProfile(authUserId.token[0], authUserId.uId))).getBody();
+        const result = JSON.parse(String(callingUserProfileSetEmail(authUserId.token, 'newemail@email.com'))).getBody();
+        const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.uId))).getBody();
         expect(result).toMatchObject({});
         expect(edited).toMatchObject({
             uId: authUserId.authUserId,
@@ -430,8 +425,8 @@ describe('Testing user/profile/setemail/v1', () => {
         'First',
         'Last').getBody()));
 
-        const result = JSON.parse(String(callingUserProfileSetEmail(authUserId.token[0], 'newemail'))).getBody();
-        const edited = JSON.parse(String(callingUserProfile(authUserId.token[0], authUserId.uId))).getBody();
+        const result = JSON.parse(String(callingUserProfileSetEmail(authUserId.token, 'newemail'))).getBody();
+        const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.uId))).getBody();
         expect(result).toMatchObject({error: 'error'});
         expect(edited).toMatchObject({
             uId: authUserId.authUserId,
@@ -454,8 +449,8 @@ describe('Testing user/profile/setemail/v1', () => {
         'First1',
         'Last1').getBody()));
 
-        const result = JSON.parse(String(callingUserProfileSetEmail(authUserId.token[0], 'email1@email.com'))).getBody();
-        const edited = JSON.parse(String(callingUserProfile(authUserId.token[0], authUserId.uId))).getBody();
+        const result = JSON.parse(String(callingUserProfileSetEmail(authUserId.token, 'email1@email.com'))).getBody();
+        const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.uId))).getBody();
         expect(result).toMatchObject({error: 'error'});
         expect(edited).toMatchObject({
             uId: authUserId.authUserId,
@@ -488,8 +483,8 @@ describe('Testing user/profile/sethandle/v1', () => {
         'First',
         'Last').getBody()));
   
-        const result = JSON.parse(String(callingUserProfileSetHandle(authUserId.token[0], 'NewHandle'))).getBody();
-        const edited = JSON.parse(String(callingUserProfile(authUserId.token[0], authUserId.uId))).getBody();
+        const result = JSON.parse(String(callingUserProfileSetHandle(authUserId.token, 'NewHandle'))).getBody();
+        const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.uId))).getBody();
         expect(result).toMatchObject({});
         expect(edited).toMatchObject({
             uId: authUserId.authUserId,
@@ -509,8 +504,8 @@ describe('Testing user/profile/sethandle/v1', () => {
         'First',
         'Last').getBody()));
 
-        const result = JSON.parse(String(callingUserProfileSetHandle(authUserId.token[0], ''))).getBody();
-        const edited = JSON.parse(String(callingUserProfile(authUserId.token[0], authUserId.uId))).getBody();
+        const result = JSON.parse(String(callingUserProfileSetHandle(authUserId.token, ''))).getBody();
+        const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.uId))).getBody();
         expect(result).toMatchObject({error: 'error'});
         expect(edited).toMatchObject({
             uId: authUserId.authUserId,
@@ -530,8 +525,8 @@ describe('Testing user/profile/sethandle/v1', () => {
         'Last').getBody()));
 
         const bigHandle = '200000000000000000000'
-        const result = JSON.parse(String(callingUserProfileSetHandle(authUserId.token[0], bigHandle))).getBody();
-        const edited = JSON.parse(String(callingUserProfile(authUserId.token[0], authUserId.uId))).getBody();
+        const result = JSON.parse(String(callingUserProfileSetHandle(authUserId.token, bigHandle))).getBody();
+        const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.uId))).getBody();
         expect(result).toMatchObject({error: 'error'});
         expect(edited).toMatchObject({
             uId: authUserId.authUserId,
@@ -554,7 +549,7 @@ describe('Testing user/profile/sethandle/v1', () => {
         'First1',
         'Last1').getBody()));
   
-        const result = JSON.parse(String(callingUserProfileSetHandle(authUserId.token[0], 'first1last1'))).getBody();
+        const result = JSON.parse(String(callingUserProfileSetHandle(authUserId.token, 'first1last1'))).getBody();
         expect(result).toMatchObject({error: 'error'});
     });
 

@@ -1,7 +1,6 @@
 import validator from 'validator';
-import { getData, setData, userType, usersType } from './dataStore';
+import { getData, setData, userType } from './dataStore';
 const error = { error: 'error' };
-
 
 // <For a valid user, returns information about their userId, email, first name, last name, and handle>
 
@@ -15,34 +14,32 @@ const error = { error: 'error' };
 
 function userProfileV1(token: string, uId: number) {
   const data = getData();
-  
-  const returnUser =  {
-      uId: 0,
-      email: '',
-      nameFirst: '',
-      nameLast: '',
-      handleStr: ''
-    }
-  
+
+  const returnUser = {
+    uId: 0,
+    email: '',
+    nameFirst: '',
+    nameLast: '',
+    handleStr: ''
+  };
 
   // Finds the index of the object which contains the apropriate authUserId matching uId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
   const uIdIndex = data.user.findIndex(object => {
     return object.authUserId === uId;
   });
-  console.log(`uId index value in user profile: ${uIdIndex}`);
+  
 
   // Checks if the token exists and returns the index of the user which has that token,
   // if noy found then returns -1
   const tokenIndex = data.user.findIndex(object => {
     for (const tokenElem of object.token) {
-        if(tokenElem === token) {
-            return tokenElem === token;
-        }
+      if (tokenElem === token) {
+        return tokenElem === token;
+      }
     }
-    return false; 
+    return false;
   }); // code adapted from the website shorturl.at/eoJKY
-  console.log(`Token index value in user profile: ${tokenIndex}`);
 
   // if neither the token nor the uId is found then the function
   // returns an error object
@@ -64,15 +61,15 @@ function userProfileV1(token: string, uId: number) {
 // Helper function that takes all the fields stored in a users and picks relevent information for
 // the user object
 function extractUserDetails (user: userType) {
+  const returnUser =
+  {
+    uId: user.authUserId,
+    email: user.email,
+    nameFirst: user.nameFirst,
+    nameLast: user.nameLast,
+    handleStr: user.handle
+  };
 
-
-  const returnUser =  
-  {uId: user.authUserId,
-  email: user.email,
-  nameFirst: user.nameFirst,
-  nameLast: user.nameLast,
-  handleStr: user.handle,}
-  
   return returnUser;
 }
 
@@ -85,7 +82,7 @@ function extractUserDetails (user: userType) {
 //             return tokenElem === token;
 //         }
 //     }
-//     return false; 
+//     return false;
 //   }); // code adapted from the website shorturl.at/eoJKY
 
 //   if (tokenIndex === -1) {
@@ -110,9 +107,8 @@ function updateUserInfo(data, channels, user) { // need to typescript channels a
     const perms = channel.channelPermissionsId;
     if (perms === 1) {
       data.channel[channelIndex].owners[ownerIndex] = user;
-      data.channel[channelIndex].members[memberIndex] = user; 
-    }
-    else {
+      data.channel[channelIndex].members[memberIndex] = user;
+    } else {
       data.channel[channelIndex].members[memberIndex] = user;
     }
   }
@@ -124,11 +120,11 @@ function usersAllV1 (token: string) {
   // if not found then returns -1
   const tokenIndex = data.user.findIndex(object => {
     for (const tokenElem of object.token) {
-        if(tokenElem === token) {
-            return tokenElem === token;
-        }
+      if (tokenElem === token) {
+        return tokenElem === token;
+      }
     }
-    return false; 
+    return false;
   }); // code adapted from the website shorturl.at/eoJKY
 
   if (tokenIndex === -1) {
@@ -139,37 +135,34 @@ function usersAllV1 (token: string) {
     usersArray.push(extractUserDetails(user));
   }
 
-  const returnUserArray = {users: usersArray};
+  const returnUserArray = { users: usersArray };
   return returnUserArray;
 }
 
-function  userProfileSetNameV1 (token: string, nameFirst: string, nameLast: string) {
+function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: string) {
   const data = getData();
   if ((nameFirst.length > 50) || (nameFirst.length < 1)) {
     return error;
   }
-  
+
   if ((nameLast.length > 50) || (nameLast.length < 1)) {
     return error;
   }
 
   // Checks if the token exists and returns the index of the user which has that token,
-  // if not found then returns -1 
-  console.log(`This is tje value of the tokem: ${token}`);
+  // if not found then returns -1
   const tokenIndex = data.user.findIndex(object => {
     for (const tokenElem of object.token) {
-        if(tokenElem === token) {
-            return tokenElem === token;
-        }
+      if (tokenElem === token) {
+        return tokenElem === token;
+      }
     }
-    return false; 
-  }); 
-  console.log(tokenIndex);
+    return false;
+  });
   if (tokenIndex === -1) {
     return error;
   }
-  
-  
+
   // locating the user and changing the first and last name, then checking the users channels and changing their name there or just updating the object at that location
 
   // could I just call this function on the user object within the members array
@@ -182,16 +175,16 @@ function  userProfileSetNameV1 (token: string, nameFirst: string, nameLast: stri
   setData(data);
 }
 
-function  userProfileSetEmailV1 (token: string, email: string) {
+function userProfileSetEmailV1 (token: string, email: string) {
   const data = getData();
 
   const tokenIndex = data.user.findIndex(object => {
     for (const tokenElem of object.token) {
-        if(tokenElem === token) {
-            return tokenElem === token;
-        }
+      if (tokenElem === token) {
+        return tokenElem === token;
+      }
     }
-    return false; 
+    return false;
   }); // code adapted from the website shorturl.at/eoJKY
 
   // if neither the token nor the uId is found then the function
@@ -200,7 +193,7 @@ function  userProfileSetEmailV1 (token: string, email: string) {
     return error;
   }
 
-  if(!(validator.isEmail(email))) {
+  if (!(validator.isEmail(email))) {
     return error;
   }
 
@@ -218,7 +211,6 @@ function  userProfileSetEmailV1 (token: string, email: string) {
   updateUserInfo(data, userChannels, updatedUser);
 
   setData(data);
-
 }
 
 function userProfileSetHandleV1 (token: string, handleStr: string) {
@@ -226,11 +218,11 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
 
   const tokenIndex = data.user.findIndex(object => {
     for (const tokenElem of object.token) {
-        if(tokenElem === token) {
-            return tokenElem === token;
-        }
+      if (tokenElem === token) {
+        return tokenElem === token;
+      }
     }
-    return false; 
+    return false;
   }); // code adapted from the website shorturl.at/eoJKY
 
   // if neither the token nor the uId is found then the function
@@ -238,13 +230,12 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   if ((tokenIndex === -1)) {
     return error;
   }
-  
 
-  if((handleStr.length < 3) || (handleStr.length > 20)) {
+  if ((handleStr.length < 3) || (handleStr.length > 20)) {
     return error;
   }
 
-  const handleIndex = data.user.findIndex(object => { //check whether the hadndle is already being used
+  const handleIndex = data.user.findIndex(object => { // check whether the hadndle is already being used
     return object.handle === handleStr;
   });
 
@@ -252,10 +243,10 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
     return error;
   }
 
-  if (handleStr.match(/^[0-9A-Za-z]+$/) === null) { //idk if this works, coded adapted from: https://tinyurl.com/2ps8ms94
-    //handleStr not alphanumeric
+  if (handleStr.match(/^[0-9A-Za-z]+$/) === null) { // idk if this works, coded adapted from: https://tinyurl.com/2ps8ms94
+    // handleStr not alphanumeric
     return error;
-    }
+  }
 
   data.user[tokenIndex].handle = handleStr;
   const updatedUser = extractUserDetails(data.user[tokenIndex]);
@@ -263,4 +254,4 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   updateUserInfo(data, userChannels, updatedUser);
   setData(data);
 }
-export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1 , userProfileSetHandleV1};
+export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 };

@@ -267,7 +267,7 @@ app.put('/user/profile/sethandle/v1', (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}); 
+});
 
 app.delete('/message/remove/v1', (req, res, next) => {
   try {

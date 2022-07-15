@@ -18,7 +18,7 @@ function callingChannelDetails (token: string, channelId: number) {
           }
         }
   );
-    // expect(res.statusCode).toBe(OK);
+  expect(res.statusCode).toBe(OK);
   return res;
 }
 
@@ -36,7 +36,7 @@ function callingChannelJoin (token: string, channelId: number) {
           },
         }
   );
-    // expect(res.statusCode).toBe(OK);
+  expect(res.statusCode).toBe(OK);
   return res;
 }
 
@@ -50,7 +50,7 @@ function callingClear () {
           }
         }
   );
-    // expect(res.statusCode).toBe(OK);
+  expect(res.statusCode).toBe(OK);
   return res;
 }
 
@@ -70,7 +70,7 @@ function callingAuthRegister (email:string, password:string, nameFirst:string, n
           },
         }
   );
-    // expect(res.statusCode).toBe(OK);
+  expect(res.statusCode).toBe(OK);
   return res;
 }
 
@@ -89,7 +89,7 @@ function callingChannelsCreate (token: string, name: string, isPublic: boolean) 
           },
         }
   );
-    // expect(res.statusCode).toBe(OK);
+  expect(res.statusCode).toBe(OK);
   return res;
 }
 
@@ -146,7 +146,7 @@ describe('HTTP tests for channelDetailsV2', () => {
     const chanId = callingChannelsCreate(authorised.token, 'name', true);
     const channelId = JSON.parse(String(chanId.getBody()));
 
-    const joined = JSON.parse(String(callingChannelJoin(authorised1.token, channelId.channelId).getBody()));
+    callingChannelJoin(authorised1.token, channelId.channelId);
 
     const res = callingChannelDetails(authorised.token, channelId.channelId);
     const result = JSON.parse(String(res.getBody()));

@@ -1,27 +1,6 @@
 import request from 'sync-request';
 import config from './config.json';
 
-// Importing the functions from channel.js file
-
-import {
-  channelDetailsV1,
-  channelJoinV1,
-} from './channel';
-
-// importing other essential functions used in channel
-
-import {
-  channelsCreateV1,
-} from './channels';
-
-import {
-  authRegisterV1,
-} from './auth';
-
-import {
-  clearV1,
-} from './other';
-
 const OK = 200;
 const port = config.port;
 const url = config.url;
@@ -103,232 +82,232 @@ function callingChannelMessages (token:string, channelId: number, start: number)
   return res;
 }
 
-describe('Testing channelDetailsV1', () => {
-  test('Testing successful return of channelDetailsV1', () => {
-    clearV1();
-    const authUser = authRegisterV1('email@email.com',
-      'password',
-      'First',
-      'Last');
+// describe('Testing channelDetailsV1', () => {
+//   test('Testing successful return of channelDetailsV1', () => {
+//     clearV1();
+//     const authUser = authRegisterV1('email@email.com',
+//       'password',
+//       'First',
+//       'Last');
 
-    const channelId = channelsCreateV1(authUser.token, 'name', true);
-    const result = channelDetailsV1(authUser.authUserId, channelId.channelId);
-    expect(result).toMatchObject({
-      name: 'name',
-      isPublic: true,
-      ownerMembers: [{
-        uId: authUser.authUserId,
-        email: 'email@email.com',
-        nameFirst: 'First',
-        nameLast: 'Last',
-        handleStr: 'firstlast',
-      }],
-      allMembers: [{
-        uId: authUser.authUserId,
-        email: 'email@email.com',
-        nameFirst: 'First',
-        nameLast: 'Last',
-        handleStr: 'firstlast',
-      }]
-    });
-  });
+//     const channelId = channelsCreateV1(authUser.token, 'name', true);
+//     const result = channelDetailsV1(authUser.authUserId, channelId.channelId);
+//     expect(result).toMatchObject({
+//       name: 'name',
+//       isPublic: true,
+//       ownerMembers: [{
+//         uId: authUser.authUserId,
+//         email: 'email@email.com',
+//         nameFirst: 'First',
+//         nameLast: 'Last',
+//         handleStr: 'firstlast',
+//       }],
+//       allMembers: [{
+//         uId: authUser.authUserId,
+//         email: 'email@email.com',
+//         nameFirst: 'First',
+//         nameLast: 'Last',
+//         handleStr: 'firstlast',
+//       }]
+//     });
+//   });
 
-  test('successful return of channelDetailsV1 with multiple members', () => {
-    clearV1();
-    const authUser = authRegisterV1('email@email.com',
-      'password',
-      'First',
-      'Last');
+//   test('successful return of channelDetailsV1 with multiple members', () => {
+//     clearV1();
+//     const authUser = authRegisterV1('email@email.com',
+//       'password',
+//       'First',
+//       'Last');
 
-    const authUser1 = authRegisterV1('email1@email.com',
-      'password',
-      'First1',
-      'Last1');
+//     const authUser1 = authRegisterV1('email1@email.com',
+//       'password',
+//       'First1',
+//       'Last1');
 
-    const channelId = channelsCreateV1(authUser.token, 'name', true);
+//     const channelId = channelsCreateV1(authUser.token, 'name', true);
 
-    channelJoinV1(authUser1.authUserId, channelId.channelId);
+//     channelJoinV1(authUser1.authUserId, channelId.channelId);
 
-    const result = channelDetailsV1(authUser.authUserId, channelId.channelId);
-    expect(result).toMatchObject({
-      name: 'name',
-      isPublic: true,
-      ownerMembers: [{
-        uId: authUser.authUserId,
-        email: 'email@email.com',
-        nameFirst: 'First',
-        nameLast: 'Last',
-        handleStr: 'firstlast',
-      }],
-      allMembers: [{
-        uId: authUser.authUserId,
-        email: 'email@email.com',
-        nameFirst: 'First',
-        nameLast: 'Last',
-        handleStr: 'firstlast',
-      },
-      {
-        uId: authUser1.authUserId,
-        email: 'email1@email.com',
-        nameFirst: 'First1',
-        nameLast: 'Last1',
-        handleStr: 'first1last1',
-      }]
-    });
-  });
+//     const result = channelDetailsV1(authUser.authUserId, channelId.channelId);
+//     expect(result).toMatchObject({
+//       name: 'name',
+//       isPublic: true,
+//       ownerMembers: [{
+//         uId: authUser.authUserId,
+//         email: 'email@email.com',
+//         nameFirst: 'First',
+//         nameLast: 'Last',
+//         handleStr: 'firstlast',
+//       }],
+//       allMembers: [{
+//         uId: authUser.authUserId,
+//         email: 'email@email.com',
+//         nameFirst: 'First',
+//         nameLast: 'Last',
+//         handleStr: 'firstlast',
+//       },
+//       {
+//         uId: authUser1.authUserId,
+//         email: 'email1@email.com',
+//         nameFirst: 'First1',
+//         nameLast: 'Last1',
+//         handleStr: 'first1last1',
+//       }]
+//     });
+//   });
 
-  test('Testing when the channelId is not valid ', () => {
-    clearV1();
-    const authUser = authRegisterV1('email@email.com',
-      'password',
-      'First',
-      'Last');
+//   test('Testing when the channelId is not valid ', () => {
+//     clearV1();
+//     const authUser = authRegisterV1('email@email.com',
+//       'password',
+//       'First',
+//       'Last');
 
-    channelsCreateV1(authUser.token, 'name', true);
+//     channelsCreateV1(authUser.token, 'name', true);
 
-    const result = channelDetailsV1(-9999, -9999);
-    expect(result).toMatchObject({ error: 'error' });
-  });
+//     const result = channelDetailsV1(-9999, -9999);
+//     expect(result).toMatchObject({ error: 'error' });
+//   });
 
-  test('Testing when the channelId is not valid ', () => {
-    clearV1();
-    const authUser = authRegisterV1('email@email.com',
-      'password',
-      'First',
-      'Last');
+//   test('Testing when the channelId is not valid ', () => {
+//     clearV1();
+//     const authUser = authRegisterV1('email@email.com',
+//       'password',
+//       'First',
+//       'Last');
 
-    const channelId = -9999;
+//     const channelId = -9999;
 
-    const result = channelDetailsV1(authUser.authUserId, channelId);
-    expect(result).toMatchObject({ error: 'error' });
-  });
+//     const result = channelDetailsV1(authUser.authUserId, channelId);
+//     expect(result).toMatchObject({ error: 'error' });
+//   });
 
-  test('Testing when the authUserId is not valid ', () => {
-    clearV1();
-    const authUser = authRegisterV1('email@email.com',
-      'password',
-      'First',
-      'Last');
+//   test('Testing when the authUserId is not valid ', () => {
+//     clearV1();
+//     const authUser = authRegisterV1('email@email.com',
+//       'password',
+//       'First',
+//       'Last');
 
-    const channelId = channelsCreateV1(authUser.token, 'name', true);
+//     const channelId = channelsCreateV1(authUser.token, 'name', true);
 
-    const userId = -9999;
+//     const userId = -9999;
 
-    const result = channelDetailsV1(userId, channelId.channelId);
-    expect(result).toMatchObject({ error: 'error' });
-  });
+//     const result = channelDetailsV1(userId, channelId.channelId);
+//     expect(result).toMatchObject({ error: 'error' });
+//   });
 
-  test('channelId is valid but authUserId is not a member of the channel', () => {
-    clearV1();
-    const authUser1 = authRegisterV1('email@email.com',
-      'password',
-      'First',
-      'Last');
+//   test('channelId is valid but authUserId is not a member of the channel', () => {
+//     clearV1();
+//     const authUser1 = authRegisterV1('email@email.com',
+//       'password',
+//       'First',
+//       'Last');
 
-    const authUser2 = authRegisterV1('email2@email2.com',
-      'password2',
-      'First2',
-      'Last2');
+//     const authUser2 = authRegisterV1('email2@email2.com',
+//       'password2',
+//       'First2',
+//       'Last2');
 
-    const channelId = channelsCreateV1(authUser1.token, 'name', true);
+//     const channelId = channelsCreateV1(authUser1.token, 'name', true);
 
-    const result = channelDetailsV1(authUser2.authUserId, channelId.channelId);
-    expect(result).toMatchObject({ error: 'error' });
-  });
-});
+//     const result = channelDetailsV1(authUser2.authUserId, channelId.channelId);
+//     expect(result).toMatchObject({ error: 'error' });
+//   });
+// });
 
-describe('Testing channelJoinV1', () => {
-  test('Person who created the channel tries to join', () => {
-    clearV1();
-    const authUser = authRegisterV1('email@email.com',
-      'password',
-      'First',
-      'Last');
+// describe('Testing channelJoinV1', () => {
+//   test('Person who created the channel tries to join', () => {
+//     clearV1();
+//     const authUser = authRegisterV1('email@email.com',
+//       'password',
+//       'First',
+//       'Last');
 
-    const channelId = channelsCreateV1(authUser.token, 'name', true);
+//     const channelId = channelsCreateV1(authUser.token, 'name', true);
 
-    const result = channelJoinV1(authUser.authUserId, channelId.channelId);
-    expect(result).toMatchObject({ error: 'error' });
-  });
+//     const result = channelJoinV1(authUser.authUserId, channelId.channelId);
+//     expect(result).toMatchObject({ error: 'error' });
+//   });
 
-  test('Person who did not create channel tries to join public channel', () => {
-    clearV1();
-    const authUser = authRegisterV1('email@email.com',
-      'password',
-      'First',
-      'Last');
+//   test('Person who did not create channel tries to join public channel', () => {
+//     clearV1();
+//     const authUser = authRegisterV1('email@email.com',
+//       'password',
+//       'First',
+//       'Last');
 
-    const authUser1 = authRegisterV1('email1@email.com',
-      'password1',
-      'First1',
-      'Last1'
-    );
+//     const authUser1 = authRegisterV1('email1@email.com',
+//       'password1',
+//       'First1',
+//       'Last1'
+//     );
 
-    /*
-    const expected: usersType = {
-      uId: authUser.authUserId,
-      email: 'email@email.com',
-      nameFirst: 'First',
-      nameLast: 'Last',
-      handleStr: 'firstlast',
-    };
+//     /*
+//     const expected: usersType = {
+//       uId: authUser.authUserId,
+//       email: 'email@email.com',
+//       nameFirst: 'First',
+//       nameLast: 'Last',
+//       handleStr: 'firstlast',
+//     };
 
-    const expected1: usersType = {
-      uId: authUser1.authUserId,
-      email: 'email1@email.com',
-      nameFirst: 'First1',
-      nameLast: 'Last1',
-      handleStr: 'first1last1',
-    };
-    */
-    const channelId = channelsCreateV1(authUser1.token, 'name', true);
+//     const expected1: usersType = {
+//       uId: authUser1.authUserId,
+//       email: 'email1@email.com',
+//       nameFirst: 'First1',
+//       nameLast: 'Last1',
+//       handleStr: 'first1last1',
+//     };
+//     */
+//     const channelId = channelsCreateV1(authUser1.token, 'name', true);
 
-    channelDetailsV1(authUser1.authUserId, channelId.channelId);
-    // expect(chDetails['allMembers']).toContainEqual(expected1);
-    // expect(chDetails['allMembers']).not.toContainEqual(expected);
+//     channelDetailsV1(authUser1.authUserId, channelId.channelId);
+//     // expect(chDetails['allMembers']).toContainEqual(expected1);
+//     // expect(chDetails['allMembers']).not.toContainEqual(expected);
 
-    const result = channelJoinV1(authUser.authUserId, channelId.channelId);
-    channelDetailsV1(authUser1.authUserId, channelId.channelId);
-    // expect(chDetails1['allMembers']).toContainEqual(expected);
-    expect(result).toMatchObject({});
-  });
+//     const result = channelJoinV1(authUser.authUserId, channelId.channelId);
+//     channelDetailsV1(authUser1.authUserId, channelId.channelId);
+//     // expect(chDetails1['allMembers']).toContainEqual(expected);
+//     expect(result).toMatchObject({});
+//   });
 
-  test('Person who did not create channel tries to join private channel', () => {
-    clearV1();
-    const authUser = authRegisterV1('email@email.com',
-      'password',
-      'First',
-      'Last');
+//   test('Person who did not create channel tries to join private channel', () => {
+//     clearV1();
+//     const authUser = authRegisterV1('email@email.com',
+//       'password',
+//       'First',
+//       'Last');
 
-    authRegisterV1('email1@email.com',
-      'password1',
-      'First1',
-      'Last1');
+//     authRegisterV1('email1@email.com',
+//       'password1',
+//       'First1',
+//       'Last1');
 
-    const channelId = channelsCreateV1(authUser.token, 'name', false);
+//     const channelId = channelsCreateV1(authUser.token, 'name', false);
 
-    const result = channelJoinV1(authUser.authUserId, channelId.channelId);
-    expect(result).toMatchObject({ error: 'error' });
-  });
+//     const result = channelJoinV1(authUser.authUserId, channelId.channelId);
+//     expect(result).toMatchObject({ error: 'error' });
+//   });
 
-  test('Private channel + global owner', () => {
-    clearV1();
-    const globalOwner = authRegisterV1('email@email.com',
-      'password',
-      'First',
-      'Last');
+//   test('Private channel + global owner', () => {
+//     clearV1();
+//     const globalOwner = authRegisterV1('email@email.com',
+//       'password',
+//       'First',
+//       'Last');
 
-    const globalMember = authRegisterV1('email1@email.com',
-      'password1',
-      'First1',
-      'Last1');
+//     const globalMember = authRegisterV1('email1@email.com',
+//       'password1',
+//       'First1',
+//       'Last1');
 
-    const channelId = channelsCreateV1(globalMember.token, 'name', false);
+//     const channelId = channelsCreateV1(globalMember.token, 'name', false);
 
-    const result = channelJoinV1(globalOwner.authUserId, channelId.channelId);
-    expect(result).toMatchObject({});
-  });
-});
+//     const result = channelJoinV1(globalOwner.authUserId, channelId.channelId);
+//     expect(result).toMatchObject({});
+//   });
+// });
 
 describe('Testing channelInvite1', () => {
   test('channelId does not refer to a valid channel', () => {

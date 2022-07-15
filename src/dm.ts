@@ -363,7 +363,7 @@ function dmMessages (token: string, dmId: number, start: number) {
     return { error: 'error' };
   }
 
-  // Validates dmId and if uer is part of dm
+  // Validates dmId and if user is part of dm
   let validDmId = 0;
   let isMember = 0;
   let looper = 0;

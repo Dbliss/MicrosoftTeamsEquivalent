@@ -3,6 +3,7 @@ import { echo } from './echo';
 import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
+import fs from 'fs';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { channelInviteV2, channelMessagesV2 } from './channel';
 import { channelsCreateV1 } from './channels';
@@ -33,8 +34,10 @@ import {
   messageSendV1,
   messageEditV1,
   messageRemoveV1,
-  messageSenddmV1
+  messageSenddmV1,
 } from './message';
+import { getData, setData } from './dataStore';
+import { fstat } from 'fs';
 
 // Set up web app, use JSON
 const app = express();

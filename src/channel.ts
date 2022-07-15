@@ -1,4 +1,4 @@
-import { getData, setData, channelType, usersType, userType } from './dataStore';
+import { getData, setData, channelType, usersType } from './dataStore';
 
 type returnObjectType = {
   name: string,
@@ -18,28 +18,6 @@ type tempMembersType = {
 type errorType = {
   error: string;
 };
-
-type newMemberType = {
-  uId: number,
-  email: string,
-  nameFirst: string,
-  nameLast: string,
-  handleStr: string,
-}
-
-function extractUserDetails (user: newMemberType) {
-
-
-  const returnUser = {user: 
-  {uId: user.uId,
-  email: user.email,
-  nameFirst: user.nameFirst,
-  nameLast: user.nameLast,
-  handleStr: user.handleStr,}
-  }
-  return returnUser;
-}
-
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
 
@@ -399,7 +377,7 @@ function channelMessagesV1 (authUserId: number, channelId: number, start: number
 
   return { messages, start, end };
 }
-const error = { error: 'error' }
+const error = { error: 'error' };
 
 const channelLeaveV1 = (token: string, channelId: number) => {
   const data = getData();
@@ -408,8 +386,8 @@ const channelLeaveV1 = (token: string, channelId: number) => {
   for (const user of data.user) {
     for (const tokens of user.token) {
       if (tokens === token) {
-        let authUserId = user.authUserId;
-        let isTokenValid = true;
+        authUserId = user.authUserId;
+        isTokenValid = true;
       }
     }
   }
@@ -422,8 +400,8 @@ const channelLeaveV1 = (token: string, channelId: number) => {
   let channelIndex = -1;
   for (let i = 0; i < data.channel.length; i++) {
     if (data.channel[i].cId === channelId) {
-      let isChannelIdValid = true;
-      let channelIndex = i;
+      isChannelIdValid = true;
+      channelIndex = i;
     }
   }
   if (isChannelIdValid === false) {
@@ -435,8 +413,8 @@ const channelLeaveV1 = (token: string, channelId: number) => {
   let memberIndex = -1;
   for (let j = 0; j < data.channel[channelIndex].members.length; j++) {
     if (data.channel[channelIndex].members[j].authUserId === authUserId) {
-      let isMemberValid = true;
-      let memberIndex = j;
+      isMemberValid = true;
+      memberIndex = j;
     }
   }
   if (isMemberValid === false) {
@@ -447,9 +425,9 @@ const channelLeaveV1 = (token: string, channelId: number) => {
   if (memberIndex > -1) {
     data.channel[channelIndex].members.splice(memberIndex, 1);
     setData(data);
-  } 
+  }
   return {};
-}
+};
 
 const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
   const data = getData();
@@ -458,17 +436,20 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
   for (const user of data.user) {
     for (const tokens of user.token) {
       if (tokens === token) {
-        let isTokenValid = true;
+        isTokenValid = true;
       }
     }
+  }
+  if (isTokenValid === false) {
+    return error;
   }
   // check if valid channel id
   let isChannelIdValid = false;
   let channelIndex = -1;
   for (let i = 0; i < data.channel.length; i++) {
     if (data.channel[i].cId === channelId) {
-      let isChannelIdValid = true;
-      let channelIndex = i;
+      isChannelIdValid = true;
+      channelIndex = i;
     }
   }
   if (isChannelIdValid === false) {
@@ -479,8 +460,8 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
   let userIndex = -1;
   for (let j = 0; j < data.user.length; j++) {
     if (data.user[j].authUserId === uId) {
-      let isUserIdValid = true;
-      let userIndex = j;
+      isUserIdValid = true;
+      userIndex = j;
     }
   }
   if (isUserIdValid === false) {
@@ -489,11 +470,9 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
 
   // check to see if member is in channel
   let isMemberValid = false;
-  let memberIndex = -1;
   for (let k = 0; k < data.channel[channelIndex].members.length; k++) {
     if (data.channel[channelIndex].members[k].authUserId === uId) {
-      let isMemberValid = true;
-      let memberIndex = k;
+      isMemberValid = true;
     }
   }
   if (isMemberValid === false) {
@@ -507,12 +486,12 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
     }
   }
 
-  // check to see if user has owner permissions 
+  // check to see if user has owner permissions
   for (let m = 0; m < data.user[userIndex].channels.length; m++) {
     if (data.user[userIndex].channels[m].cId === channelId) {
       if (data.user[userIndex].channels[m].channelPermissionsId === 2) {
         return error;
-      } 
+      }
     }
   }
 
@@ -528,14 +507,12 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
     permissionId: data.user[userIndex].permissionId,
     token: [...data.user[userIndex].token],
   };
-  
-  
 
   data.channel[channelIndex].owners.push(newOwner);
   setData(data);
 
   return {};
-}
+};
 
 const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => {
   const data = getData();
@@ -544,17 +521,20 @@ const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => 
   for (const user of data.user) {
     for (const tokens of user.token) {
       if (tokens === token) {
-        let isTokenValid = true;
+        isTokenValid = true;
       }
     }
+  }
+  if (isTokenValid === false) {
+    return error;
   }
   // check if valid channel id
   let isChannelIdValid = false;
   let channelIndex = -1;
   for (let i = 0; i < data.channel.length; i++) {
     if (data.channel[i].cId === channelId) {
-      let isChannelIdValid = true;
-      let channelIndex = i;
+      isChannelIdValid = true;
+      channelIndex = i;
     }
   }
   if (isChannelIdValid === false) {
@@ -565,8 +545,8 @@ const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => 
   let userIndex = -1;
   for (let j = 0; j < data.user.length; j++) {
     if (data.user[j].authUserId === uId) {
-      let isUserIdValid = true;
-      let userIndex = j;
+      isUserIdValid = true;
+      userIndex = j;
     }
   }
   if (isUserIdValid === false) {
@@ -578,8 +558,8 @@ const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => 
   let ownerIndex = -1;
   for (let k = 0; k < data.channel[channelIndex].members.length; k++) {
     if (data.channel[channelIndex].owners[k].authUserId === uId) {
-      let isOwnerValid = true;
-      let ownerIndex = k;
+      isOwnerValid = true;
+      ownerIndex = k;
     }
   }
   if (isOwnerValid === false) {
@@ -591,21 +571,20 @@ const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => 
     return error;
   }
 
-  // check to see if user has owner permissions 
+  // check to see if user has owner permissions
   for (let m = 0; m < data.user[userIndex].channels.length; m++) {
     if (data.user[userIndex].channels[m].cId === channelId) {
       if (data.user[userIndex].channels[m].channelPermissionsId === 2) {
         return error;
-      } 
+      }
     }
   }
-  // remove owner from array 
+  // remove owner from array
   if (ownerIndex > -1) {
     data.channel[channelIndex].owners.splice(ownerIndex, 1);
     setData(data);
-  } 
+  }
   return {};
-}
-
+};
 
 export { channelDetailsV1, channelJoinV1, channelInviteV1, channelMessagesV1, channelLeaveV1, channelAddOwnerV1, channelRemoveOwnerV1 };

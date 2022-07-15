@@ -158,4 +158,8 @@ function messageRemoveV1(token: string, messageId: number) {
   return {};
 }
 
-export { messageSendV1, messageRemoveV1, messageEditV1 };
+function messageSenddmV1 (token: string, dmId: number, message: string) {
+
+}
+
+export { messageSendV1, messageRemoveV1, messageEditV1, messageSenddmV1 };

@@ -31,7 +31,7 @@ type errorType = {
 // Returns <{error: error}> on <when channelId is invalid>
 // Returns <{error: error}> on <authorised user is not a member of the channel>
 
-function channelDetailsV1 (authUserId: number, channelId: number) {
+function channelDetailsV1 (token: string, channelId: number) {
   const data = getData();
 
   const error: errorType = { error: 'error' };
@@ -39,7 +39,12 @@ function channelDetailsV1 (authUserId: number, channelId: number) {
   // The code finds the index of the object which contains the apropriate authUserId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
   const userIndex = data.user.findIndex(object => {
-    return object.authUserId === authUserId;
+    for (const tokenElem of object.token) {
+      if (tokenElem === token) {
+        return tokenElem === token;
+      }
+    }
+    return false;
   });
     // code adapted from the website shorturl.at/eoJKY
 
@@ -132,7 +137,7 @@ function channelDetailsV1 (authUserId: number, channelId: number) {
 // Returns {error: error} on channelId does not refer to a valid channel,
 // Returns {error: error} on the authorised user is already a member of the channel
 
-function channelJoinV1 (authUserId: number, channelId: number) {
+function channelJoinV1 (token: string, channelId: number) {
   const data = getData();
   const returnObject = {};
   const error = { error: 'error' };
@@ -146,7 +151,12 @@ function channelJoinV1 (authUserId: number, channelId: number) {
   // The code finds the index of the object which contains the apropriate authUserId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
   const userIndex = data.user.findIndex(object => {
-    return object.authUserId === authUserId;
+    for (const tokenElem of object.token) {
+      if (tokenElem === token) {
+        return tokenElem === token;
+      }
+    }
+    return false;
   }); // code adapted from the website shorturl.at/eoJKY
 
   // if neither the authUserId nor the channelId is valid then the function
@@ -164,11 +174,21 @@ function channelJoinV1 (authUserId: number, channelId: number) {
   // Loops through the array members in the specified channel and checks
   // whether the authorised user is already a member of the channel,
   // if they are then error object is returned
-  for (let i = 0; i < data.channel[channelIndex].members.length; i++) {
-    if (data.channel[channelIndex].members[i].authUserId === authUserId) {
-      return error;
-    }
+
+  const currentMember = data.user[userIndex].channels.findIndex(object => { // I think this works need to test
+    // further
+    return object.cId === data.channel[channelIndex].cId;
+  });
+
+  if (currentMember !== -1) {
+    return error;
   }
+
+  // for (let i = 0; i < data.channel[channelIndex].members.length; i++) {
+  //   if (data.channel[channelIndex].members[i].authUserId === authUserId) {
+  //     return error;
+  //   }
+  // }
 
   // checking if the channel is public or not if not true then error is returned
   const isPublic = data.channel[channelIndex].isPublic;

@@ -34,6 +34,7 @@ type channelsType = {
   name: string,
 };
 
+// Storing messages with its Id
 type messageType = {
   messageId: number,
   message: string
@@ -55,7 +56,7 @@ type dmType = {
   name: string,
   members: number[],
   owners: number[],
-  messages: string[]
+  messages: messageType[]
 }
 
 type dataType = {

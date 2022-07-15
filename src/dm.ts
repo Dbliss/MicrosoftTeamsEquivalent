@@ -380,8 +380,7 @@ function dmMessages (token: string, dmId: number, start: number) {
     }
     looper++;
   }
-  console.log('start = ' + start);
-  console.log(data.dm[dmIndex].messages.length);
+  
   // Returns error if start, dmId or user is invaid
   // if (validDmId === 0) return { error: 'error1' };
   // if(isMember === 0 ) return { error: 'error2' };

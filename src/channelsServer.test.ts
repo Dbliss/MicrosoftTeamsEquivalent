@@ -298,7 +298,6 @@ describe('Testing channelsListV1', () => {
     const channels = callingChannelslistAll(registered.token);
     expect(channels.statusCode).toBe(OK);
     const result = JSON.parse(String(channels.getBody()));
-    expect(result.statusCode).toBe(OK);
     expect(result).toMatchObject({
       channels: [{
         channelId: channel1.channelId,

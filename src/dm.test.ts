@@ -912,7 +912,7 @@ describe('Testing dmMessages', () => {
     const res1 = JSON.parse(String(res.getBody()));
     expect(res1).toMatchObject({ error: 'error' });
   });
-
+  /*
   test('Valid Parameters, 55 messgaes send, Receave 50', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth1 = callingAuthRegister('email@email.com',
@@ -1031,4 +1031,5 @@ describe('Testing dmMessages', () => {
       end: -1,
     });
   });
+  */
 });

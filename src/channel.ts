@@ -386,6 +386,17 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
 }
 const error = { error: 'error' };
 
+// Given a channel with ID channelId that the authorised user is a member of, remove them as a member of the channel
+// Arguments:
+// token (string) - This is the token string allocated to the user which is used when trying to leave the channel
+// channelId (number) - This is channelId of the channel the user is trying to leave
+
+// Return Values:
+// Returns {} (object) on valid channelLeaveV1
+// Returns { error: 'error' } on invalid token
+// Returns { error: 'error' } on invalid channelId
+// Returns { error: 'error' } on authorised user not being part of channel
+
 const channelLeaveV1 = (token: string, channelId: number) => {
   const data = getData();
   let isTokenValid = false;
@@ -435,6 +446,21 @@ const channelLeaveV1 = (token: string, channelId: number) => {
   }
   return {};
 };
+
+// Make user with user id uId an owner of the channel.
+// Arguments:
+// token (string) - This is the token string allocated to the user when trying to add user as owner of channel
+// channelId (number) - This is channelId of the channel the user is trying to be an owner of
+// uId (number) - This is the user Id of the user when trying to add user as owner of channel
+
+// Return Values:
+// Returns {} (object) on valid channelAddOwnerV1
+// Returns { error: 'error' } on invalid token
+// Returns { error: 'error' } on invalid channelId
+// Returns { error: 'error' } on invalid uId
+// Returns { error: 'error' } on user not being a member of channel
+// Returns { error: 'error' } on user already being owner of channel
+// Returns { error: 'error' } on authorised user not having owner permissions
 
 const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
   const data = getData();
@@ -520,6 +546,21 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
 
   return {};
 };
+
+// Remove user with user id uId as an owner of the channel.
+// Arguments:
+// token (string) - This is the token string allocated to the user when trying to remove user as owner of channel
+// channelId (number) - This is channelId of the channel the user is trying to be removed as an owner of
+// uId (number) - This is the user Id of the user when trying to remove user as owner of channel
+
+// Return Values:
+// Returns {} (object) on valid channelRemoveOwnerV1
+// Returns { error: 'error' } on invalid token
+// Returns { error: 'error' } on invalid channelId
+// Returns { error: 'error' } on invalid uId
+// Returns { error: 'error' } on user not being an owner of channel
+// Returns { error: 'error' } on user being only owner of channel
+// Returns { error: 'error' } on authorised user not having owner permissions
 
 const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => {
   const data = getData();

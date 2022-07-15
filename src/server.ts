@@ -32,7 +32,8 @@ import {
 import {
   messageSendV1,
   messageEditV1,
-  messageRemoveV1
+  messageRemoveV1,
+  messageSenddmV1
 } from './message';
 
 // Set up web app, use JSON
@@ -210,6 +211,12 @@ app.delete('/message/remove/v1', (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+app.post('/message/senddm/v1', (req, res) => {
+  const { token, dmId, message } = req.body;
+  const leave = messageSenddmV1(token, dmId, message);
+  res.json(leave);
 });
 
 // for logging errors

@@ -158,4 +158,59 @@ function messageRemoveV1(token: string, messageId: number) {
   return {};
 }
 
-export { messageSendV1, messageRemoveV1, messageEditV1 };
+function messageSenddmV1 (token: string, dmId: number, message: string) {
+  const data = getData();
+
+  // Checking if token is valid and taking out the userId of the user
+  // Also gets the index of user and stores it on flag
+  let validToken = 0;
+  let flag = 0;
+  for (let i = 0; i < data.user.length; i++) {
+    for (const tokens of data.user[i].token) {
+      if (tokens === token) {
+        validToken = 1;
+        flag = i;
+      }
+    }
+  }
+
+  // returns ettor on invalid token and message length
+  if (validToken === 0 || message.length < 1 || message.length > 1000) {
+    return { error: 'error' };
+  }
+
+  // Validates dmId and if user is part of dm
+  let validDmId = 0;
+  let isMember = 0;
+  let looper = 0;
+  let dmIndex = 0;
+  for (const dm of data.dm) {
+    if (dm.dmId === dmId) {
+      validDmId = 1;
+      dmIndex = looper;
+      for (const member of dm.members) {
+        if (member === data.user[flag].authUserId) {
+          isMember = 1;
+        }
+      }
+    }
+    looper++;
+  }
+
+  // Returns error if dmId or user is invaid
+  if (validDmId === 0 || isMember === 0) {
+    return { error: 'error' };
+  }
+
+  const tempMessage = {
+    messageId: Math.floor(Math.random() * Date.now()),
+    message: message
+  };
+
+  data.dm[dmIndex].messages.push(tempMessage);
+
+  setData(data);
+  return { messageId: tempMessage.messageId };
+}
+
+export { messageSendV1, messageRemoveV1, messageEditV1, messageSenddmV1 };

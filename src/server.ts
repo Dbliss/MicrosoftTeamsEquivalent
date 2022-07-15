@@ -2,16 +2,19 @@ import express from 'express';
 import { echo } from './echo';
 import morgan from 'morgan';
 import config from './config.json';
+import cors from 'cors';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
+import { channelInviteV2, channelMessagesV2 } from './channel';
+import { channelsCreateV1 } from './channels';
 import { clearV1 } from './other';
 
 import {
-  channelsCreateV1,
   channelsListV1,
   channelsListallV1,
 } from './channels';
 
 import {
+
   dmCreate,
   dmList,
   dmRemove,
@@ -20,9 +23,23 @@ import {
   dmMessages,
 } from './dm';
 
+import {
+  channelLeaveV1,
+  channelAddOwnerV1,
+  channelRemoveOwnerV1,
+} from './channel';
+
+import {
+  messageSendV1,
+  messageEditV1,
+  messageRemoveV1
+} from './message';
+
 // Set up web app, use JSON
 const app = express();
 app.use(express.json());
+// Use middleware that allows for access from other domains
+app.use(cors());
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
@@ -50,6 +67,26 @@ app.post('/auth/login/v2', (req, res, next) => {
   try {
     const { email, password } = req.body;
     return res.json(authLoginV1(email, password));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channel/invite/v2', (req, res, next) => {
+  try {
+    const { token, channelId, uId } = req.body;
+    return res.json(channelInviteV2(token, channelId, uId));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/channel/messages/v2', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const channelId = req.query.channelId;
+    const start = req.query.start;
+    return res.json(channelMessagesV2(token, Number(channelId), Number(start)));
   } catch (err) {
     next(err);
   }
@@ -118,6 +155,61 @@ app.post('/dm/leave/v1', (req, res) => {
 app.get('/dm/messages/v1', (req, res) => {
   const messages = dmMessages(req.query.token as string, parseInt(req.query.dmId as string), parseInt(req.query.start as string));
   res.json(messages);
+});
+
+app.post('/channel/leave/v1', (req, res, next) => {
+  try {
+    const { token, channelId } = req.body;
+    return res.json(channelLeaveV1(token, channelId));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/message/send/v1', (req, res, next) => {
+  try {
+    const { token, channelId, message } = req.body;
+    return res.json(messageSendV1(token, channelId, message));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channel/addowner/v1', (req, res, next) => {
+  try {
+    const { token, channelId, uId } = req.body;
+    return res.json(channelAddOwnerV1(token, channelId, uId));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/message/edit/v1', (req, res, next) => {
+  try {
+    const { token, channelId, message } = req.body;
+    return res.json(messageEditV1(token, channelId, message));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channel/removeowner/v1', (req, res, next) => {
+  try {
+    const { token, channelId, uId } = req.body;
+    return res.json(channelRemoveOwnerV1(token, channelId, uId));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.delete('/message/remove/v1', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const messageId = req.query.messageId;
+    return res.json(messageRemoveV1(token, Number(messageId)));
+  } catch (err) {
+    next(err);
+  }
 });
 
 // for logging errors

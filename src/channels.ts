@@ -48,7 +48,7 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
   };
 
   data.channel.push(newChannel);
-  // Saving channel information of the channel user is part of in the user data 
+  // Saving channel information of the channel user is part of in the user data
   const pushObject = {
     cId: newChannel.cId,
     channelPermissionsId: 1

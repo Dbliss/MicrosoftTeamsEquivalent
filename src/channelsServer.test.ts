@@ -136,8 +136,8 @@ describe('Testing channelsCreateV1', () => {
 
   test('Invalid authUserId', () => {
     expect(callingClear().statusCode).toBe(OK);
-    
-      expect(callingAuthRegister('email@email.com',
+
+    expect(callingAuthRegister('email@email.com',
       'password',
       'First',
       'Last').statusCode).toBe(OK);
@@ -170,7 +170,7 @@ describe('Testing channelsListV1', () => {
     const channelId2 = callingChannelsCreate(registered.token,
       'name2',
       true);
-      expect(channelId2.statusCode).toBe(OK);
+    expect(channelId2.statusCode).toBe(OK);
     const channel2 = JSON.parse(String(channelId2.getBody()));
 
     const result = callingChannelslist(registered.token);

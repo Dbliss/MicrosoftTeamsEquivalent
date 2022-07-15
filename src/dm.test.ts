@@ -96,6 +96,7 @@ function callingDmMessages(token: string, dmId: number, start: number) {
   return res;
 }
 
+/*
 function callingMessageSendDm(token: string, dmId: number, message: string) {
   const res = request(
     'POST',
@@ -113,6 +114,7 @@ function callingMessageSendDm(token: string, dmId: number, message: string) {
   );
   return res;
 }
+*/
 
 function callingAuthRegister (email: string, password: string, nameFirst: string, nameLast: string) {
   const res = request(
@@ -149,13 +151,13 @@ describe('Testing dmCreate', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const res = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -171,20 +173,20 @@ describe('Testing dmCreate', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const auth3 = callingAuthRegister('email3@email.com',
       'password3',
       'First3',
       'Last3');
-      expect(auth3.statusCode).toBe(OK);
+    expect(auth3.statusCode).toBe(OK);
     const registered3 = JSON.parse(String(auth3.getBody()));
 
     const res = callingDmCreate(registered1.token, [registered2.authUserId, registered3.authUserId]);
@@ -204,7 +206,7 @@ describe('Testing dmCreate', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const res = callingDmCreate(registered1.token, [-9999]);
@@ -219,13 +221,13 @@ describe('Testing dmCreate', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const res = callingDmCreate(registered1.token, [registered2.authUserId, registered2.authUserId]);
@@ -245,7 +247,7 @@ describe('Testing dmCreate', () => {
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const res = callingDmCreate('-9999', [registered2.authUserId]);
@@ -275,13 +277,13 @@ describe('Testing dmList', () => {
       'password',
       'abc',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'dad',
       'mom');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -300,13 +302,13 @@ describe('Testing dmList', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -325,20 +327,20 @@ describe('Testing dmList', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const auth3 = callingAuthRegister('email3@email.com',
       'password3',
       'First3',
       'Last3');
-      expect(auth3.statusCode).toBe(OK);
+    expect(auth3.statusCode).toBe(OK);
     const registered3 = JSON.parse(String(auth3.getBody()));
 
     const dm1 = callingDmCreate(registered1.token, [registered3.authUserId]);
@@ -365,14 +367,14 @@ describe('Testing dmRemove', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -391,7 +393,7 @@ describe('Testing dmRemove', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const res = callingDmRemove(registered1.token, -9999);
@@ -406,13 +408,13 @@ describe('Testing dmRemove', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -431,13 +433,13 @@ describe('Testing dmRemove', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -458,13 +460,13 @@ describe('Testing dmRemove', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -490,14 +492,14 @@ describe('Testing dmDetails', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -516,7 +518,7 @@ describe('Testing dmDetails', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const res = callingDmDetails(registered1.token, -9999);
@@ -531,21 +533,21 @@ describe('Testing dmDetails', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const auth3 = callingAuthRegister('email3@email.com',
       'password3',
       'First3',
       'Last3');
-      expect(auth3.statusCode).toBe(OK);
+    expect(auth3.statusCode).toBe(OK);
     const registered3 = JSON.parse(String(auth3.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -564,14 +566,14 @@ describe('Testing dmDetails', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -608,21 +610,21 @@ describe('Testing dmDetails', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const auth3 = callingAuthRegister('email3@email.com',
       'password3',
       'First3',
       'Last3');
-      expect(auth3.statusCode).toBe(OK);
+    expect(auth3.statusCode).toBe(OK);
     const registered3 = JSON.parse(String(auth3.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId, registered3.authUserId]);
@@ -668,14 +670,14 @@ describe('Testing dmLeave', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -694,7 +696,7 @@ describe('Testing dmLeave', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const res = callingDmLeave(registered1.token, -9999);
@@ -709,21 +711,21 @@ describe('Testing dmLeave', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const auth3 = callingAuthRegister('email3@email.com',
       'password3',
       'First3',
       'Last3');
-      expect(auth3.statusCode).toBe(OK);
+    expect(auth3.statusCode).toBe(OK);
     const registered3 = JSON.parse(String(auth3.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -742,14 +744,14 @@ describe('Testing dmLeave', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -767,14 +769,14 @@ describe('Testing dmLeave', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -810,14 +812,14 @@ describe('Testing dmMessages', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -836,14 +838,14 @@ describe('Testing dmMessages', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     expect(callingDmCreate(registered1.token, [registered2.authUserId]).statusCode).toBe(OK);
@@ -860,14 +862,14 @@ describe('Testing dmMessages', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
@@ -886,21 +888,21 @@ describe('Testing dmMessages', () => {
       'password',
       'First',
       'Last');
-      expect(auth1.statusCode).toBe(OK);
+    expect(auth1.statusCode).toBe(OK);
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const auth2 = callingAuthRegister('email2@email.com',
       'password2',
       'First2',
       'Last2');
-      expect(auth2.statusCode).toBe(OK);
+    expect(auth2.statusCode).toBe(OK);
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const auth3 = callingAuthRegister('email3@email.com',
       'password3',
       'First3',
       'Last3');
-      expect(auth3.statusCode).toBe(OK);
+    expect(auth3.statusCode).toBe(OK);
     const registered3 = JSON.parse(String(auth3.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);

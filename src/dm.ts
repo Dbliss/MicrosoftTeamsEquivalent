@@ -14,7 +14,7 @@ import { getData, setData, dmType } from './dataStore';
 
 function dmCreate (token: string, uIds: number[]) {
   const data = getData();
-  
+
   // Checking if token is valid and taking out the userId of the user
   // Also gets the index of user and stores it on flag
   let validToken = 0;
@@ -32,7 +32,7 @@ function dmCreate (token: string, uIds: number[]) {
     return { error: 'error' };
   }
 
-  // Checking if uId is valid and if no uId is being repeated 
+  // Checking if uId is valid and if no uId is being repeated
   let validUId = 0;
   let uIdRepeat = 0;
   const dmNames = [];
@@ -93,13 +93,13 @@ function dmCreate (token: string, uIds: number[]) {
 // token (string) - Token shows an active session of the user
 
 // Return Values:
-// Returns [dms] (array of objects having name and dmId) on valid token 
+// Returns [dms] (array of objects having name and dmId) on valid token
 // Returns {error: 'error'} on invalid token - Being token does not exist
 
 function dmList (token: string) {
   const data = getData();
-  // Checking if token is valid and taking out the userId of the user 
-  // Also gets the index of user and stores it on flag  
+  // Checking if token is valid and taking out the userId of the user
+  // Also gets the index of user and stores it on flag
   let validToken = 0;
   let flag = 0;
   for (let i = 0; i < data.user.length; i++) {
@@ -143,7 +143,7 @@ function dmList (token: string) {
 
 function dmRemove (token: string, dmId: number) {
   const data = getData();
-  // Checking if token is valid and taking out the userId of the user 
+  // Checking if token is valid and taking out the userId of the user
   // Also gets the index of user and stores it on flag
   let validToken = 0;
   let flag = 0;
@@ -210,7 +210,7 @@ function dmRemove (token: string, dmId: number) {
 
 function dmDetails(token: string, dmId: number) {
   const data = getData();
-  // Checking if token is valid and taking out the userId of the user 
+  // Checking if token is valid and taking out the userId of the user
   // Also gets the index of user and stores it on flag
   let validToken = 0;
   let flag = 0;
@@ -282,7 +282,7 @@ function dmDetails(token: string, dmId: number) {
 
 function dmLeave(token: string, dmId: number) {
   const data = getData();
-  // Checking if token is valid and taking out the userId of the user 
+  // Checking if token is valid and taking out the userId of the user
   // Also gets the index of user and stores it on flag
   let validToken = 0;
   let flag = 0;
@@ -334,8 +334,8 @@ function dmLeave(token: string, dmId: number) {
 // Start (number) - Index of from where the messages need to be seen
 
 // Return Values:
-// Returns {messages: , start: , end: } 
-//  (messages is an array of strings od messages) 
+// Returns {messages: , start: , end: }
+//  (messages is an array of strings od messages)
 //  (start is the staring point of messages sent)
 //  (end is ending point of messages send - will be start +50 but if there are not 50 messages to show, end = -1 )
 // on valid token and uIds
@@ -346,7 +346,7 @@ function dmLeave(token: string, dmId: number) {
 
 function dmMessages (token: string, dmId: number, start: number) {
   const data = getData();
-  // Checking if token is valid and taking out the userId of the user 
+  // Checking if token is valid and taking out the userId of the user
   // Also gets the index of user and stores it on flag
   let validToken = 0;
   let flag = 0;
@@ -381,7 +381,7 @@ function dmMessages (token: string, dmId: number, start: number) {
     looper++;
   }
 
-  // Returns error if start, dmId or user is invaid 
+  // Returns error if start, dmId or user is invaid
   if (validDmId === 0 || isMember === 0 || data.dm[dmIndex].messages.length < start) {
     return { error: 'error' };
   }

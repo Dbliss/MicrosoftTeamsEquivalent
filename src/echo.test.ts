@@ -12,7 +12,6 @@ test('Filler', () => {
 });
 
 describe('HTTP tests using Jest', () => {
-
   test('Test successful echo', () => {
     const res = request(
       'GET',
@@ -27,7 +26,7 @@ describe('HTTP tests using Jest', () => {
     expect(res.statusCode).toBe(OK);
     expect(bodyObj).toEqual('Hello');
   });
-  
+
   test('Test invalid echo', () => {
     const res = request(
       'GET',
@@ -42,7 +41,4 @@ describe('HTTP tests using Jest', () => {
     expect(res.statusCode).toBe(OK);
     expect(bodyObj).toEqual({ error: 'error' });
   });
-  
 });
-
-

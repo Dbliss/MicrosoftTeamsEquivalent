@@ -1,6 +1,7 @@
 import validator from 'validator';
-import { getData, setData, userType } from './dataStore';
+import { getData, setData, userType, usersType } from './dataStore';
 const error = { error: 'error' };
+
 
 // <For a valid user, returns information about their userId, email, first name, last name, and handle>
 
@@ -14,21 +15,22 @@ const error = { error: 'error' };
 
 function userProfileV1(token: string, uId: number) {
   const data = getData();
-  const returnUser = {
-    user: {
+  
+  const returnUser =  {
       uId: 0,
       email: '',
       nameFirst: '',
       nameLast: '',
       handleStr: ''
     }
-  };
+  
 
   // Finds the index of the object which contains the apropriate authUserId matching uId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
   const uIdIndex = data.user.findIndex(object => {
     return object.authUserId === uId;
   });
+  console.log(`uId index value in user profile: ${uIdIndex}`);
 
   // Checks if the token exists and returns the index of the user which has that token,
   // if noy found then returns -1
@@ -40,6 +42,7 @@ function userProfileV1(token: string, uId: number) {
     }
     return false; 
   }); // code adapted from the website shorturl.at/eoJKY
+  console.log(`Token index value in user profile: ${tokenIndex}`);
 
   // if neither the token nor the uId is found then the function
   // returns an error object
@@ -49,11 +52,11 @@ function userProfileV1(token: string, uId: number) {
 
   // Setting the values of the returned user object with the necessary details
   const retuId = data.user[uIdIndex].authUserId;
-  returnUser.user.uId = retuId;
-  returnUser.user.email = data.user[uIdIndex].email;
-  returnUser.user.nameFirst = data.user[uIdIndex].nameFirst;
-  returnUser.user.nameLast = data.user[uIdIndex].nameLast;
-  returnUser.user.handleStr = data.user[uIdIndex].handle;
+  returnUser.uId = retuId;
+  returnUser.email = data.user[uIdIndex].email;
+  returnUser.nameFirst = data.user[uIdIndex].nameFirst;
+  returnUser.nameLast = data.user[uIdIndex].nameLast;
+  returnUser.handleStr = data.user[uIdIndex].handle;
 
   return returnUser;
 }
@@ -63,33 +66,33 @@ function userProfileV1(token: string, uId: number) {
 function extractUserDetails (user: userType) {
 
 
-  const returnUser = {user: 
+  const returnUser =  
   {uId: user.authUserId,
   email: user.email,
   nameFirst: user.nameFirst,
   nameLast: user.nameLast,
   handleStr: user.handle,}
-  }
+  
   return returnUser;
 }
 
-function tokenIndexCheck (data, token) {
-  // Checks if the token exists and returns the index of the user which has that token,
-  // if noy found then returns -1
-  const tokenIndex = data.user.findIndex(object => {
-    for (const tokenElem of object.token) {
-        if(tokenElem === token) {
-            return tokenElem === token;
-        }
-    }
-    return false; 
-  }); // code adapted from the website shorturl.at/eoJKY
+// function tokenIndexCheck (data, token) {
+//   // Checks if the token exists and returns the index of the user which has that token,
+//   // if noy found then returns -1
+//   const tokenIndex = data.user.findIndex(object => {
+//     for (const tokenElem of object.token) {
+//         if(tokenElem === token) {
+//             return tokenElem === token;
+//         }
+//     }
+//     return false; 
+//   }); // code adapted from the website shorturl.at/eoJKY
 
-  if (tokenIndex === -1) {
-    return error;
-  }
-  else return tokenIndex;
-}
+//   if (tokenIndex === -1) {
+//     return error;
+//   }
+//   else return tokenIndex;
+// }
 
 function updateUserInfo(data, channels, user) { // need to typescript channels as an array of channels
   for (const channel of channels) {
@@ -152,9 +155,18 @@ function  userProfileSetNameV1 (token: string, nameFirst: string, nameLast: stri
 
   // Checks if the token exists and returns the index of the user which has that token,
   // if not found then returns -1 
-  const tokenIndex = tokenIndexCheck(data, token);
-  if (tokenIndex === error) {
-    return tokenIndex;
+  console.log(`This is tje value of the tokem: ${token}`);
+  const tokenIndex = data.user.findIndex(object => {
+    for (const tokenElem of object.token) {
+        if(tokenElem === token) {
+            return tokenElem === token;
+        }
+    }
+    return false; 
+  }); 
+  console.log(tokenIndex);
+  if (tokenIndex === -1) {
+    return error;
   }
   
   
@@ -173,9 +185,19 @@ function  userProfileSetNameV1 (token: string, nameFirst: string, nameLast: stri
 function  userProfileSetEmailV1 (token: string, email: string) {
   const data = getData();
 
-  const tokenIndex = tokenIndexCheck(data, token);
-  if (tokenIndex === error) {
-    return tokenIndex;
+  const tokenIndex = data.user.findIndex(object => {
+    for (const tokenElem of object.token) {
+        if(tokenElem === token) {
+            return tokenElem === token;
+        }
+    }
+    return false; 
+  }); // code adapted from the website shorturl.at/eoJKY
+
+  // if neither the token nor the uId is found then the function
+  // returns an error object
+  if ((tokenIndex === -1)) {
+    return error;
   }
 
   if(!(validator.isEmail(email))) {
@@ -202,10 +224,21 @@ function  userProfileSetEmailV1 (token: string, email: string) {
 function userProfileSetHandleV1 (token: string, handleStr: string) {
   const data = getData();
 
-  const tokenIndex = tokenIndexCheck(data, token);
-  if (tokenIndex === error) {
-    return tokenIndex;
+  const tokenIndex = data.user.findIndex(object => {
+    for (const tokenElem of object.token) {
+        if(tokenElem === token) {
+            return tokenElem === token;
+        }
+    }
+    return false; 
+  }); // code adapted from the website shorturl.at/eoJKY
+
+  // if neither the token nor the uId is found then the function
+  // returns an error object
+  if ((tokenIndex === -1)) {
+    return error;
   }
+  
 
   if((handleStr.length < 3) || (handleStr.length > 20)) {
     return error;

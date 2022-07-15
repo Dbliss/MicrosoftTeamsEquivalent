@@ -40,8 +40,8 @@ function channelDetailsV1 (token: string, channelId: number) {
   // and stores it within a variable. If not found -1 is stored
   const userIndex = data.user.findIndex(object => {
     for (const tokenElem of object.token) {
-      if(tokenElem === token) {
-          return tokenElem === token;
+      if (tokenElem === token) {
+        return tokenElem === token;
       }
     }
     return false;
@@ -152,8 +152,8 @@ function channelJoinV1 (token: string, channelId: number) {
   // and stores it within a variable. If not found -1 is stored
   const userIndex = data.user.findIndex(object => {
     for (const tokenElem of object.token) {
-      if(tokenElem === token) {
-          return tokenElem === token;
+      if (tokenElem === token) {
+        return tokenElem === token;
       }
     }
     return false;
@@ -175,15 +175,15 @@ function channelJoinV1 (token: string, channelId: number) {
   // whether the authorised user is already a member of the channel,
   // if they are then error object is returned
 
-  const currentMember = data.user[userIndex].channels.findIndex(object => { //I think this works need to test
-                                                                            //further
+  const currentMember = data.user[userIndex].channels.findIndex(object => { // I think this works need to test
+    // further
     return object.cId === data.channel[channelIndex].cId;
   });
 
   if (currentMember !== -1) {
     return error;
   }
-  
+
   // for (let i = 0; i < data.channel[channelIndex].members.length; i++) {
   //   if (data.channel[channelIndex].members[i].authUserId === authUserId) {
   //     return error;

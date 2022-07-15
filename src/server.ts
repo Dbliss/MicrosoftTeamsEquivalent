@@ -7,8 +7,7 @@ import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { clearV1 } from './other';
 
 import { channelDetailsV1, channelJoinV1 } from './channel';
-import { usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1} from './users';
-
+import { usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1 } from './users';
 
 import {
   channelsCreateV1,
@@ -86,7 +85,7 @@ app.post('/auth/logout/v1', (req, res, next) => {
   }
 });
 
-//WRAPPING CHANNEL FUNCTIONS - channelDetailsV1 (GET) and channelJoinV1 (POST)
+// WRAPPING CHANNEL FUNCTIONS - channelDetailsV1 (GET) and channelJoinV1 (POST)
 
 app.get('/channel/details/v2', (req, res, next) => {
   try {
@@ -95,23 +94,17 @@ app.get('/channel/details/v2', (req, res, next) => {
     return res.json(channelDetailsV1(String(token), Number(channelId)));
   } catch (err) {
     next(err);
-  } 
-   
-                                                                           
+  }
 });
 
 app.post('/channel/join/v2', (req, res, next) => {
   try {
-    const {token, channelId} = req.body;
+    const { token, channelId } = req.body;
     return res.json(channelJoinV1(token, channelId));
   } catch (err) {
     next(err);
   }
-  
-
-   
 });
-
 
 app.get('/user/profile/v2', (req, res, next) => {
   try {
@@ -121,50 +114,44 @@ app.get('/user/profile/v2', (req, res, next) => {
   } catch (err) {
     next(err);
   }
-
 });
 
-app.get('/users/all/v1', (req, res, next) => { 
+app.get('/users/all/v1', (req, res, next) => {
   try {
     const token = req.query.token;
     return res.json(usersAllV1(String(token)));
   } catch (err) {
     next(err);
   }
-
 });
 
 app.put('/user/profile/setname/v1', (req, res, next) => {
   try {
-    const { token, nameFirst, nameLast } = req.body
-  
+    const { token, nameFirst, nameLast } = req.body;
+
     return res.json(userProfileSetNameV1(token, nameFirst, nameLast));
   } catch (err) {
     next(err);
   }
-  
 });
 
 app.put('/user/profile/setemail/v1', (req, res, next) => {
   try {
-    const { token, email } = req.body
+    const { token, email } = req.body;
     return res.json(userProfileSetEmailV1(token, email));
   } catch (err) {
     next(err);
   }
-  
 });
 
 app.put('/user/profile/sethandle/v1', (req, res, next) => {
   try {
-    const { token, handleStr } = req.body  
+    const { token, handleStr } = req.body;
     return res.json(userProfileSetHandleV1(token, handleStr));
   } catch (err) {
     next(err);
   }
-  
 });
-
 
 // for logging errors
 app.use(morgan('dev'));

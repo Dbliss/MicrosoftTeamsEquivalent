@@ -112,7 +112,7 @@ function messageEditV1(token: string, messageId: number, message: string) {
   if (flag === 0) {
     return { error: 'error' };
   }
-
+  setData(data);
   return {};
 }
 
@@ -154,7 +154,7 @@ function messageRemoveV1(token: string, messageId: number) {
   if (flag === 0) {
     return { error: 'error' };
   }
-
+  setData(data);
   return {};
 }
 

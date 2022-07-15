@@ -1,4 +1,5 @@
 // import { type } from 'os';
+import fs from 'fs';
 
 // Storing info about which channel user is part of
 type channelsInUserType = {
@@ -66,11 +67,6 @@ type dataType = {
 };
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-let data: dataType = {
-  user: [],
-  channel: [],
-  dm: [],
-};
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
@@ -90,12 +86,14 @@ Example usage
 
 // Use get() to access the data
 function getData() {
+  const storedData = (fs.readFileSync('src/data.json'));
+  const data = JSON.parse(String(storedData));
   return data;
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
 function setData(newData: dataType) {
-  data = newData;
+  fs.writeFileSync('src/data.json', JSON.stringify(newData), { flag: 'w' });
 }
 
 export { getData, setData, dataType, userType, channelType, channelsType, usersType, dmType, messageType };

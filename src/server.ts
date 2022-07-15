@@ -36,7 +36,7 @@ import {
   messageSendV1,
   messageEditV1,
   messageRemoveV1,
-  messageSenddmV1
+  messageSenddmV1,
 } from './message';
 
 // Set up web app, use JSON
@@ -133,9 +133,9 @@ app.post('/auth/logout/v1', (req, res, next) => {
 
 app.get('/channel/details/v2', (req, res, next) => {
   try {
-    const token = req.query.token;
+    const token = req.query.token as string;
     const channelId = req.query.channelId;
-    return res.json(channelDetailsV1(String(token), Number(channelId)));
+    return res.json(channelDetailsV1(token, Number(channelId)));
   } catch (err) {
     next(err);
   }

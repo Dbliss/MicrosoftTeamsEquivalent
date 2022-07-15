@@ -38,7 +38,7 @@ function channelDetailsV1 (token: string, channelId: number) {
 
   // The code finds the index of the object which contains the apropriate authUserId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
-  const userIndex = data.user.findIndex(object => {
+  const userIndex = data.user.findIndex((object: any) => {
     for (const tokenElem of object.token) {
       if (tokenElem === token) {
         return tokenElem === token;
@@ -50,7 +50,7 @@ function channelDetailsV1 (token: string, channelId: number) {
 
   // The code finds the index of the object which contains the apropriate channelId, in the channel key array,
   // and stores it within a variable. If not found -1 is stored
-  const channelIndex = data.channel.findIndex(object => {
+  const channelIndex = data.channel.findIndex((object: any) => {
     return object.cId === channelId;
   });
 
@@ -62,7 +62,7 @@ function channelDetailsV1 (token: string, channelId: number) {
 
   // returns the index of the channelId in the channels array of the valid user
   // if the channel is not within the user's channels array then -1 is returned
-  const cIdIndex = data.user[userIndex].channels.findIndex(object => {
+  const cIdIndex = data.user[userIndex].channels.findIndex((object: any) => {
     return object.cId === channelId;
   });
 
@@ -144,13 +144,13 @@ function channelJoinV1 (token: string, channelId: number) {
 
   // The code finds the index of the object which contains the apropriate channelId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
-  const channelIndex = data.channel.findIndex(object => {
+  const channelIndex = data.channel.findIndex((object: any) => {
     return object.cId === channelId;
   });
 
   // The code finds the index of the object which contains the apropriate authUserId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
-  const userIndex = data.user.findIndex(object => {
+  const userIndex = data.user.findIndex((object: any) => {
     for (const tokenElem of object.token) {
       if (tokenElem === token) {
         return tokenElem === token;
@@ -175,7 +175,7 @@ function channelJoinV1 (token: string, channelId: number) {
   // whether the authorised user is already a member of the channel,
   // if they are then error object is returned
 
-  const currentMember = data.user[userIndex].channels.findIndex(object => { // I think this works need to test
+  const currentMember = data.user[userIndex].channels.findIndex((object: any) => { // I think this works need to test
     // further
     return object.cId === data.channel[channelIndex].cId;
   });

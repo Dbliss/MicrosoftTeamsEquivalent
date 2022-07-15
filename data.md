@@ -25,7 +25,9 @@ database = {
             'isPublic': Channel1publicity,
             'owners': [ memberuIds ]
             'members': [ uIDs ]
-            'messages': [ messages ]
+            'messages': [ {'messageId': messageId,
+                           'message': 'message1',
+                        }, ],
         },
     ]
 }

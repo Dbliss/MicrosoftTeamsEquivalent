@@ -3,13 +3,12 @@ import { echo } from './echo';
 import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
-import {
-  authLoginV1, authRegisterV1, authLogoutV1
-} from './auth';
+import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
+import { channelInviteV2, channelMessagesV2 } from './channel';
+import { channelsCreateV1 } from './channels';
 import { clearV1 } from './other';
 
 import {
-  channelsCreateV1,
   channelsListV1,
   channelsListallV1,
 } from './channels';
@@ -19,6 +18,12 @@ import {
   channelAddOwnerV1,
   channelRemoveOwnerV1,
 } from './channel';
+
+import {
+  messageSendV1,
+  messageEditV1,
+  messageRemoveV1
+} from './message';
 
 // Set up web app, use JSON
 const app = express();
@@ -57,6 +62,26 @@ app.post('/auth/login/v2', (req, res, next) => {
   }
 });
 
+app.post('/channel/invite/v2', (req, res, next) => {
+  try {
+    const { token, channelId, uId } = req.body;
+    return res.json(channelInviteV2(token, channelId, uId));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/channel/messages/v2', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const channelId = req.query.channelId;
+    const start = req.query.start;
+    return res.json(channelMessagesV2(token, Number(channelId), Number(start)));
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.delete('/clear/v1', (req, res, next) => {
   try {
     return res.json(clearV1());
@@ -65,7 +90,7 @@ app.delete('/clear/v1', (req, res, next) => {
   }
 });
 
-app.post('/channels/create/v2', (req, res, next) => {
+app.post('/channels/create/v1', (req, res, next) => {
   const { token, name, isPublic } = req.body;
   const cId = channelsCreateV1(token, name, isPublic);
   res.json(cId);
@@ -99,10 +124,28 @@ app.post('/channel/leave/v1', (req, res, next) => {
   }
 });
 
+app.post('/message/send/v1', (req, res, next) => {
+  try {
+    const { token, channelId, message } = req.body;
+    return res.json(messageSendV1(token, channelId, message));
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.post('/channel/addowner/v1', (req, res, next) => {
   try {
     const { token, channelId, uId } = req.body;
     return res.json(channelAddOwnerV1(token, channelId, uId));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/message/edit/v1', (req, res, next) => {
+  try {
+    const { token, channelId, message } = req.body;
+    return res.json(messageEditV1(token, channelId, message));
   } catch (err) {
     next(err);
   }
@@ -116,6 +159,17 @@ app.post('/channel/removeowner/v1', (req, res, next) => {
     next(err);
   }
 });
+
+app.delete('/message/remove/v1', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const messageId = req.query.messageId;
+    return res.json(messageRemoveV1(token, Number(messageId)));
+  } catch (err) {
+    next(err);
+  }
+});
+
 // for logging errors
 app.use(morgan('dev'));
 

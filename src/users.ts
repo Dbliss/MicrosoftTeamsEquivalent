@@ -2,7 +2,7 @@ import validator from 'validator';
 import { getData, setData, userType } from './dataStore';
 const error = { error: 'error' };
 
-// <For a valid user, returns information about their userId, email, first name, last name, and handle>
+// <For a valid token, returns information about their userId, email, first name, last name, and handle>
 
 // Arguments:
 // <authUserId> (<integer>)    - <This is the unique number given to a user once registered and is the number for the person looking for information>
@@ -72,24 +72,8 @@ function extractUserDetails (user: userType) {
   return returnUser;
 }
 
-// function tokenIndexCheck (data, token) {
-//   // Checks if the token exists and returns the index of the user which has that token,
-//   // if noy found then returns -1
-//   const tokenIndex = data.user.findIndex((object: any) => {
-//     for (const tokenElem of object.token) {
-//         if(tokenElem === token) {
-//             return tokenElem === token;
-//         }
-//     }
-//     return false;
-//   }); // code adapted from the website shorturl.at/eoJKY
-
-//   if (tokenIndex === -1) {
-//     return error;
-//   }
-//   else return tokenIndex;
-// }
-
+// Helper function which takes in the data, the updateed user and the channels they are part of and updates all of
+// the instances fo that user
 function updateUserInfo(data: any, channels: any, user: any) { // need to typescript channels as an array of channels
   for (const channel of channels) {
     const channelId = channel.cId;
@@ -113,6 +97,15 @@ function updateUserInfo(data: any, channels: any, user: any) { // need to typesc
   }
 }
 
+// <For a valid token, an array of all the users in the system>
+
+// Arguments:
+// <token> (<string>)    - <This is the unique string given to each session for a user>
+// <uId> (<integer>)    - <This is the unique number given to a user once registered and is the number of the user if valid whose details is being sought>
+
+// Return Value:
+// Returns <{users}> on <valid input of authUserId and uId>
+// Returns {error: 'error'} on <invalid token>
 function usersAllV1 (token: string) {
   const data = getData();
   // Checks if the token exists and returns the index of the user which has that token,
@@ -138,6 +131,19 @@ function usersAllV1 (token: string) {
   return returnUserArray;
 }
 
+// <For a valid token, nameFirst and nameLast, changes tehe suers first and last name in all of
+// their instances within the data. including members of channels>
+
+// Arguments:
+// <token> (<integer>)    - <This is the unique string given to each session for a user>
+// <nameFirst> (<integer>)    - <New first name to be changed for the user>
+// <nameLast> (<integer>)    - <New last name to be changed for the user>
+
+// Return Value:
+// Returns <{empty object - {}}> on <valid input of authUserId and uId>
+// Returns {error: 'error'} on <invalid token>
+// Returns {error: 'error'} on <invalid nameFirst>
+// Returns {error: 'error'} on <invalid nameLast>
 function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: string) {
   const data = getData();
   if ((nameFirst.length > 50) || (nameFirst.length < 1)) {
@@ -174,6 +180,16 @@ function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: strin
   setData(data);
 }
 
+// <For a valid token and email, changes a particular user's email, in all instances of its existance in the data set>
+
+// Arguments:
+// <token> (<integer>)    - <This is the unique string given to each session for a user>
+// <email> (<string>)    - <New email to replace the users current email>
+
+// Return Value:
+// Returns <{empty object - {}}> on <valid input of token and email>
+// Returns {error: 'error'} on <invalid token>
+// Returns {error: 'error'} on <invalid email>
 function userProfileSetEmailV1 (token: string, email: string) {
   const data = getData();
 
@@ -212,6 +228,14 @@ function userProfileSetEmailV1 (token: string, email: string) {
   setData(data);
 }
 
+// Arguments:
+// <token> (<integer>)    - <This is the unique string given to each session for a user>
+// <handleStr> (<string>)    - <New email to replace the users current email>
+
+// Return Value:
+// Returns <{empty object - {}}> on <valid input of token and handleStr>
+// Returns {error: 'error'} on <invalid token>
+// Returns {error: 'error'} on <invalid handleStr>
 function userProfileSetHandleV1 (token: string, handleStr: string) {
   const data = getData();
 

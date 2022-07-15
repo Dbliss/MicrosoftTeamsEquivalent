@@ -1,7 +1,6 @@
 import {
   setData, dataType
 } from './dataStore';
-import fs from 'fs';
 
 // <Resets the internal data of the application to its initial state>
 

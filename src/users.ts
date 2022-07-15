@@ -25,14 +25,13 @@ function userProfileV1(token: string, uId: number) {
 
   // Finds the index of the object which contains the apropriate authUserId matching uId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
-  const uIdIndex = data.user.findIndex(object => {
+  const uIdIndex = data.user.findIndex((object: any) => {
     return object.authUserId === uId;
   });
-  
 
   // Checks if the token exists and returns the index of the user which has that token,
   // if noy found then returns -1
-  const tokenIndex = data.user.findIndex(object => {
+  const tokenIndex = data.user.findIndex((object: any) => {
     for (const tokenElem of object.token) {
       if (tokenElem === token) {
         return tokenElem === token;
@@ -76,7 +75,7 @@ function extractUserDetails (user: userType) {
 // function tokenIndexCheck (data, token) {
 //   // Checks if the token exists and returns the index of the user which has that token,
 //   // if noy found then returns -1
-//   const tokenIndex = data.user.findIndex(object => {
+//   const tokenIndex = data.user.findIndex((object: any) => {
 //     for (const tokenElem of object.token) {
 //         if(tokenElem === token) {
 //             return tokenElem === token;
@@ -91,16 +90,16 @@ function extractUserDetails (user: userType) {
 //   else return tokenIndex;
 // }
 
-function updateUserInfo(data, channels, user) { // need to typescript channels as an array of channels
+function updateUserInfo(data: any, channels: any, user: any) { // need to typescript channels as an array of channels
   for (const channel of channels) {
     const channelId = channel.cId;
-    const channelIndex = data.channel.findIndex(object => {
+    const channelIndex = data.channel.findIndex((object: any) => {
       return object.cId === channelId;
     });
-    const ownerIndex = data.channel[channelIndex].owners.findIndex(object => {
+    const ownerIndex = data.channel[channelIndex].owners.findIndex((object: any) => {
       return object.authUserId === user.authUserId;
     });
-    const memberIndex = data.channel[channelIndex].members.findIndex(object => {
+    const memberIndex = data.channel[channelIndex].members.findIndex((object: any) => {
       return object.authUserId === user.authUserId;
     });
 
@@ -118,7 +117,7 @@ function usersAllV1 (token: string) {
   const data = getData();
   // Checks if the token exists and returns the index of the user which has that token,
   // if not found then returns -1
-  const tokenIndex = data.user.findIndex(object => {
+  const tokenIndex = data.user.findIndex((object: any) => {
     for (const tokenElem of object.token) {
       if (tokenElem === token) {
         return tokenElem === token;
@@ -151,7 +150,7 @@ function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: strin
 
   // Checks if the token exists and returns the index of the user which has that token,
   // if not found then returns -1
-  const tokenIndex = data.user.findIndex(object => {
+  const tokenIndex = data.user.findIndex((object: any) => {
     for (const tokenElem of object.token) {
       if (tokenElem === token) {
         return tokenElem === token;
@@ -178,7 +177,7 @@ function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: strin
 function userProfileSetEmailV1 (token: string, email: string) {
   const data = getData();
 
-  const tokenIndex = data.user.findIndex(object => {
+  const tokenIndex = data.user.findIndex((object: any) => {
     for (const tokenElem of object.token) {
       if (tokenElem === token) {
         return tokenElem === token;
@@ -197,7 +196,7 @@ function userProfileSetEmailV1 (token: string, email: string) {
     return error;
   }
 
-  const userIndex = data.user.findIndex(object => {
+  const userIndex = data.user.findIndex((object: any) => {
     return object.email === email;
   });
 
@@ -216,7 +215,7 @@ function userProfileSetEmailV1 (token: string, email: string) {
 function userProfileSetHandleV1 (token: string, handleStr: string) {
   const data = getData();
 
-  const tokenIndex = data.user.findIndex(object => {
+  const tokenIndex = data.user.findIndex((object: any) => {
     for (const tokenElem of object.token) {
       if (tokenElem === token) {
         return tokenElem === token;
@@ -235,7 +234,7 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
     return error;
   }
 
-  const handleIndex = data.user.findIndex(object => { // check whether the hadndle is already being used
+  const handleIndex = data.user.findIndex((object: any) => { // check whether the hadndle is already being used
     return object.handle === handleStr;
   });
 

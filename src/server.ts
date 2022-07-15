@@ -3,7 +3,6 @@ import { echo } from './echo';
 import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
-import fs from 'fs';
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { channelInviteV2, channelMessagesV2 } from './channel';
 import { channelsCreateV1 } from './channels';
@@ -39,8 +38,6 @@ import {
   messageRemoveV1,
   messageSenddmV1,
 } from './message';
-import { getData, setData } from './dataStore';
-import { fstat } from 'fs';
 
 // Set up web app, use JSON
 const app = express();
@@ -136,9 +133,9 @@ app.post('/auth/logout/v1', (req, res, next) => {
 
 app.get('/channel/details/v2', (req, res, next) => {
   try {
-    const token = req.query.token;
+    const token = req.query.token as string;
     const channelId = req.query.channelId;
-    return res.json(channelDetailsV1(String(token), Number(channelId)));
+    return res.json(channelDetailsV1(token, Number(channelId)));
   } catch (err) {
     next(err);
   }

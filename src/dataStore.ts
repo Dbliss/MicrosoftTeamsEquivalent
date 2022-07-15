@@ -67,11 +67,6 @@ type dataType = {
 };
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-let data: dataType = {
-  user: [],
-  channel: [],
-  dm: [],
-};
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
@@ -98,7 +93,7 @@ function getData() {
 
 // Use set(newData) to pass in the entire data object, with modifications made
 function setData(newData: dataType) {
-  const storedData = (fs.writeFileSync('src/data.json', JSON.stringify(newData), { flag: 'w' }));
+  fs.writeFileSync('src/data.json', JSON.stringify(newData), { flag: 'w' });
 }
 
 export { getData, setData, dataType, userType, channelType, channelsType, usersType, dmType, messageType };

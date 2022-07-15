@@ -40,7 +40,7 @@ function callingClear () {
     'DELETE',
         `${url}:${port}/clear/v1`
   );
-    expect(res.statusCode).toBe(OK);
+  expect(res.statusCode).toBe(OK);
 }
 
 function callingUserProfile (token: string, uId: number) {
@@ -54,7 +54,7 @@ function callingUserProfile (token: string, uId: number) {
           }
         }
   );
-    expect(res.statusCode).toBe(OK);
+  expect(res.statusCode).toBe(OK);
   return res;
 }
 
@@ -68,7 +68,7 @@ function callingUsersAll (token: string) {
           }
         }
   );
-    expect(res.statusCode).toBe(OK);
+  expect(res.statusCode).toBe(OK);
   return res;
 }
 
@@ -105,7 +105,7 @@ function callingUserProfileSetEmail (token: string, email: string) {
           },
         }
   );
-    expect(res.statusCode).toBe(OK);
+  expect(res.statusCode).toBe(OK);
   return res;
 }
 
@@ -260,7 +260,7 @@ describe('Testing users/all/v1', () => {
       'Last2').getBody()));
 
     const result = JSON.parse(String(callingUsersAll(authUserId.token).getBody()));
- 
+
     expect(result).toMatchObject({
       users: [{
         uId: authUserId.authUserId,
@@ -453,7 +453,7 @@ describe('Testing user/profile/setemail/v1', () => {
 
   test('Testing error return when invalid token is given', () => {
     callingClear();
-  
+
     const result = JSON.parse(String(callingUserProfileSetEmail('!@#$', 'email1@email.com').getBody()));
     expect(result).toMatchObject({ error: 'error' }); // assuming that an invlaid token is given that it produces an error this
     // condition is not given in the spec
@@ -536,7 +536,7 @@ describe('Testing user/profile/sethandle/v1', () => {
 
   test('Testing error when token is invalid', () => {
     callingClear();
- 
+
     const result = JSON.parse(String(callingUserProfileSetHandle('!@#$', 'NewHandle').getBody()));
     expect(result).toMatchObject({ error: 'error' }); // assuming that an invlaid token is given that it produces an error this
     // condition is not given in the spec

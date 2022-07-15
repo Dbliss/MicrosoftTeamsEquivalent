@@ -380,8 +380,14 @@ function dmMessages (token: string, dmId: number, start: number) {
     }
     looper++;
   }
-
+  console.log('start = ' + start);
+  console.log(data.dm[dmIndex].messages.length);
   // Returns error if start, dmId or user is invaid
+  // if (validDmId === 0) return { error: 'error1' };
+  // if(isMember === 0 ) return { error: 'error2' };
+  // if(data.dm[dmIndex].messages.length < start) {
+  //  return { error: 'error3' };
+  // }
   if (validDmId === 0 || isMember === 0 || data.dm[dmIndex].messages.length < start) {
     return { error: 'error' };
   }
@@ -402,7 +408,7 @@ function dmMessages (token: string, dmId: number, start: number) {
 
   // Pushing the messages to a array
   for (let i = start; i < end; i++) {
-    returnMessages.push(data.dm[dmIndex].messages[i]);
+    returnMessages.push(data.dm[dmIndex].messages[i].message);
   }
 
   return { messages: returnMessages, start: start, end: returnEnd };

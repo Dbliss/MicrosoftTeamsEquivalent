@@ -375,9 +375,8 @@ describe('Testing messageRemove', () => {
   });
 });
 
-describe("Testing messgaeSendDm", () => {
-  
-  test("Invalid Token", () => {
+describe('Testing messgaeSendDm', () => {
+  test('Invalid Token', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -395,12 +394,12 @@ describe("Testing messgaeSendDm", () => {
     expect(dm.statusCode).toBe(OK);
     const dm1 = JSON.parse(String(dm.getBody()));
 
-    const res = callingMessageSendDm('-9999',dm1.dmId, "Hello Message");
+    const res = callingMessageSendDm('-9999', dm1.dmId, 'Hello Message');
     const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({error: 'error'});
+    expect(result).toMatchObject({ error: 'error' });
   });
 
-  test("Invalid dmId", () => {
+  test('Invalid dmId', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -416,14 +415,13 @@ describe("Testing messgaeSendDm", () => {
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
     expect(dm.statusCode).toBe(OK);
-    const dm1 = JSON.parse(String(dm.getBody()));
 
-    const res = callingMessageSendDm(registered1.token,-9999, "Hello Message");
+    const res = callingMessageSendDm(registered1.token, -9999, 'Hello Message');
     const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({error: 'error'});
+    expect(result).toMatchObject({ error: 'error' });
   });
 
-  test("Message < 1 character", () => {
+  test('Message < 1 character', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -441,12 +439,12 @@ describe("Testing messgaeSendDm", () => {
     expect(dm.statusCode).toBe(OK);
     const dm1 = JSON.parse(String(dm.getBody()));
 
-    const res = callingMessageSendDm(registered1.token,dm1.dmId, "");
+    const res = callingMessageSendDm(registered1.token, dm1.dmId, '');
     const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({error: 'error'});
+    expect(result).toMatchObject({ error: 'error' });
   });
 
-  test("Message > 1000 characters", () => {
+  test('Message > 1000 characters', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -464,16 +462,16 @@ describe("Testing messgaeSendDm", () => {
     expect(dm.statusCode).toBe(OK);
     const dm1 = JSON.parse(String(dm.getBody()));
 
-    let message = "";
-    for(let i = 0; i <= 1001; i++) {
+    let message = '';
+    for (let i = 0; i <= 1001; i++) {
       message = message + i;
     }
-    const res = callingMessageSendDm(registered1.token,dm1.dmId, message);
+    const res = callingMessageSendDm(registered1.token, dm1.dmId, message);
     const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({error: 'error'});
+    expect(result).toMatchObject({ error: 'error' });
   });
 
-  test("User is not part of dm", () => {
+  test('User is not part of dm', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -496,13 +494,12 @@ describe("Testing messgaeSendDm", () => {
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
     const dm1 = JSON.parse(String(dm.getBody()));
 
-    const res = callingMessageSendDm(registered3.token,dm1.dmId, 'Hello Message');
+    const res = callingMessageSendDm(registered3.token, dm1.dmId, 'Hello Message');
     const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({error: 'error'});
-
+    expect(result).toMatchObject({ error: 'error' });
   });
 
-  test("Valid Parameters", () => {
+  test('Valid Parameters', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -520,9 +517,8 @@ describe("Testing messgaeSendDm", () => {
     expect(dm.statusCode).toBe(OK);
     const dm1 = JSON.parse(String(dm.getBody()));
 
-    const res = callingMessageSendDm(registered1.token,dm1.dmId, 'Hello Message');
+    const res = callingMessageSendDm(registered1.token, dm1.dmId, 'Hello Message');
     const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({messageId: expect.any(Number)});
+    expect(result).toMatchObject({ messageId: expect.any(Number) });
   });
-
 });

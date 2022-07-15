@@ -203,15 +203,14 @@ function messageSenddmV1 (token: string, dmId: number, message: string) {
   }
 
   const tempMessage = {
-    messageId: Math.floor(Math.random() * Date.now()), 
+    messageId: Math.floor(Math.random() * Date.now()),
     message: message
   };
-  
+
   data.dm[dmIndex].messages.push(tempMessage);
 
   setData(data);
-  return {messageId: tempMessage.messageId};
-
+  return { messageId: tempMessage.messageId };
 }
 
 export { messageSendV1, messageRemoveV1, messageEditV1, messageSenddmV1 };

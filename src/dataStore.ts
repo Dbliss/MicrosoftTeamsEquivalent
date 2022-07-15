@@ -34,6 +34,12 @@ type channelsType = {
   name: string,
 };
 
+// Storing messages with its Id
+type messageType = {
+  messageId: number,
+  message: string
+};
+
 // Storing channel information in data
 type channelType = {
   cId: number,
@@ -41,18 +47,29 @@ type channelType = {
   isPublic: boolean,
   owners: userType[],
   members: userType[],
-  messages: string[],
+  messages: messageType[],
 };
+
+// Storing dm information in data
+type dmType = {
+  dmId: number,
+  name: string,
+  members: number[],
+  owners: number[],
+  messages: messageType[]
+}
 
 type dataType = {
   user: userType[],
   channel: channelType[],
+  dm: dmType[],
 };
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 let data: dataType = {
   user: [],
   channel: [],
+  dm: [],
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
@@ -81,4 +98,4 @@ function setData(newData: dataType) {
   data = newData;
 }
 
-export { getData, setData, dataType, userType, channelType, channelsType, usersType };
+export { getData, setData, dataType, userType, channelType, channelsType, usersType, dmType, messageType };

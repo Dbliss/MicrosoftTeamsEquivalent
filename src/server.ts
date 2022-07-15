@@ -14,6 +14,16 @@ import {
 } from './channels';
 
 import {
+
+  dmCreate,
+  dmList,
+  dmRemove,
+  dmDetails,
+  dmLeave,
+  dmMessages,
+} from './dm';
+
+import {
   channelLeaveV1,
   channelAddOwnerV1,
   channelRemoveOwnerV1,
@@ -90,7 +100,7 @@ app.delete('/clear/v1', (req, res, next) => {
   }
 });
 
-app.post('/channels/create/v1', (req, res, next) => {
+app.post('/channels/create/v2', (req, res) => {
   const { token, name, isPublic } = req.body;
   const cId = channelsCreateV1(token, name, isPublic);
   res.json(cId);
@@ -113,6 +123,38 @@ app.post('/auth/logout/v1', (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+app.post('/dm/create/v1', (req, res) => {
+  const { token, uIds } = req.body;
+  const dmId = dmCreate(token, uIds);
+  res.json(dmId);
+});
+
+app.get('/dm/list/v1', (req, res) => {
+  const dms = dmList(req.query.token as string);
+  res.json(dms);
+});
+
+app.delete('/dm/remove/v1', (req, res) => {
+  const remove = dmRemove(req.query.token as string, parseInt(req.query.dmId as string));
+  res.json(remove);
+});
+
+app.get('/dm/details/v1', (req, res) => {
+  const dms = dmDetails(req.query.token as string, parseInt(req.query.dmId as string));
+  res.json(dms);
+});
+
+app.post('/dm/leave/v1', (req, res) => {
+  const { token, dmId } = req.body;
+  const leave = dmLeave(token, dmId);
+  res.json(leave);
+});
+
+app.get('/dm/messages/v1', (req, res) => {
+  const messages = dmMessages(req.query.token as string, parseInt(req.query.dmId as string), parseInt(req.query.start as string));
+  res.json(messages);
 });
 
 app.post('/channel/leave/v1', (req, res, next) => {

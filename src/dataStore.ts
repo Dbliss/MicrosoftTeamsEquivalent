@@ -49,15 +49,26 @@ type channelType = {
   messages: messageType[],
 };
 
+// Storing dm information in data
+type dmType = {
+  dmId: number,
+  name: string,
+  members: number[],
+  owners: number[],
+  messages: string[]
+}
+
 type dataType = {
   user: userType[],
   channel: channelType[],
+  dm: dmType[],
 };
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 let data: dataType = {
   user: [],
   channel: [],
+  dm: [],
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
@@ -86,4 +97,4 @@ function setData(newData: dataType) {
   data = newData;
 }
 
-export { getData, setData, dataType, userType, channelType, channelsType, usersType, messageType };
+export { getData, setData, dataType, userType, channelType, channelsType, usersType, dmType, messageType };

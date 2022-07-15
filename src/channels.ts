@@ -19,28 +19,25 @@ type storeChannelsType = {
 
 function channelsCreateV1(token: string, name: string, isPublic: boolean) {
   const data = getData();
-  let authUserId = -1;
-  for (const user of data.user) {
-    for (const tokens of user.token) {
+
+  // Checking if token is valid and taking out the userId of the user
+  let validToken = 0;
+  let flag = 0;
+  for (let i = 0; i < data.user.length; i++) {
+    for (const tokens of data.user[i].token) {
       if (tokens === token) {
-        authUserId = user.authUserId;
+        validToken = 1;
+        flag = i;
       }
     }
   }
-  let validId = false;
-  let flag = 0;
-  // Validates the authUserId Passed
-  for (let i = 0; i < data.user.length; i++) {
-    if (data.user[i].authUserId === authUserId) {
-      validId = true;
-      flag = i;
-    }
-  }
-  // Returns error message when authUserId or name is invalid
-  if (validId === false || name.length < 1 || name.length > 20) {
+
+  // Returns error message when token or name is invalid
+  if (validToken === 0 || name.length < 1 || name.length > 20) {
     return { error: 'error' };
   }
 
+  // New channel to be saved in data
   const newChannel: channelType = {
     cId: Math.floor(Math.random() * Date.now()),
     name: name,
@@ -51,6 +48,7 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
   };
 
   data.channel.push(newChannel);
+  // Saving channel information of the channel user is part of in the user data
   const pushObject = {
     cId: newChannel.cId,
     channelPermissionsId: 1
@@ -78,32 +76,26 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
 function channelsListV1(token: string) {
   const data = getData();
 
-  let authUserId = -1;
-  for (const user of data.user) {
-    for (const tokens of user.token) {
+  // Checking if token is valid and taking out the userId of the user
+  let validToken = 0;
+  let flag = 0;
+  for (let i = 0; i < data.user.length; i++) {
+    for (const tokens of data.user[i].token) {
       if (tokens === token) {
-        authUserId = user.authUserId;
+        validToken = 1;
+        flag = i;
       }
     }
   }
 
-  let validId = false;
-  let flag = 0;
-
-  // Validates the authUserId Passed
-  for (let i = 0; i < data.user.length; i++) {
-    if (data.user[i].authUserId === authUserId) {
-      validId = true;
-      flag = i;
-    }
-  }
-
-  if (validId === false) {
+  // return empty channel if the token is invalid
+  if (validToken === 0) {
     return {
       channels: []
     };
   }
 
+  // Loop through the channels and save the ones user is part of in an array
   const storeChannels:storeChannelsType = { channels: [] };
   for (let j = 0; j < data.user[flag].channels.length; j++) {
     const channelId = data.user[flag].channels[j].cId;
@@ -136,32 +128,24 @@ function channelsListV1(token: string) {
 function channelsListallV1(token: string) {
   const data = getData();
 
-  let authUserId = -1;
-  for (const user of data.user) {
-    for (const tokens of user.token) {
+  // Checking if token is valid and taking out the userId of the user
+  let validToken = 0;
+  for (let i = 0; i < data.user.length; i++) {
+    for (const tokens of data.user[i].token) {
       if (tokens === token) {
-        authUserId = user.authUserId;
+        validToken = 1;
       }
     }
   }
 
-  let validId = false;
-
-  // Validates the authUserId Passed
-  for (let i = 0; i < data.user.length; i++) {
-    if (data.user[i].authUserId === authUserId) {
-      validId = true;
-    }
-  }
-
-  if (validId === false) {
+  if (validToken === 0) {
     return {
       channels: []
     };
   }
 
+  // Loop though data to store all the channels in a array
   const storeChannels: storeChannelsType = { channels: [] };
-
   for (let j = 0; j < data.channel.length; j++) {
     storeChannels.channels.push({
       channelId: data.channel[j].cId,

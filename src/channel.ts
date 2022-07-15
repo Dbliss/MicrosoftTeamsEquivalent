@@ -575,4 +575,3 @@ const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => 
 };
 
 export { channelDetailsV1, channelJoinV1, channelInviteV2, channelMessagesV2, channelLeaveV1, channelAddOwnerV1, channelRemoveOwnerV1 };
-

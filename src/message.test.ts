@@ -15,7 +15,7 @@ function callingClear () {
 function callingChannelsCreate (token: string, name: string, isPublic: boolean) {
   const res = request(
     'POST',
-        `${url}:${port}/channels/create/v1`,
+        `${url}:${port}/channels/create/v2`,
         {
           body: JSON.stringify({
             token: token,

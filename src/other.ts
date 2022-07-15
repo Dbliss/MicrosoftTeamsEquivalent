@@ -15,6 +15,7 @@ function clearV1() {
   const emptyData: dataType = {
     user: [],
     channel: [],
+    dm: []
   };
   // setting the cleared data as the original
   setData(emptyData);

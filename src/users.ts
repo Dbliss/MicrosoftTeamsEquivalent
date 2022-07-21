@@ -178,6 +178,7 @@ function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: strin
   updateUserInfo(data, userChannels, updatedUser);
 
   setData(data);
+  return {};
 }
 
 // <For a valid token and email, changes a particular user's email, in all instances of its existance in the data set>
@@ -224,8 +225,8 @@ function userProfileSetEmailV1 (token: string, email: string) {
   const updatedUser = extractUserDetails(data.user[tokenIndex]);
   const userChannels = data.user[tokenIndex].channels;
   updateUserInfo(data, userChannels, updatedUser);
-
   setData(data);
+  return {};
 }
 
 // Arguments:
@@ -276,5 +277,6 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   const userChannels = data.user[tokenIndex].channels;
   updateUserInfo(data, userChannels, updatedUser);
   setData(data);
+  return {};
 }
 export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 };

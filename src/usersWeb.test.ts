@@ -469,7 +469,7 @@ describe('Testing user/profile/sethandle/v1', () => {
       'Last').getBody()));
     const result = callingUserProfileSetHandle(authUserId.token, 'NewHandle');
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
-    expect(result).toMatchObject({});
+    expect(result).toStrictEqual({});
     expect(edited).toMatchObject({
       uId: authUserId.authUserId,
       email: 'email@email.com',

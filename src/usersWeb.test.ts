@@ -308,13 +308,13 @@ describe('Testing user/profile/setname/v1', () => {
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
 
     expect(result).toMatchObject({});
-    expect(edited).toMatchObject({
+    expect(edited).toMatchObject({ user: {
       uId: authUserId.authUserId,
       email: 'email@email.com',
       nameFirst: 'NewFirstName',
       nameLast: 'NewLastName',
       handleStr: 'firstlast',
-    });
+    }});
   });
 
   test('Testing error when first name is not valid', () => {
@@ -327,13 +327,13 @@ describe('Testing user/profile/setname/v1', () => {
     const result = JSON.parse(String(callingUserProfileSetName(authUserId.token, '', 'NewLastName').getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toMatchObject({ error: 'error' });
-    expect(edited).toMatchObject({
+    expect(edited).toMatchObject({ user: {
       uId: authUserId.authUserId,
       email: 'email@email.com',
       nameFirst: 'First',
       nameLast: 'Last',
       handleStr: 'firstlast',
-    });
+    }});
 
     const bigFirstName = '510000000000000000000000000000000000000000000000000';
     const result1 = JSON.parse(String(callingUserProfileSetName(authUserId.token, bigFirstName, 'NewLastName').getBody()));
@@ -358,13 +358,13 @@ describe('Testing user/profile/setname/v1', () => {
     const result = JSON.parse(String(callingUserProfileSetName(authUserId.token, 'NewFirstName', '').getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toMatchObject({ error: 'error' });
-    expect(edited).toMatchObject({
+    expect(edited).toMatchObject({ user: {
       uId: authUserId.authUserId,
       email: 'email@email.com',
       nameFirst: 'First',
       nameLast: 'Last',
       handleStr: 'firstlast',
-    });
+    }});
 
     const bigLastName = '510000000000000000000000000000000000000000000000000';
     const result1 = JSON.parse(String(callingUserProfileSetName(authUserId.token, 'NewFirstName', bigLastName).getBody()));
@@ -399,13 +399,13 @@ describe('Testing user/profile/setemail/v1', () => {
     const result = callingUserProfileSetEmail(authUserId.token, 'newemail@email.com');
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toMatchObject({});
-    expect(edited).toMatchObject({
+    expect(edited).toMatchObject({ user: {
       uId: authUserId.authUserId,
       email: 'newemail@email.com',
       nameFirst: 'First',
       nameLast: 'Last',
       handleStr: 'firstlast',
-    });
+    }});
   });
 
   test('Testing error when email is not valid', () => {
@@ -418,13 +418,13 @@ describe('Testing user/profile/setemail/v1', () => {
     const result = JSON.parse(String(callingUserProfileSetEmail(authUserId.token, 'newemail').getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toMatchObject({ error: 'error' });
-    expect(edited).toMatchObject({
+    expect(edited).toMatchObject({ user: {
       uId: authUserId.authUserId,
       email: 'email@email.com',
       nameFirst: 'First',
       nameLast: 'Last',
       handleStr: 'firstlast',
-    });
+    }});
   });
 
   test('Testing error when new email is already in use', () => {
@@ -442,13 +442,13 @@ describe('Testing user/profile/setemail/v1', () => {
     const result = JSON.parse(String(callingUserProfileSetEmail(authUserId.token, 'email1@email.com').getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toMatchObject({ error: 'error' });
-    expect(edited).toMatchObject({
+    expect(edited).toMatchObject({ user: {
       uId: authUserId.authUserId,
       email: 'email@email.com',
       nameFirst: 'First',
       nameLast: 'Last',
       handleStr: 'firstlast',
-    });
+    }});
   });
 
   test('Testing error return when invalid token is given', () => {
@@ -470,13 +470,13 @@ describe('Testing user/profile/sethandle/v1', () => {
     const result = callingUserProfileSetHandle(authUserId.token, 'NewHandle');
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toStrictEqual({});
-    expect(edited).toMatchObject({
+    expect(edited).toMatchObject({ user: {
       uId: authUserId.authUserId,
       email: 'email@email.com',
       nameFirst: 'First',
       nameLast: 'Last',
       handleStr: 'NewHandle',
-    });
+    }});
   });
 
   test('Testing error when handle is < 3 length', () => {
@@ -489,13 +489,13 @@ describe('Testing user/profile/sethandle/v1', () => {
     const result = JSON.parse(String(callingUserProfileSetHandle(authUserId.token, '').getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toMatchObject({ error: 'error' });
-    expect(edited).toMatchObject({
+    expect(edited).toMatchObject({ user: {
       uId: authUserId.authUserId,
       email: 'email@email.com',
       nameFirst: 'First',
       nameLast: 'Last',
       handleStr: 'firstlast',
-    });
+    }});
   });
 
   test('Testing error when handle is > 20 length', () => {
@@ -509,13 +509,13 @@ describe('Testing user/profile/sethandle/v1', () => {
     const result = JSON.parse(String(callingUserProfileSetHandle(authUserId.token, bigHandle).getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toMatchObject({ error: 'error' });
-    expect(edited).toMatchObject({
+    expect(edited).toMatchObject({ user: {
       uId: authUserId.authUserId,
       email: 'email@email.com',
       nameFirst: 'First',
       nameLast: 'Last',
       handleStr: 'firstlast',
-    });
+    }});
   });
 
   test('Testing error when handle is already being used', () => {

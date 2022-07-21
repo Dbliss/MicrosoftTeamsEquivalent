@@ -1,6 +1,23 @@
 import validator from 'validator';
-import { getData, setData, userType } from './dataStore';
+import { dataType, getData, setData, userType } from './dataStore';
 const error = { error: 'error' };
+
+
+function getTokenIndex(token: string, data: dataType) {
+  const tokenIndex = data.user.findIndex((object: any) => {
+    for (const tokenElem of object.token) {
+      if (tokenElem === token) {
+        return tokenElem === token;
+      }
+    }
+    return false;
+  });
+  return tokenIndex;
+}
+
+
+
+
 
 // <For a valid token, returns information about their userId, email, first name, last name, and handle>
 
@@ -15,12 +32,12 @@ const error = { error: 'error' };
 function userProfileV1(token: string, uId: number) {
   const data = getData();
 
-  const returnUser = {
-    uId: 0,
+  const returnUser = { user:
+    {uId: 0,
     email: '',
     nameFirst: '',
     nameLast: '',
-    handleStr: ''
+    handleStr: ''}
   };
 
   // Finds the index of the object which contains the apropriate authUserId matching uId, in the user key array,
@@ -31,14 +48,7 @@ function userProfileV1(token: string, uId: number) {
 
   // Checks if the token exists and returns the index of the user which has that token,
   // if noy found then returns -1
-  const tokenIndex = data.user.findIndex((object: any) => {
-    for (const tokenElem of object.token) {
-      if (tokenElem === token) {
-        return tokenElem === token;
-      }
-    }
-    return false;
-  }); // code adapted from the website shorturl.at/eoJKY
+  const tokenIndex = getTokenIndex(token, data); // code adapted from the website shorturl.at/eoJKY
 
   // if neither the token nor the uId is found then the function
   // returns an error object
@@ -48,11 +58,11 @@ function userProfileV1(token: string, uId: number) {
 
   // Setting the values of the returned user object with the necessary details
   const retuId = data.user[uIdIndex].authUserId;
-  returnUser.uId = retuId;
-  returnUser.email = data.user[uIdIndex].email;
-  returnUser.nameFirst = data.user[uIdIndex].nameFirst;
-  returnUser.nameLast = data.user[uIdIndex].nameLast;
-  returnUser.handleStr = data.user[uIdIndex].handle;
+  returnUser.user.uId = retuId;
+  returnUser.user.email = data.user[uIdIndex].email;
+  returnUser.user.nameFirst = data.user[uIdIndex].nameFirst;
+  returnUser.user.nameLast = data.user[uIdIndex].nameLast;
+  returnUser.user.handleStr = data.user[uIdIndex].handle;
 
   return returnUser;
 }
@@ -279,4 +289,4 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   setData(data);
   return {};
 }
-export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 };
+export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, getTokenIndex };

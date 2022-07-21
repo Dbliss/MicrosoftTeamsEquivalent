@@ -303,11 +303,11 @@ describe('Testing user/profile/setname/v1', () => {
       'First',
       'Last').getBody()));
 
-    const result = callingUserProfileSetName(authUserId.token, 'NewFirstName', 'NewLastName');
+    const result = JSON.parse(String(callingUserProfileSetName(authUserId.token, 'NewFirstName', 'NewLastName').getBody()));
     callingUserProfileSetName(authUserId.token, 'NewFirstName', 'NewLastName');
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
 
-    expect(result).toMatchObject({});
+    expect(result).toStrictEqual({});
     expect(edited).toMatchObject({ user: {
       uId: authUserId.authUserId,
       email: 'email@email.com',
@@ -339,13 +339,13 @@ describe('Testing user/profile/setname/v1', () => {
     const result1 = JSON.parse(String(callingUserProfileSetName(authUserId.token, bigFirstName, 'NewLastName').getBody()));
     const edited1 = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result1).toMatchObject({ error: 'error' });
-    expect(edited1).toMatchObject({
+    expect(edited1).toMatchObject({ user: {
       uId: authUserId.authUserId,
       email: 'email@email.com',
       nameFirst: 'First',
       nameLast: 'Last',
       handleStr: 'firstlast',
-    });
+    }});
   });
 
   test('Testing error when last name is not valid', () => {
@@ -370,13 +370,13 @@ describe('Testing user/profile/setname/v1', () => {
     const result1 = JSON.parse(String(callingUserProfileSetName(authUserId.token, 'NewFirstName', bigLastName).getBody()));
     const edited1 = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result1).toMatchObject({ error: 'error' });
-    expect(edited1).toMatchObject({
+    expect(edited1).toMatchObject({ user: {
       uId: authUserId.authUserId,
       email: 'email@email.com',
       nameFirst: 'First',
       nameLast: 'Last',
       handleStr: 'firstlast',
-    });
+    }});
   });
 
   test('Testing error return when invalid token is given', () => {
@@ -396,9 +396,9 @@ describe('Testing user/profile/setemail/v1', () => {
       'Last').getBody()));
 
     // const result = JSON.parse(String(callingUserProfileSetEmail(authUserId.token, 'newemail@email.com').getBody()));
-    const result = callingUserProfileSetEmail(authUserId.token, 'newemail@email.com');
+    const result = JSON.parse(String(callingUserProfileSetEmail(authUserId.token, 'newemail@email.com').getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
-    expect(result).toMatchObject({});
+    expect(result).toStrictEqual({});
     expect(edited).toMatchObject({ user: {
       uId: authUserId.authUserId,
       email: 'newemail@email.com',
@@ -467,7 +467,7 @@ describe('Testing user/profile/sethandle/v1', () => {
       'password',
       'First',
       'Last').getBody()));
-    const result = callingUserProfileSetHandle(authUserId.token, 'NewHandle');
+    const result = JSON.parse(String(callingUserProfileSetHandle(authUserId.token, 'NewHandle').getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toStrictEqual({});
     expect(edited).toMatchObject({ user: {

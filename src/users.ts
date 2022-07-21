@@ -3,6 +3,8 @@ import { dataType, getData, setData, userType } from './dataStore';
 const error = { error: 'error' };
 
 
+// Helper Function which finds the user which has the token,
+// if not then -1 is returned meaning token does not exist
 function getTokenIndex(token: string, data: dataType) {
   const tokenIndex = data.user.findIndex((object: any) => {
     for (const tokenElem of object.token) {
@@ -120,14 +122,7 @@ function usersAllV1 (token: string) {
   const data = getData();
   // Checks if the token exists and returns the index of the user which has that token,
   // if not found then returns -1
-  const tokenIndex = data.user.findIndex((object: any) => {
-    for (const tokenElem of object.token) {
-      if (tokenElem === token) {
-        return tokenElem === token;
-      }
-    }
-    return false;
-  }); // code adapted from the website shorturl.at/eoJKY
+  const tokenIndex = getTokenIndex(token, data);
 
   if (tokenIndex === -1) {
     return error;
@@ -166,14 +161,7 @@ function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: strin
 
   // Checks if the token exists and returns the index of the user which has that token,
   // if not found then returns -1
-  const tokenIndex = data.user.findIndex((object: any) => {
-    for (const tokenElem of object.token) {
-      if (tokenElem === token) {
-        return tokenElem === token;
-      }
-    }
-    return false;
-  });
+  const tokenIndex = getTokenIndex(token, data);
   if (tokenIndex === -1) {
     return error;
   }
@@ -204,17 +192,8 @@ function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: strin
 function userProfileSetEmailV1 (token: string, email: string) {
   const data = getData();
 
-  const tokenIndex = data.user.findIndex((object: any) => {
-    for (const tokenElem of object.token) {
-      if (tokenElem === token) {
-        return tokenElem === token;
-      }
-    }
-    return false;
-  }); // code adapted from the website shorturl.at/eoJKY
+  const tokenIndex = getTokenIndex(token, data);
 
-  // if neither the token nor the uId is found then the function
-  // returns an error object
   if ((tokenIndex === -1)) {
     return error;
   }
@@ -223,11 +202,12 @@ function userProfileSetEmailV1 (token: string, email: string) {
     return error;
   }
 
-  const userIndex = data.user.findIndex((object: any) => {
+  const emailIndex = data.user.findIndex((object: any) => {
     return object.email === email;
   });
 
-  if (userIndex !== -1) {
+  // if the input email already exists return error
+  if (emailIndex !== -1) {
     return error;
   }
 
@@ -250,14 +230,7 @@ function userProfileSetEmailV1 (token: string, email: string) {
 function userProfileSetHandleV1 (token: string, handleStr: string) {
   const data = getData();
 
-  const tokenIndex = data.user.findIndex((object: any) => {
-    for (const tokenElem of object.token) {
-      if (tokenElem === token) {
-        return tokenElem === token;
-      }
-    }
-    return false;
-  }); // code adapted from the website shorturl.at/eoJKY
+  const tokenIndex = getTokenIndex(token, data);
 
   // if neither the token nor the uId is found then the function
   // returns an error object

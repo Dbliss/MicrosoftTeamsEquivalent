@@ -96,4 +96,5 @@ function setData(newData: dataType) {
   fs.writeFileSync('src/data.json', JSON.stringify(newData), { flag: 'w' });
 }
 
-export { getData, setData, dataType, userType, channelType, channelsType, usersType, dmType, messageType };
+export { getData, setData, dataType, userType, channelType, channelsType, usersType, dmType, messageType, 
+  channelsInUserType };

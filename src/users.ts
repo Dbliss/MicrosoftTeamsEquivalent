@@ -1,5 +1,5 @@
 import validator from 'validator';
-import { dataType, getData, setData, userType } from './dataStore';
+import { dataType, getData, setData, userType, channelsInUserType } from './dataStore';
 const error = { error: 'error' };
 
 
@@ -86,7 +86,7 @@ function extractUserDetails (user: userType) {
 
 // Helper function which takes in the data, the updateed user and the channels they are part of and updates all of
 // the instances fo that user
-function updateUserInfo(data: any, channels: any, user: any) { // need to typescript channels as an array of channels
+function updateUserInfo(data: dataType, channels: channelsInUserType[], user: any) { // need to typescript channels as an array of channels
   for (const channel of channels) {
     const channelId = channel.cId;
     const channelIndex = data.channel.findIndex((object: any) => {

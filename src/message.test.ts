@@ -1,5 +1,6 @@
 import request from 'sync-request';
 import config from './config.json';
+import { getData } from './dataStore';
 
 const OK = 200;
 const port = config.port;
@@ -134,6 +135,21 @@ function callingDmCreate(token: string, uIds: number[]) {
   return res;
 }
 
+function callingChannelMessages (token:string, channelId: number, start: number) {
+  const res = request(
+    'GET',
+        `${url}:${port}/channel/messages/v2`,
+        {
+          qs: {
+            token: token,
+            channelId: channelId,
+            start: start,
+          }
+        }
+  );
+  return res;
+}
+
 describe('Testing messageSend', () => {
   test('channelId does not refer to a valid channel', () => {
     const res = callingClear();
@@ -188,6 +204,25 @@ describe('Testing messageSend', () => {
     const res4 = callingMessageSend(user2.token, channel1.channelId, 'qeqweqdq');
     expect(res4.statusCode).toBe(OK);
     const message1 = JSON.parse(res4.body as string);
+
+    expect(message1).toMatchObject({ error: 'error' });
+  });
+
+  test('invalid token test', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res2 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res2.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res2.body as string);
+
+    const res3 = callingMessageSend('-99999', channel1.channelId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(res3.body as string);
 
     expect(message1).toMatchObject({ error: 'error' });
   });
@@ -302,6 +337,78 @@ describe('Testing messageEdit', () => {
     expect(res4.statusCode).toBe(OK);
 
     expect(edit1).toMatchObject({});
+    
+    const res5 = callingChannelMessages(user1.token, channel1.channelId, 0);
+    const messages = JSON.parse(res5.body as string);
+    expect(res5.statusCode).toBe(OK);
+
+    expect(messages).toMatchObject({ messages: ['dsfwe2131wef'], start: 0, end: -1 });
+  });
+
+  test('succesful deletion via edit for a message', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+    let data = getData();
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const user1 = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res2 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res2.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res2.body as string);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'dsfwefwef');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(res3.body as string);
+
+    const res7 = callingMessageSend(user1.token, channel1.channelId, 'abc');
+    expect(res7.statusCode).toBe(OK);
+
+    const res4 = callingMessageEdit(user1.token, message1.messageId, '');
+    const edit1 = JSON.parse(res4.body as string);
+    expect(res4.statusCode).toBe(OK);
+
+    const res5 = callingChannelMessages(user1.token, channel1.channelId, 0);
+    const messages = JSON.parse(res5.body as string);
+    expect(res5.statusCode).toBe(OK);
+
+    expect(edit1).toMatchObject({});
+
+    expect(messages).toEqual({ messages: ['abc'], start: 0, end: -1 });
+  });
+
+
+  test('succesful edit for a message 2', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const user1 = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res2 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res2.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res2.body as string);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'dsfwefwef');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(res3.body as string);
+
+    const res7 = callingMessageSend(user1.token, channel1.channelId, 'abc');
+    expect(res7.statusCode).toBe(OK);
+
+    const res4 = callingMessageEdit(user1.token, message1.messageId, 'cba');
+    const edit1 = JSON.parse(res4.body as string);
+    expect(res4.statusCode).toBe(OK);
+
+    const res5 = callingChannelMessages(user1.token, channel1.channelId, 0);
+    const messages = JSON.parse(res5.body as string);
+    expect(res5.statusCode).toBe(OK);
+
+    expect(edit1).toMatchObject({});
+
+    expect(messages).toEqual({ messages: ['abc', 'cba'], start: 0, end: -1 });
   });
 });
 
@@ -351,6 +458,29 @@ describe('Testing messageRemove', () => {
     expect(removed).toMatchObject({ error: 'error' });
   });
 
+  test('invalid token test', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const user1 = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res2 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res2.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res2.body as string);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'dsfwefwef');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(res3.body as string);
+
+    const res4 = callingMessageRemove('-99999', message1.messageId);
+    const removed = JSON.parse(res4.body as string);
+    expect(res4.statusCode).toBe(OK);
+
+    expect(removed).toMatchObject({ error: 'error' });
+  });
+
   test('succesful deletion of message', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
@@ -367,15 +497,25 @@ describe('Testing messageRemove', () => {
     expect(res3.statusCode).toBe(OK);
     const message1 = JSON.parse(res3.body as string);
 
+    const res6 = callingMessageSend(user1.token, channel1.channelId, 'abc');
+    expect(res6.statusCode).toBe(OK);
+
     const res4 = callingMessageRemove(user1.token, message1.messageId);
     const removed = JSON.parse(res4.body as string);
     expect(res4.statusCode).toBe(OK);
 
     expect(removed).toMatchObject({});
+
+    const res5 = callingChannelMessages(user1.token, channel1.channelId, 0);
+    const messages = JSON.parse(res5.body as string);
+    expect(res5.statusCode).toBe(OK);
+
+    expect(messages).toEqual({ messages: ['abc'], start: 0, end: -1 });
   });
+
 });
 
-describe('Testing messgaeSendDm', () => {
+describe('Testing messageSendDm', () => {
   test('Invalid Token', () => {
     callingClear();
     const auth1 = callingAuthRegister('email@email.com',

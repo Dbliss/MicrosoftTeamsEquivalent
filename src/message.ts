@@ -1,4 +1,5 @@
 import { getData, setData, channelType, messageType } from './dataStore';
+import { getTokenIndex } from './users';
 
 function messageSendV1(token: string, channelId: number, message: string) {
   const data = getData();
@@ -16,6 +17,11 @@ function messageSendV1(token: string, channelId: number, message: string) {
     return { error: 'error' };
   }
 
+  //checking the token is valid
+  if (getTokenIndex(token, data) === -1){
+    return { error: 'error'}
+  }
+
   // chekcing the length of the message is within parameters
   if (message.length > 1000 || message.length < 1) {
     return { error: 'error' };
@@ -23,10 +29,12 @@ function messageSendV1(token: string, channelId: number, message: string) {
 
   // checking the user is a member of the channel
   let flag = 0;
+  let uId = 0;
   for (const member of currentChannel.members) {
     for (const tokenn of member.token) {
       if (tokenn === token) {
         flag = 1;
+        uId = member.authUserId;
       }
     }
   }
@@ -37,10 +45,15 @@ function messageSendV1(token: string, channelId: number, message: string) {
   // generating the messageId
   const messageId = Math.floor(Math.random() * Date.now());
 
+  // generating the timeSent
+  const timeSent = Math.floor(Date.now() / 1000);
+
   // creating a new object for the message
   const newMessage: messageType = {
     messageId: messageId,
+    uId: uId,
     message: message,
+    timeSent: timeSent
   };
 
   for (let i = 0; i < data.channel.length; i++) {
@@ -58,6 +71,11 @@ function messageSendV1(token: string, channelId: number, message: string) {
 function messageEditV1(token: string, messageId: number, message: string) {
   const data = getData();
 
+  //checking the token is valid
+  if (getTokenIndex(token, data) === -1){
+    return { error: 'error'}
+  }
+
   // checking the length of the message is within parameters
   if (message.length > 1000) {
     return { error: 'error' };
@@ -68,17 +86,17 @@ function messageEditV1(token: string, messageId: number, message: string) {
   if (message.length === 0) {
     deleteCondition = true;
   }
+  let uId = 0;
+  let timeSent = 0;
 
-  const newMessage: messageType = {
-    messageId: messageId,
-    message: message,
-  };
   // checking the messageId refers to a real message
   let validMessageId = false;
   for (let i = 0; i < data.channel.length; i++) {
     for (const message of data.channel[i].messages) {
       if (message.messageId === messageId) {
         validMessageId = true;
+        uId = message.uId;
+        timeSent = message.timeSent;
       }
     }
   }
@@ -86,16 +104,20 @@ function messageEditV1(token: string, messageId: number, message: string) {
     return { error: 'error' };
   }
 
+  const newMessage: messageType = {
+    messageId: messageId,
+    uId: uId,
+    message: message,
+    timeSent: timeSent,
+  };
+
   let key1 = -1;
   for (let i = 0; i < data.channel.length; i++) {
     for (let j = 0; i < data.channel[i].messages.length; j++) {
       if (data.channel[i].messages[j].messageId === messageId) {
-        key1 = i;
-        if (deleteCondition === true) {
-          data.channel[i].messages.splice(j, 1);
-        } else {
-          data.channel[i].messages.splice(j, 1, newMessage);
-        }
+        key1 = i; 
+        deleteCondition === true? data.channel[i].messages.splice(j, 1): data.channel[i].messages.splice(j, 1, newMessage);
+        break;
       }
     }
   }
@@ -112,6 +134,7 @@ function messageEditV1(token: string, messageId: number, message: string) {
   if (flag === 0) {
     return { error: 'error' };
   }
+  return { error: 'wat?'}
   setData(data);
   return {};
 }
@@ -119,15 +142,23 @@ function messageEditV1(token: string, messageId: number, message: string) {
 function messageRemoveV1(token: string, messageId: number) {
   const data = getData();
 
+  //checking the token is valid
+  if (getTokenIndex(token, data) === -1){
+    return { error: 'error'}
+  }
+
+  let messageSender = 0;
   // checking the messageId refers to a real message
   let validMessageId = false;
   for (let i = 0; i < data.channel.length; i++) {
     for (const message of data.channel[i].messages) {
       if (message.messageId === messageId) {
         validMessageId = true;
+        messageSender = message.uId;
       }
     }
   }
+
   if (validMessageId === false) {
     return { error: 'error' };
   }
@@ -138,6 +169,7 @@ function messageRemoveV1(token: string, messageId: number) {
       if (data.channel[i].messages[j].messageId === messageId) {
         key1 = i;
         data.channel[i].messages.splice(j, 1);
+        break;
       }
     }
   }
@@ -161,15 +193,22 @@ function messageRemoveV1(token: string, messageId: number) {
 function messageSenddmV1 (token: string, dmId: number, message: string) {
   const data = getData();
 
+  //checking the token is valid
+  if (getTokenIndex(token, data) === -1){
+    return { error: 'error'}
+  }
+
   // Checking if token is valid and taking out the userId of the user
   // Also gets the index of user and stores it on flag
   let validToken = 0;
   let flag = 0;
+  let uId = 0;
   for (let i = 0; i < data.user.length; i++) {
     for (const tokens of data.user[i].token) {
       if (tokens === token) {
         validToken = 1;
         flag = i;
+        uId = data.user[i].uId;
       }
     }
   }
@@ -204,7 +243,9 @@ function messageSenddmV1 (token: string, dmId: number, message: string) {
 
   const tempMessage = {
     messageId: Math.floor(Math.random() * Date.now()),
-    message: message
+    uId: uId,
+    message: message,
+    timeSent: Math.floor(Date.now() / 1000)
   };
 
   data.dm[dmIndex].messages.push(tempMessage);

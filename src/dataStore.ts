@@ -38,7 +38,9 @@ type channelsType = {
 // Storing messages with its Id
 type messageType = {
   messageId: number,
-  message: string
+  uId: number,
+  message: string,
+  timeSent: number
 };
 
 // Storing channel information in data

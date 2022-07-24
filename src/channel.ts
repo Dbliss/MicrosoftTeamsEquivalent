@@ -1,5 +1,5 @@
 import { getData, setData, channelType, usersType } from './dataStore';
-
+import { getTokenIndex } from './users';
 type returnObjectType = {
   name: string,
   isPublic: boolean,
@@ -238,6 +238,11 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
   // getting the dataset
   const data = getData();
 
+  //checking the token is valid
+  if (getTokenIndex(token, data) === -1){
+    return { error: 'error'}
+  }
+
   let validChannel = false;
   let validUid = false;
 
@@ -333,6 +338,11 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
   let currentChannel: channelType;
   const messages = [];
 
+  //checking the token is valid
+  if (getTokenIndex(token, data) === -1){
+    return { error: 'error'}
+  }
+
   // if no channels have been created return an error
   if (data.channel.length === 0) {
     return { error: 'error' };
@@ -371,8 +381,8 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
   }
 
   let j = 0;
-  for (let i = start; i < currentChannel.messages.length && j < 50; i++) {
-    messages[j] = currentChannel.messages[i];
+  for (let i = currentChannel.messages.length; i > 0 && j < 50; i--) {
+    messages[j] = currentChannel.messages[i - 1].message;
     j++;
   }
 
@@ -381,7 +391,6 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
   if (j !== 50) {
     end = -1;
   }
-
   return { messages, start, end };
 }
 const error = { error: 'error' };

@@ -240,13 +240,10 @@ app.put('/user/profile/setname/v1', (req, res, next) => {
     next(err);
   }
 });
+
 app.put('/message/edit/v1', (req, res, next) => {
-  try {
-    const { token, channelId, message } = req.body;
-    return res.json(messageEditV1(token, channelId, message));
-  } catch (err) {
-    next(err);
-  }
+  const { token, channelId, message } = req.body;
+  res.json(messageEditV1(token, channelId, message));
 });
 
 app.put('/user/profile/setemail/v1', (req, res, next) => {
@@ -276,13 +273,10 @@ app.put('/user/profile/sethandle/v1', (req, res, next) => {
 });
 
 app.delete('/message/remove/v1', (req, res, next) => {
-  try {
-    const token = req.query.token as string;
-    const messageId = req.query.messageId;
-    return res.json(messageRemoveV1(token, Number(messageId)));
-  } catch (err) {
-    next(err);
-  }
+  const token = req.query.token as string;
+  const messageId = parseInt(req.query.messageId as string);
+  const remove = messageRemoveV1(token, messageId);
+  res.json(remove);
 });
 
 app.post('/message/senddm/v1', (req, res) => {

@@ -1,6 +1,20 @@
 import validator from 'validator';
-import { getData, setData, userType } from './dataStore';
+import { dataType, getData, setData, userType } from './dataStore';
 const error = { error: 'error' };
+
+// Helper Function which finds the user which has the token,
+// if not then -1 is returned meaning token does not exist
+function getTokenIndex(token: string, data: dataType) {
+  const tokenIndex = data.user.findIndex((object: any) => {
+    for (const tokenElem of object.token) {
+      if (tokenElem === token) {
+        return tokenElem === token;
+      }
+    }
+    return false;
+  });
+  return tokenIndex;
+}
 
 // <For a valid token, returns information about their userId, email, first name, last name, and handle>
 
@@ -277,4 +291,4 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   updateUserInfo(data, userChannels, updatedUser);
   setData(data);
 }
-export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1 };
+export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, getTokenIndex };

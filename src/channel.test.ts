@@ -82,6 +82,24 @@ function callingChannelMessages (token:string, channelId: number, start: number)
   return res;
 }
 
+function callingMessageSend (token: string, channelId: number, message: string) {
+  const res = request(
+    'POST',
+          `${url}:${port}/message/send/v1`,
+          {
+            body: JSON.stringify({
+              token: token,
+              channelId: channelId,
+              message: message
+            }),
+            headers: {
+              'Content-type': 'application/json',
+            },
+          }
+  );
+  return res;
+}
+
 // describe('Testing channelDetailsV1', () => {
 //   test('Testing successful return of channelDetailsV1', () => {
 //     clearV1();
@@ -473,5 +491,55 @@ describe('Testing channelMessages1', () => {
     const bodyObj5 = JSON.parse(res5.body as string);
 
     expect(bodyObj5).toEqual({ messages: [], start: 0, end: -1 });
+  });
+
+  test('under fifty messages sent', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res3 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res3.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res3.body as string);
+
+    const res6 = callingMessageSend(user1.token, channel1.channelId, 'yeahhhh baby!!');
+    expect(res6.statusCode).toBe(OK);
+
+    const res7 = callingMessageSend(user1.token, channel1.channelId, 'I was energised, couldnt see your eyes');
+    expect(res7.statusCode).toBe(OK);
+
+    const res8 = callingMessageSend(user1.token, channel1.channelId, 'you asked if i could see');
+    expect(res8.statusCode).toBe(OK);
+
+    const res9 = callingMessageSend(user1.token, channel1.channelId, 'the most recent hehehe');
+    expect(res9.statusCode).toBe(OK);
+
+    const res5 = callingChannelMessages(user1.token, channel1.channelId, 0);
+    expect(res5.statusCode).toBe(OK);
+    const bodyObj5 = JSON.parse(res5.body as string);
+
+    expect(bodyObj5).toEqual({ messages: ['the most recent hehehe', 'you asked if i could see', 'I was energised, couldnt see your eyes', 'yeahhhh baby!!'], start: 0, end: -1 });
+  });
+
+  test('invalid token', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res3 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res3.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res3.body as string);
+
+    const res5 = callingChannelMessages('-999999', channel1.channelId, 0);
+    expect(res5.statusCode).toBe(OK);
+    const bodyObj5 = JSON.parse(res5.body as string);
+
+    expect(bodyObj5).toEqual({ error: 'error' });
   });
 });

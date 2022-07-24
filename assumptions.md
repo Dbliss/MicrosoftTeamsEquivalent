@@ -15,3 +15,5 @@ Assumptions :
 7. Token is a combination of letters and numbers randomly generated such that is a lesser chance of repetition 
 
 8. Token is an array of string to store multiple tokens for each user session 
+
+9. When a message is edited, its timeSent and uId is not updated regardless of who edited the message and when it was edited.

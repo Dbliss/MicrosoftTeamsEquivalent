@@ -242,8 +242,12 @@ app.put('/user/profile/setname/v1', (req, res, next) => {
 });
 
 app.put('/message/edit/v1', (req, res, next) => {
-  const { token, channelId, message } = req.body;
-  res.json(messageEditV1(token, channelId, message));
+  try {
+    const { token, messageId, message } = req.body;
+    res.json(messageEditV1(token, messageId, message));
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.put('/user/profile/setemail/v1', (req, res, next) => {

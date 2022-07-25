@@ -1,6 +1,5 @@
 import request from 'sync-request';
 import config from './config.json';
-import { getData } from './dataStore';
 
 const OK = 200;
 const port = config.port;
@@ -163,7 +162,7 @@ describe('Testing messageSend', () => {
     const message1 = JSON.parse(res3.body as string);
     expect(res3.statusCode).toBe(OK);
 
-    expect(message1).toMatchObject({ error: 'error' });
+    expect(message1).toEqual({ error: 'error' });
   });
 
   test('length of message is less than 1 or over 1000 characters', () => {
@@ -182,7 +181,7 @@ describe('Testing messageSend', () => {
     expect(res3.statusCode).toBe(OK);
     const message1 = JSON.parse(res3.body as string);
 
-    expect(message1).toMatchObject({ error: 'error' });
+    expect(message1).toEqual({ error: 'error' });
   });
 
   test('channelId is valid and the authorised user is not a member of the channel', () => {
@@ -205,7 +204,7 @@ describe('Testing messageSend', () => {
     expect(res4.statusCode).toBe(OK);
     const message1 = JSON.parse(res4.body as string);
 
-    expect(message1).toMatchObject({ error: 'error' });
+    expect(message1).toEqual({ error: 'error' });
   });
 
   test('invalid token test', () => {
@@ -224,7 +223,7 @@ describe('Testing messageSend', () => {
     expect(res3.statusCode).toBe(OK);
     const message1 = JSON.parse(res3.body as string);
 
-    expect(message1).toMatchObject({ error: 'error' });
+    expect(message1).toEqual({ error: 'error' });
   });
 
   test('no errors, succesful message sent', () => {
@@ -243,7 +242,7 @@ describe('Testing messageSend', () => {
     expect(res3.statusCode).toBe(OK);
     const message1 = JSON.parse(res3.body as string);
 
-    expect(message1).toMatchObject({ messageId: expect.any(Number) });
+    expect(message1).toEqual({ messageId: expect.any(Number) });
   });
 });
 
@@ -263,7 +262,7 @@ describe('Testing messageEdit', () => {
     expect(res4.statusCode).toBe(OK);
     const edit1 = JSON.parse(res4.body as string);
 
-    expect(edit1).toMatchObject({ error: 'error' });
+    expect(edit1).toEqual({ error: 'error' });
   });
 
   test('length of message is over 1000 characters', () => {
@@ -286,7 +285,7 @@ describe('Testing messageEdit', () => {
     expect(res4.statusCode).toBe(OK);
     const edit1 = JSON.parse(res4.body as string);
 
-    expect(edit1).toMatchObject({ error: 'error' });
+    expect(edit1).toEqual({ error: 'error' });
   });
 
   test('the message was not sent by the authorised user making this request or the authorised user does not have owner permissions', () => {
@@ -313,7 +312,7 @@ describe('Testing messageEdit', () => {
     const edit1 = JSON.parse(res4.body as string);
     expect(res4.statusCode).toBe(OK);
 
-    expect(edit1).toMatchObject({ error: 'error' });
+    expect(edit1).toEqual({ error: 'error' });
   });
 
   test('succesful edit of message', () => {
@@ -336,19 +335,18 @@ describe('Testing messageEdit', () => {
     const edit1 = JSON.parse(res4.body as string);
     expect(res4.statusCode).toBe(OK);
 
-    expect(edit1).toMatchObject({});
-    
+    expect(edit1).toEqual({});
+
     const res5 = callingChannelMessages(user1.token, channel1.channelId, 0);
     const messages = JSON.parse(res5.body as string);
     expect(res5.statusCode).toBe(OK);
 
-    expect(messages).toMatchObject({ messages: ['dsfwe2131wef'], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: ['dsfwe2131wef'], start: 0, end: -1 });
   });
 
   test('succesful deletion via edit for a message', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
-    let data = getData();
 
     const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
     const user1 = JSON.parse(res1.body as string);
@@ -373,11 +371,10 @@ describe('Testing messageEdit', () => {
     const messages = JSON.parse(res5.body as string);
     expect(res5.statusCode).toBe(OK);
 
-    expect(edit1).toMatchObject({});
+    expect(edit1).toEqual({});
 
     expect(messages).toEqual({ messages: ['abc'], start: 0, end: -1 });
   });
-
 
   test('succesful edit for a message 2', () => {
     const res = callingClear();
@@ -406,7 +403,7 @@ describe('Testing messageEdit', () => {
     const messages = JSON.parse(res5.body as string);
     expect(res5.statusCode).toBe(OK);
 
-    expect(edit1).toMatchObject({});
+    expect(edit1).toEqual({});
 
     expect(messages).toEqual({ messages: ['abc', 'cba'], start: 0, end: -1 });
   });
@@ -428,7 +425,7 @@ describe('Testing messageRemove', () => {
     const bodyObj4 = JSON.parse(res4.body as string);
     expect(res4.statusCode).toBe(OK);
 
-    expect(bodyObj4).toMatchObject({ error: 'error' });
+    expect(bodyObj4).toEqual({ error: 'error' });
   });
 
   test('the message was not sent by the authorised user making this request or the authorised user does not have owner permissions in the channel', () => {
@@ -455,7 +452,7 @@ describe('Testing messageRemove', () => {
     const removed = JSON.parse(res4.body as string);
     expect(res4.statusCode).toBe(OK);
 
-    expect(removed).toMatchObject({ error: 'error' });
+    expect(removed).toEqual({ error: 'error' });
   });
 
   test('invalid token test', () => {
@@ -478,7 +475,7 @@ describe('Testing messageRemove', () => {
     const removed = JSON.parse(res4.body as string);
     expect(res4.statusCode).toBe(OK);
 
-    expect(removed).toMatchObject({ error: 'error' });
+    expect(removed).toEqual({ error: 'error' });
   });
 
   test('succesful deletion of message', () => {
@@ -504,7 +501,7 @@ describe('Testing messageRemove', () => {
     const removed = JSON.parse(res4.body as string);
     expect(res4.statusCode).toBe(OK);
 
-    expect(removed).toMatchObject({});
+    expect(removed).toEqual({});
 
     const res5 = callingChannelMessages(user1.token, channel1.channelId, 0);
     const messages = JSON.parse(res5.body as string);
@@ -512,7 +509,6 @@ describe('Testing messageRemove', () => {
 
     expect(messages).toEqual({ messages: ['abc'], start: 0, end: -1 });
   });
-
 });
 
 describe('Testing messageSendDm', () => {

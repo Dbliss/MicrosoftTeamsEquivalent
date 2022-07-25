@@ -238,9 +238,9 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
   // getting the dataset
   const data = getData();
 
-  //checking the token is valid
-  if (getTokenIndex(token, data) === -1){
-    return { error: 'error'}
+  // checking the token is valid
+  if (getTokenIndex(token, data) === -1) {
+    return { error: 'error' };
   }
 
   let validChannel = false;
@@ -338,9 +338,9 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
   let currentChannel: channelType;
   const messages = [];
 
-  //checking the token is valid
-  if (getTokenIndex(token, data) === -1){
-    return { error: 'error'}
+  // checking the token is valid
+  if (getTokenIndex(token, data) === -1) {
+    return { error: 'error' };
   }
 
   // if no channels have been created return an error

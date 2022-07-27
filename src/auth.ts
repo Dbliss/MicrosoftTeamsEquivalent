@@ -1,5 +1,5 @@
 import validator from 'validator';
-import { getData, setData } from './dataStore';
+import { dataType, getData, setData } from './dataStore';
 
 // Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.
 // Arguments:
@@ -41,7 +41,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   const handleString = nameFirst + nameLast;
   let handleName = handleString.toLowerCase();
   // check for duplicate email and duplicate handle
-  const data = getData();
+  const data: dataType = getData();
   let k = 0;
   for (let i = 0; i < data.user.length; i++) {
     if (email === data.user[i].email) {
@@ -56,7 +56,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   // make unique uID and store data
   const uID = Math.floor(Math.random() * Date.now());
   let permissionId = 2;
-  if (data.user === []) {
+  if (data.user[0] ===  undefined) {
     permissionId = 1;
   }
   // generate token and store

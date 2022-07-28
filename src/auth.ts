@@ -56,7 +56,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   // make unique uID and store data
   const uID = Math.floor(Math.random() * Date.now());
   let permissionId = 2;
-  if (data.user[0] ===  undefined) {
+  if (data.user[0] === undefined) {
     permissionId = 1;
   }
   // generate token and store

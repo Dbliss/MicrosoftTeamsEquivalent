@@ -2,7 +2,6 @@ import validator from 'validator';
 import { dataType, getData, setData, userType, channelsInUserType } from './dataStore';
 const error = { error: 'error' };
 
-
 // Helper Function which finds the user which has the token,
 // if not then -1 is returned meaning token does not exist
 function getTokenIndex(token: string, data: dataType) {
@@ -17,10 +16,6 @@ function getTokenIndex(token: string, data: dataType) {
   return tokenIndex;
 }
 
-
-
-
-
 // <For a valid token, returns information about their userId, email, first name, last name, and handle>
 
 // Arguments:
@@ -34,12 +29,15 @@ function getTokenIndex(token: string, data: dataType) {
 function userProfileV1(token: string, uId: number) {
   const data = getData();
 
-  const returnUser = { user:
-    {uId: 0,
-    email: '',
-    nameFirst: '',
-    nameLast: '',
-    handleStr: ''}
+  const returnUser = {
+    user:
+    {
+      uId: 0,
+      email: '',
+      nameFirst: '',
+      nameLast: '',
+      handleStr: ''
+    }
   };
 
   // Finds the index of the object which contains the apropriate authUserId matching uId, in the user key array,

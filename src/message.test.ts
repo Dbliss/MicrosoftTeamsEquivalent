@@ -100,7 +100,6 @@ function callingMessageRemove (token: string, messageId: number) {
   return res;
 }
 
-
 function callingChannelMessages (token:string, channelId: number, start: number) {
   const res = request(
     'GET',
@@ -115,8 +114,6 @@ function callingChannelMessages (token:string, channelId: number, start: number)
   );
   return res;
 }
-
-
 
 describe('Testing messageSend', () => {
   test('channelId does not refer to a valid channel', () => {

@@ -1,4 +1,3 @@
-import { userInfo } from 'os';
 import { getData, setData, channelType, messageType } from './dataStore';
 import { getTokenIndex } from './users';
 
@@ -72,7 +71,7 @@ function messageSendV1(token: string, channelId: number, message: string) {
 function messageEditV1(token: string, messageId: number, message: string) {
   const data = getData();
 
-  let tokenIndex = getTokenIndex(token, data);
+  const tokenIndex = getTokenIndex(token, data);
   // checking the token is valid
   if (tokenIndex === -1) {
     return { error: 'error' };
@@ -86,18 +85,18 @@ function messageEditV1(token: string, messageId: number, message: string) {
   let isMemberOfChannel = false;
   let tokenIsSender = false;
 
-  //finding the checking if the token user has global permissions
-  for (let i = 0; i < data.user.length; i++){
-    if (data.user[i].token[tokenIndex] === token){
+  // finding the checking if the token user has global permissions
+  for (let i = 0; i < data.user.length; i++) {
+    if (data.user[i].token[tokenIndex] === token) {
       userIndex = i;
-      if (data.user[i].PermissionsId === 1){
+      if (data.user[i].PermissionsId === 1) {
         hasGlobalPermission = true;
       }
       userId = data.user[i].authUserId;
     }
   }
 
-  //checking if the token user
+  // checking if the token user
 
   // checking the length of the message is within parameters
   if (message.length > 1000) {
@@ -125,18 +124,18 @@ function messageEditV1(token: string, messageId: number, message: string) {
         uId = message.uId;
         timeSent = message.timeSent;
         isChannelMessage = true;
-        //checking if the token is the sender
-        if (uId === userId){
+        // checking if the token is the sender
+        if (uId === userId) {
           tokenIsSender = true;
         }
-        //checking the user is in the channel
-        for (let j = 0; j < data.channel[i].members.length; j++){
-          if (data.channel[i].members[j].uId === userId){
+        // checking the user is in the channel
+        for (let j = 0; j < data.channel[i].members.length; j++) {
+          if (data.channel[i].members[j].uId === userId) {
             isMemberOfChannel = true;
-            //need to check if the user has owner permissions in this channel
-            for (let channel of data.user[userIndex].channels){
-              if (channel.cId = data.channel[i].cId){
-                if (channel.channelPermissionsId == 1){
+            // need to check if the user has owner permissions in this channel
+            for (const channel of data.user[userIndex].channels) {
+              if (channel.cId === data.channel[i].cId) {
+                if (channel.channelPermissionsId === 1) {
                   isOwnerMember = true;
                 }
               }
@@ -147,7 +146,7 @@ function messageEditV1(token: string, messageId: number, message: string) {
       }
     }
   }
-  
+
   // checking the messageId refers to a real dm message
   for (let i = 0; i < data.dm.length; i++) {
     for (const message of data.dm[i].messages) {
@@ -156,19 +155,19 @@ function messageEditV1(token: string, messageId: number, message: string) {
         uId = message.uId;
         timeSent = message.timeSent;
         isDmMessage = true;
-        //checking if the token is the sender
-        if (uId === userId){
+        // checking if the token is the sender
+        if (uId === userId) {
           tokenIsSender = true;
         }
-        //check if the token user is a member of channel
-        for (let member of data.dm[i].members){
-          if (member === userId){
+        // check if the token user is a member of channel
+        for (const member of data.dm[i].members) {
+          if (member === userId) {
             isDmMember = true;
           }
         }
-        //check is token user is a owner of channel
-        for (let owner of data.dm[i].owners){
-          if (owner === userId){
+        // check is token user is a owner of channel
+        for (const owner of data.dm[i].owners) {
+          if (owner === userId) {
             isDmOwner = true;
           }
         }
@@ -177,19 +176,17 @@ function messageEditV1(token: string, messageId: number, message: string) {
     }
   }
 
-  if (tokenIsSender === false){
-    if (isDmMessage === true){
-      if (isDmMember === false || isDmOwner === false){
+  if (tokenIsSender === false) {
+    if (isDmMessage === true) {
+      if (isDmMember === false || isDmOwner === false) {
         return { error: 'error' };
       }
-    }
-    else if (isChannelMessage === true){
-      if (isMemberOfChannel === false){
+    } else if (isChannelMessage === true) {
+      if (isMemberOfChannel === false) {
         return { error: 'error' };
-      }
-      else if (isMemberOfChannel === true){
-        if (isOwnerMember === false){
-          if (hasGlobalPermission === false){
+      } else if (isMemberOfChannel === true) {
+        if (isOwnerMember === false) {
+          if (hasGlobalPermission === false) {
             return { error: 'error' };
           }
         }
@@ -208,8 +205,8 @@ function messageEditV1(token: string, messageId: number, message: string) {
     timeSent: timeSent,
   };
 
-  //editing the message for the channel case
-  if (isChannelMessage === true){
+  // editing the message for the channel case
+  if (isChannelMessage === true) {
     let key1 = -1;
     for (let i = 0; i < data.channel.length; i++) {
       for (let j = 0; i < data.channel[i].messages.length; j++) {
@@ -237,9 +234,8 @@ function messageEditV1(token: string, messageId: number, message: string) {
       return { error: 'error' };
     }
   }
-  //editing the message for the dm case
-  let returns = [];
-  if (isDmMessage === true){
+  // editing the message for the dm case
+  if (isDmMessage === true) {
     for (let i = 0; i < data.dm.length; i++) {
       for (let j = 0; i < data.dm[i].messages.length; j++) {
         if (data.dm[i].messages[j].messageId === messageId) {
@@ -293,7 +289,7 @@ function messageRemoveV1(token: string, messageId: number) {
     return { error: 'error' };
   }
 
-  if (isChannelMessage === true){
+  if (isChannelMessage === true) {
     let key1 = -1;
     for (let i = 0; i < data.channel.length; i++) {
       for (let j = 0; i < data.channel[i].messages.length; j++) {
@@ -319,13 +315,10 @@ function messageRemoveV1(token: string, messageId: number) {
     }
   }
 
-
-  if (isDmMessage === true){
-    let key1 = -1;
+  if (isDmMessage === true) {
     for (let i = 0; i < data.dm.length; i++) {
       for (let j = 0; i < data.dm[i].messages.length; j++) {
         if (data.dm[i].messages[j].messageId === messageId) {
-          key1 = i;
           data.dm[i].messages.splice(j, 1);
           break;
         }

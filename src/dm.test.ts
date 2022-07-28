@@ -80,7 +80,7 @@ function callingDmLeave(token: string, dmId: number) {
   );
   return res;
 }
-/*
+
 function callingDmMessages(token: string, dmId: number, start: number) {
   const res = request(
     'GET',
@@ -113,7 +113,6 @@ function callingMessageSendDm(token: string, dmId: number, message: string) {
   );
   return res;
 }
-*/
 
 function callingAuthRegister (email: string, password: string, nameFirst: string, nameLast: string) {
   const res = request(
@@ -1036,3 +1035,5 @@ describe('Testing dmMessages', () => {
   });
 });
 */
+
+export { callingDmCreate, callingMessageSendDm, callingDmMessages };

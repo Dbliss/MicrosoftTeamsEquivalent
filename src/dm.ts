@@ -72,9 +72,7 @@ function dmCreate (token: string, uIds: number[]) {
   }
   // Adding single quotes to the name
   name = "'" + name + "'";
-  console.log(uIds);
   uIds.push(data.user[flag].authUserId);
-  console.log(uIds);
   const tempDm: dmType = {
     dmId: Math.floor(Math.random() * Date.now()),
     name: name,
@@ -119,7 +117,14 @@ function dmList (token: string) {
   // Assigning userId
   const authUserId = data.user[flag].authUserId;
   // Pushing details of dm into an array
-  const tempDms = { dms: [] };
+  type retunDmType = {
+    dms: {
+      dmId: number,
+      name: string
+    }[]
+  }
+
+  const tempDms:retunDmType = { dms: [] };
   for (const dm of data.dm) {
     for (const member of dm.members) {
       if (member === authUserId) {
@@ -266,7 +271,6 @@ function dmDetails(token: string, dmId: number) {
     }
   }
   const returnObject = { name: data.dm[dmIndex].name, members: tempMembers };
-  console.log(returnObject);
   return returnObject;
 }
 

@@ -465,15 +465,18 @@ const channelLeaveV1 = (token: string, channelId: number) => {
 const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
   const data = getData();
   // check if valid token
-  let isTokenValid = false;
-  for (const user of data.user) {
-    for (const tokens of user.token) {
-      if (tokens === token) {
-        isTokenValid = true;
+  const tokenIndex = data.user.findIndex((object: any) => {
+    for (const tokenElem of object.token) {
+      if (tokenElem === token) {
+        return tokenElem === token;
       }
     }
-  }
-  if (isTokenValid === false) {
+    return false;
+  }); // code adapted from the website shorturl.at/eoJKY
+
+  // if neither the token nor the uId is found then the function
+  // returns an error object
+  if ((tokenIndex === -1)) {
     return error;
   }
   // check if valid channel id
@@ -520,9 +523,9 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
   }
 
   // check to see if user has owner permissions
-  for (let m = 0; m < data.user[userIndex].channels.length; m++) {
-    if (data.user[userIndex].channels[m].cId === channelId) {
-      if (data.user[userIndex].channels[m].channelPermissionsId === 2) {
+  for (let m = 0; m < data.user[tokenIndex].channels.length; m++) {
+    if (data.user[tokenIndex].channels[m].cId === channelId) {
+      if (data.user[tokenIndex].channels[m].channelPermissionsId === 2) {
         return error;
       }
     }
@@ -565,15 +568,18 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
 const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => {
   const data = getData();
   // check if valid token
-  let isTokenValid = false;
-  for (const user of data.user) {
-    for (const tokens of user.token) {
-      if (tokens === token) {
-        isTokenValid = true;
+  const tokenIndex = data.user.findIndex((object: any) => {
+    for (const tokenElem of object.token) {
+      if (tokenElem === token) {
+        return tokenElem === token;
       }
     }
-  }
-  if (isTokenValid === false) {
+    return false;
+  }); // code adapted from the website shorturl.at/eoJKY
+
+  // if neither the token nor the uId is found then the function
+  // returns an error object
+  if ((tokenIndex === -1)) {
     return error;
   }
   // check if valid channel id
@@ -590,11 +596,9 @@ const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => 
   }
   // check if uId is valid
   let isUserIdValid = false;
-  let userIndex = -1;
   for (let j = 0; j < data.user.length; j++) {
     if (data.user[j].authUserId === uId) {
       isUserIdValid = true;
-      userIndex = j;
     }
   }
   if (isUserIdValid === false) {
@@ -620,9 +624,9 @@ const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => 
   }
 
   // check to see if user has owner permissions
-  for (let m = 0; m < data.user[userIndex].channels.length; m++) {
-    if (data.user[userIndex].channels[m].cId === channelId) {
-      if (data.user[userIndex].channels[m].channelPermissionsId === 2) {
+  for (let m = 0; m < data.user[tokenIndex].channels.length; m++) {
+    if (data.user[tokenIndex].channels[m].cId === channelId) {
+      if (data.user[tokenIndex].channels[m].channelPermissionsId === 2) {
         return error;
       }
     }

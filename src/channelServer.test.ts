@@ -52,7 +52,7 @@ function requestChannelsCreate(token: string, name: string, isPublic: boolean) {
 }
 
 function requestChannelJoin(token: string, channelId: number) {
-  return post('channel/join/v2', {token, channelId });
+  return post('channel/join/v2', { token, channelId });
 }
 
 describe('channel/leave/v1', () => {
@@ -534,7 +534,7 @@ describe('channel/removeowner/v1', () => {
       tokenTest1,
       channelIdTest,
       userId
-    )
+    );
     expect(bodyObj).toMatchObject({});
-  })
+  });
 });

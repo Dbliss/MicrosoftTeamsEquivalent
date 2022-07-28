@@ -596,11 +596,9 @@ const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => 
   }
   // check if uId is valid
   let isUserIdValid = false;
-  let userIndex = -1;
   for (let j = 0; j < data.user.length; j++) {
     if (data.user[j].authUserId === uId) {
       isUserIdValid = true;
-      userIndex = j;
     }
   }
   if (isUserIdValid === false) {

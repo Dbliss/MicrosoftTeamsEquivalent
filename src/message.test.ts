@@ -1,5 +1,6 @@
 import request from 'sync-request';
 import config from './config.json';
+import { callingDmCreate, callingMessageSendDm, callingDmMessages } from './dm.test';
 
 const OK = 200;
 const port = config.port;
@@ -99,40 +100,6 @@ function callingMessageRemove (token: string, messageId: number) {
   return res;
 }
 
-function callingMessageSendDm (token: string, dmId: number, message: string) {
-  const res = request(
-    'POST',
-          `${url}:${port}/message/senddm/v1`,
-          {
-            body: JSON.stringify({
-              token: token,
-              dmId: dmId,
-              message: message
-            }),
-            headers: {
-              'Content-type': 'application/json',
-            },
-          }
-  );
-  return res;
-}
-
-function callingDmCreate(token: string, uIds: number[]) {
-  const res = request(
-    'POST',
-        `${url}:${port}/dm/create/v1`,
-        {
-          body: JSON.stringify({
-            token: token,
-            uIds: uIds,
-          }),
-          headers: {
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
 
 function callingChannelMessages (token:string, channelId: number, start: number) {
   const res = request(
@@ -148,6 +115,8 @@ function callingChannelMessages (token:string, channelId: number, start: number)
   );
   return res;
 }
+
+
 
 describe('Testing messageSend', () => {
   test('channelId does not refer to a valid channel', () => {
@@ -407,6 +376,78 @@ describe('Testing messageEdit', () => {
 
     expect(messages).toEqual({ messages: ['abc', 'cba'], start: 0, end: -1 });
   });
+
+  test('succesful edit for a message in a dm', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const user1 = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res8 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    const user2 = JSON.parse(res8.body as string);
+    expect(res8.statusCode).toBe(OK);
+
+    const res2 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res2.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res2.body as string);
+
+    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'dsfwefwef');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(res3.body as string);
+
+    const res7 = callingMessageSendDm(user1.token, dm1.dmId, 'abc');
+    expect(res7.statusCode).toBe(OK);
+
+    const res4 = callingMessageEdit(user1.token, message1.messageId, 'cba');
+    const edit1 = JSON.parse(res4.body as string);
+    expect(res4.statusCode).toBe(OK);
+
+    const res5 = callingDmMessages(user1.token, dm1.dmId, 0);
+    const messages = JSON.parse(res5.body as string);
+    expect(res5.statusCode).toBe(OK);
+
+    expect(edit1).toEqual({});
+
+    expect(messages).toEqual({ messages: ['abc', 'cba'], start: 0, end: -1 });
+  });
+
+  test('succesful edit for a message in a dm', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const user1 = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res8 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    const user2 = JSON.parse(res8.body as string);
+    expect(res8.statusCode).toBe(OK);
+
+    const res2 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res2.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res2.body as string);
+
+    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'dsfwefwef');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(res3.body as string);
+
+    const res7 = callingMessageSendDm(user1.token, dm1.dmId, 'abc');
+    expect(res7.statusCode).toBe(OK);
+
+    const res4 = callingMessageEdit(user1.token, message1.messageId, '');
+    const edit1 = JSON.parse(res4.body as string);
+    expect(res4.statusCode).toBe(OK);
+
+    const res5 = callingDmMessages(user1.token, dm1.dmId, 0);
+    const messages = JSON.parse(res5.body as string);
+    expect(res5.statusCode).toBe(OK);
+
+    expect(edit1).toEqual({});
+
+    expect(messages).toEqual({ messages: ['abc'], start: 0, end: -1 });
+  });
 });
 
 describe('Testing messageRemove', () => {
@@ -506,6 +547,42 @@ describe('Testing messageRemove', () => {
     const res5 = callingChannelMessages(user1.token, channel1.channelId, 0);
     const messages = JSON.parse(res5.body as string);
     expect(res5.statusCode).toBe(OK);
+
+    expect(messages).toEqual({ messages: ['abc'], start: 0, end: -1 });
+  });
+
+  test('succesful deletion of a message in a dm', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const user1 = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res8 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    const user2 = JSON.parse(res8.body as string);
+    expect(res8.statusCode).toBe(OK);
+
+    const res2 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res2.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res2.body as string);
+
+    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'dsfwefwef');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(res3.body as string);
+
+    const res7 = callingMessageSendDm(user1.token, dm1.dmId, 'abc');
+    expect(res7.statusCode).toBe(OK);
+
+    const res4 = callingMessageRemove(user1.token, message1.messageId);
+    const edit1 = JSON.parse(res4.body as string);
+    expect(res4.statusCode).toBe(OK);
+
+    const res5 = callingDmMessages(user1.token, dm1.dmId, 0);
+    const messages = JSON.parse(res5.body as string);
+    expect(res5.statusCode).toBe(OK);
+
+    expect(edit1).toEqual({});
 
     expect(messages).toEqual({ messages: ['abc'], start: 0, end: -1 });
   });

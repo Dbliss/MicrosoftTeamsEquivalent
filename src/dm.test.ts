@@ -1032,3 +1032,5 @@ describe('Testing dmMessages', () => {
     });
   });
 });
+
+export { callingDmCreate, callingMessageSendDm,callingDmMessages};

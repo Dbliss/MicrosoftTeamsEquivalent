@@ -1,3 +1,4 @@
+import { userInfo } from 'os';
 import { getData, setData, channelType, messageType } from './dataStore';
 import { getTokenIndex } from './users';
 
@@ -71,10 +72,32 @@ function messageSendV1(token: string, channelId: number, message: string) {
 function messageEditV1(token: string, messageId: number, message: string) {
   const data = getData();
 
+  let tokenIndex = getTokenIndex(token, data);
   // checking the token is valid
-  if (getTokenIndex(token, data) === -1) {
+  if (tokenIndex === -1) {
     return { error: 'error' };
   }
+  let isDmMember = false;
+  let isDmOwner = false;
+  let isOwnerMember = false;
+  let hasGlobalPermission = false;
+  let userIndex = 0;
+  let userId = 0;
+  let isMemberOfChannel = false;
+  let tokenIsSender = false;
+
+  //finding the checking if the token user has global permissions
+  for (let i = 0; i < data.user.length; i++){
+    if (data.user[i].token[tokenIndex] === token){
+      userIndex = i;
+      if (data.user[i].PermissionsId === 1){
+        hasGlobalPermission = true;
+      }
+      userId = data.user[i].authUserId;
+    }
+  }
+
+  //checking if the token user
 
   // checking the length of the message is within parameters
   if (message.length > 1000) {
@@ -89,7 +112,11 @@ function messageEditV1(token: string, messageId: number, message: string) {
   let uId = 0;
   let timeSent = 0;
 
-  // checking the messageId refers to a real message
+  // Need to check if the message is a dm or channel message
+  let isDmMessage = false;
+  let isChannelMessage = false;
+
+  // checking the messageId refers to a real channel message
   let validMessageId = false;
   for (let i = 0; i < data.channel.length; i++) {
     for (const message of data.channel[i].messages) {
@@ -97,7 +124,75 @@ function messageEditV1(token: string, messageId: number, message: string) {
         validMessageId = true;
         uId = message.uId;
         timeSent = message.timeSent;
+        isChannelMessage = true;
+        //checking if the token is the sender
+        if (uId === userId){
+          tokenIsSender = true;
+        }
+        //checking the user is in the channel
+        for (let j = 0; j < data.channel[i].members.length; j++){
+          if (data.channel[i].members[j].uId === userId){
+            isMemberOfChannel = true;
+            //need to check if the user has owner permissions in this channel
+            for (let channel of data.user[userIndex].channels){
+              if (channel.cId = data.channel[i].cId){
+                if (channel.channelPermissionsId == 1){
+                  isOwnerMember = true;
+                }
+              }
+            }
+          }
+        }
         break;
+      }
+    }
+  }
+  
+  // checking the messageId refers to a real dm message
+  for (let i = 0; i < data.dm.length; i++) {
+    for (const message of data.dm[i].messages) {
+      if (message.messageId === messageId) {
+        validMessageId = true;
+        uId = message.uId;
+        timeSent = message.timeSent;
+        isDmMessage = true;
+        //checking if the token is the sender
+        if (uId === userId){
+          tokenIsSender = true;
+        }
+        //check if the token user is a member of channel
+        for (let member of data.dm[i].members){
+          if (member === userId){
+            isDmMember = true;
+          }
+        }
+        //check is token user is a owner of channel
+        for (let owner of data.dm[i].owners){
+          if (owner === userId){
+            isDmOwner = true;
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  if (tokenIsSender === false){
+    if (isDmMessage === true){
+      if (isDmMember === false || isDmOwner === false){
+        return { error: 'error' };
+      }
+    }
+    else if (isChannelMessage === true){
+      if (isMemberOfChannel === false){
+        return { error: 'error' };
+      }
+      else if (isMemberOfChannel === true){
+        if (isOwnerMember === false){
+          if (hasGlobalPermission === false){
+            return { error: 'error' };
+          }
+        }
       }
     }
   }
@@ -106,17 +201,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
     return { error: 'error' };
   }
 
-  // checking the messageId refers to a real message
-  for (const channel of data.channel) {
-    for (const message of channel.messages) {
-      if (message.messageId === messageId) {
-        validMessageId = true;
-        uId = message.uId;
-        timeSent = message.timeSent;
-        break;
-      }
-    }
-  }
   const newMessage: messageType = {
     messageId: messageId,
     uId: uId,
@@ -124,33 +208,50 @@ function messageEditV1(token: string, messageId: number, message: string) {
     timeSent: timeSent,
   };
 
-  let key1 = -1;
-  for (let i = 0; i < data.channel.length; i++) {
-    for (let j = 0; i < data.channel[i].messages.length; j++) {
-      if (data.channel[i].messages[j].messageId === messageId) {
-        key1 = i;
-        newMessage.uId = data.channel[i].messages[j].uId;
-        newMessage.timeSent = data.channel[i].messages[j].timeSent;
-        validMessageId = true;
-        deleteCondition === true ? data.channel[i].messages.splice(j, 1) : data.channel[i].messages.splice(j, 1, newMessage);
-        break;
+  //editing the message for the channel case
+  if (isChannelMessage === true){
+    let key1 = -1;
+    for (let i = 0; i < data.channel.length; i++) {
+      for (let j = 0; i < data.channel[i].messages.length; j++) {
+        if (data.channel[i].messages[j].messageId === messageId) {
+          key1 = i;
+          newMessage.uId = data.channel[i].messages[j].uId;
+          newMessage.timeSent = data.channel[i].messages[j].timeSent;
+          validMessageId = true;
+          deleteCondition === true ? data.channel[i].messages.splice(j, 1) : data.channel[i].messages.splice(j, 1, newMessage);
+          break;
+        }
+      }
+    }
+
+    // checking the user is a member of the channel
+    let flag = 0;
+    for (const member of data.channel[key1].members) {
+      for (const tokenn of member.token) {
+        if (tokenn === token) {
+          flag = 1;
+        }
+      }
+    }
+    if (flag === 0) {
+      return { error: 'error' };
+    }
+  }
+  //editing the message for the dm case
+  let returns = [];
+  if (isDmMessage === true){
+    for (let i = 0; i < data.dm.length; i++) {
+      for (let j = 0; i < data.dm[i].messages.length; j++) {
+        if (data.dm[i].messages[j].messageId === messageId) {
+          newMessage.uId = data.dm[i].messages[j].uId;
+          newMessage.timeSent = data.dm[i].messages[j].timeSent;
+          validMessageId = true;
+          deleteCondition === true ? data.dm[i].messages.splice(j, 1) : data.dm[i].messages.splice(j, 1, newMessage);
+          break;
+        }
       }
     }
   }
-
-  // checking the user is a member of the channel
-  let flag = 0;
-  for (const member of data.channel[key1].members) {
-    for (const tokenn of member.token) {
-      if (tokenn === token) {
-        flag = 1;
-      }
-    }
-  }
-  if (flag === 0) {
-    return { error: 'error' };
-  }
-
   setData(data);
   return {};
 }
@@ -163,12 +264,27 @@ function messageRemoveV1(token: string, messageId: number) {
     return { error: 'error' };
   }
 
+  // Need to check if the message is a dm or channel message
+  let isDmMessage = false;
+  let isChannelMessage = false;
+
   // checking the messageId refers to a real message
   let validMessageId = false;
   for (let i = 0; i < data.channel.length; i++) {
     for (const message of data.channel[i].messages) {
       if (message.messageId === messageId) {
         validMessageId = true;
+        isChannelMessage = true;
+      }
+    }
+  }
+
+  // checking the messageId refers to a real message
+  for (let i = 0; i < data.dm.length; i++) {
+    for (const message of data.dm[i].messages) {
+      if (message.messageId === messageId) {
+        validMessageId = true;
+        isDmMessage = true;
       }
     }
   }
@@ -177,28 +293,44 @@ function messageRemoveV1(token: string, messageId: number) {
     return { error: 'error' };
   }
 
-  let key1 = -1;
-  for (let i = 0; i < data.channel.length; i++) {
-    for (let j = 0; i < data.channel[i].messages.length; j++) {
-      if (data.channel[i].messages[j].messageId === messageId) {
-        key1 = i;
-        data.channel[i].messages.splice(j, 1);
-        break;
+  if (isChannelMessage === true){
+    let key1 = -1;
+    for (let i = 0; i < data.channel.length; i++) {
+      for (let j = 0; i < data.channel[i].messages.length; j++) {
+        if (data.channel[i].messages[j].messageId === messageId) {
+          key1 = i;
+          data.channel[i].messages.splice(j, 1);
+          break;
+        }
       }
+    }
+
+    // checking the user is a member of the channel
+    let flag = 0;
+    for (const member of data.channel[key1].members) {
+      for (const tokenn of member.token) {
+        if (tokenn === token) {
+          flag = 1;
+        }
+      }
+    }
+    if (flag === 0) {
+      return { error: 'error' };
     }
   }
 
-  // checking the user is a member of the channel
-  let flag = 0;
-  for (const member of data.channel[key1].members) {
-    for (const tokenn of member.token) {
-      if (tokenn === token) {
-        flag = 1;
+
+  if (isDmMessage === true){
+    let key1 = -1;
+    for (let i = 0; i < data.dm.length; i++) {
+      for (let j = 0; i < data.dm[i].messages.length; j++) {
+        if (data.dm[i].messages[j].messageId === messageId) {
+          key1 = i;
+          data.dm[i].messages.splice(j, 1);
+          break;
+        }
       }
     }
-  }
-  if (flag === 0) {
-    return { error: 'error' };
   }
   setData(data);
   return {};
@@ -222,7 +354,7 @@ function messageSenddmV1 (token: string, dmId: number, message: string) {
       if (tokens === token) {
         validToken = 1;
         flag = i;
-        uId = data.user[i].uId;
+        uId = data.user[i].authUserId;
       }
     }
   }
@@ -259,7 +391,7 @@ function messageSenddmV1 (token: string, dmId: number, message: string) {
     messageId: Math.floor(Math.random() * Date.now()),
     uId: uId,
     message: message,
-    timeSent: Math.floor(Date.now() / 1000)
+    timeSent: Math.floor(Date.now() / 1000),
   };
 
   data.dm[dmIndex].messages.push(tempMessage);

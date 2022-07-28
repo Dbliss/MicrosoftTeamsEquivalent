@@ -51,13 +51,20 @@ type channelType = {
   messages: messageType[],
 };
 
+type dmmessageType = {
+  messageId: number,
+  uId: number,
+  message: string,
+  timeSent: number
+};
+
 // Storing dm information in data
 type dmType = {
   dmId: number,
   name: string,
   members: number[],
   owners: number[],
-  messages: messageType[]
+  messages: dmmessageType[]
 }
 
 type dataType = {
@@ -96,4 +103,4 @@ function setData(newData: dataType) {
   fs.writeFileSync('src/data.json', JSON.stringify(newData), { flag: 'w' });
 }
 
-export { getData, setData, dataType, userType, channelType, channelsType, usersType, dmType, messageType };
+export { getData, setData, dataType, userType, channelType, channelsType, usersType, dmType, messageType, dmmessageType };

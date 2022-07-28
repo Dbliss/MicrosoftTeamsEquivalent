@@ -1,4 +1,5 @@
-import { getData, setData, channelType, messageType } from './dataStore';
+import { updateImportDeclaration } from 'typescript';
+import { getData, setData, channelType, messageType, dmmessageType } from './dataStore';
 
 function messageSendV1(token: string, channelId: number, message: string) {
   const data = getData();
@@ -202,9 +203,11 @@ function messageSenddmV1 (token: string, dmId: number, message: string) {
     return { error: 'error' };
   }
 
-  const tempMessage = {
+  const tempMessage: dmmessageType = {
     messageId: Math.floor(Math.random() * Date.now()),
-    message: message
+    uId: data.user[flag].authUserId,
+    message: message,
+    timeSent: Math.floor((new Date()).getTime() / 1000)
   };
 
   data.dm[dmIndex].messages.push(tempMessage);

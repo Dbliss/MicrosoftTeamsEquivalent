@@ -51,6 +51,9 @@ app.use(cors());
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
 
+// for logging errors
+app.use(morgan('dev'));
+
 // Example get request
 app.get('/echo', (req, res, next) => {
   try {
@@ -290,9 +293,6 @@ app.post('/message/senddm/v1', (req, res) => {
   const leave = messageSenddmV1(token, dmId, message);
   res.json(leave);
 });
-
-// for logging errors
-app.use(morgan('dev'));
 
 // start server
 const server = app.listen(PORT, HOST, () => {

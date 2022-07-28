@@ -80,7 +80,7 @@ function callingDmLeave(token: string, dmId: number) {
   );
   return res;
 }
-
+/*
 function callingDmMessages(token: string, dmId: number, start: number) {
   const res = request(
     'GET',
@@ -113,6 +113,7 @@ function callingMessageSendDm(token: string, dmId: number, message: string) {
   );
   return res;
 }
+*/
 
 function callingAuthRegister (email: string, password: string, nameFirst: string, nameLast: string) {
   const res = request(
@@ -195,7 +196,7 @@ describe('Testing dmCreate', () => {
     const res2 = callingDmList(registered1.token);
     expect(res2.statusCode).toBe(OK);
     const result2 = JSON.parse(String(res2.getBody()));
-    expect(result2).toMatchObject([{ dmId: result.dmId, name: "'first2last2, first3last3, firstlast'" }]);
+    expect(result2).toMatchObject({ dms: [{ dmId: result.dmId, name: "'first2last2, first3last3, firstlast'" }] });
   });
 
   test('Invalid uId', () => {
@@ -291,7 +292,7 @@ describe('Testing dmList', () => {
     const res = callingDmList(registered1.token);
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
-    expect(result).toStrictEqual([{ dmId: dm1.dmId, name: "'abclast, dadmom'" }]);
+    expect(result).toStrictEqual({ dms: [{ dmId: dm1.dmId, name: "'abclast, dadmom'" }] });
   });
 
   test('Valid Parameters, 1 dm, Listing by member', () => {
@@ -316,7 +317,7 @@ describe('Testing dmList', () => {
     const res = callingDmList(registered2.token);
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
-    expect(result).toStrictEqual([{ dmId: dm1.dmId, name: "'first2last2, firstlast'" }]);
+    expect(result).toStrictEqual({ dms: [{ dmId: dm1.dmId, name: "'first2last2, firstlast'" }] });
   });
 
   test('Valid Parameters, 2 dm, Listing by member', () => {
@@ -352,9 +353,11 @@ describe('Testing dmList', () => {
     const res = callingDmList(registered3.token);
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject([
-      { dmId: dmCreated1.dmId, name: "'first3last3, firstlast'" },
-      { dmId: dmCreated2.dmId, name: "'first2last2, first3last3'" }]);
+    expect(result).toMatchObject({
+      dms: [
+        { dmId: dmCreated1.dmId, name: "'first3last3, firstlast'" },
+        { dmId: dmCreated2.dmId, name: "'first2last2, first3last3'" }]
+    });
   });
 });
 
@@ -479,7 +482,7 @@ describe('Testing dmRemove', () => {
     const res2 = callingDmList(registered1.token);
     expect(res2.statusCode).toBe(OK);
     const result2 = JSON.parse(String(res2.getBody()));
-    expect(result2).toStrictEqual([]);
+    expect(result2).toStrictEqual({ dms: [] });
   });
 });
 
@@ -802,7 +805,7 @@ describe('Testing dmLeave', () => {
     });
   });
 });
-
+/*
 describe('Testing dmMessages', () => {
   test('Invalid Token', () => {
     expect(callingClear().statusCode).toBe(OK);
@@ -1032,3 +1035,4 @@ describe('Testing dmMessages', () => {
     });
   });
 });
+*/

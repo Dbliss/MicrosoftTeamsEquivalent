@@ -15,13 +15,12 @@ const error = { error: 'error' };
 function userProfileV1(token: string, uId: number) {
   const data = getData();
 
-  const returnUser = { user: {
+  const returnUser = {
     uId: 0,
     email: '',
     nameFirst: '',
     nameLast: '',
     handleStr: ''
-  }
   };
 
   // Finds the index of the object which contains the apropriate authUserId matching uId, in the user key array,
@@ -49,11 +48,11 @@ function userProfileV1(token: string, uId: number) {
 
   // Setting the values of the returned user object with the necessary details
   const retuId = data.user[uIdIndex].authUserId;
-  returnUser.user.uId = retuId;
-  returnUser.user.email = data.user[uIdIndex].email;
-  returnUser.user.nameFirst = data.user[uIdIndex].nameFirst;
-  returnUser.user.nameLast = data.user[uIdIndex].nameLast;
-  returnUser.user.handleStr = data.user[uIdIndex].handle;
+  returnUser.uId = retuId;
+  returnUser.email = data.user[uIdIndex].email;
+  returnUser.nameFirst = data.user[uIdIndex].nameFirst;
+  returnUser.nameLast = data.user[uIdIndex].nameLast;
+  returnUser.handleStr = data.user[uIdIndex].handle;
 
   console.log(returnUser);
   return returnUser;

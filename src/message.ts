@@ -1,4 +1,3 @@
-import { updateImportDeclaration } from 'typescript';
 import { getData, setData, channelType, messageType, dmmessageType } from './dataStore';
 
 function messageSendV1(token: string, channelId: number, message: string) {

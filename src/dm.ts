@@ -1,5 +1,5 @@
 
-import { getData, setData, dmType, dmmessageType, usersType } from './dataStore';
+import { getData, setData, dmType, dmmessageType } from './dataStore';
 
 // Funtion to create a dm
 
@@ -119,7 +119,7 @@ function dmList (token: string) {
   // Assigning userId
   const authUserId = data.user[flag].authUserId;
   // Pushing details of dm into an array
-  const tempDms = {dms: []};
+  const tempDms = { dms: [] };
   for (const dm of data.dm) {
     for (const member of dm.members) {
       if (member === authUserId) {
@@ -246,9 +246,8 @@ function dmDetails(token: string, dmId: number) {
     looper++;
   }
 
-
-  if (validDmId === 0 || isMember === 0) { 
-    return {error: 'error'};
+  if (validDmId === 0 || isMember === 0) {
+    return { error: 'error' };
   }
 
   // Extraction and pushing necessary data of the member to an array of the members

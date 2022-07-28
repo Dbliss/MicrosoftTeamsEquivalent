@@ -445,8 +445,8 @@ const channelLeaveV1 = (token: string, channelId: number) => {
   // remove user as member of channel
   if (memberIndex > -1) {
     data.channel[channelIndex].members.splice(memberIndex, 1);
-    for(let i = 0; i < data.user[userIndex].channels.length; i++) {
-      if(data.user[userIndex].channels[i].cId === channelId) {
+    for (let i = 0; i < data.user[userIndex].channels.length; i++) {
+      if (data.user[userIndex].channels[i].cId === channelId) {
         data.user[userIndex].channels.splice(i, 1);
       }
     }

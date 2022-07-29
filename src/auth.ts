@@ -1,6 +1,7 @@
 import validator from 'validator';
 import { dataType, getData, setData } from './dataStore';
 
+
 // Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.
 // Arguments:
 // email (string) - This is the email string the user uses to register their account with
@@ -81,7 +82,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     permissionId: permissionId,
     token: [],
   };
-  data.user[j].token.push(token);
+  data.user[j].token.push(getHashOf(token));
   setData(data);
 
   return { token: token, authUserId: uID };

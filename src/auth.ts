@@ -82,7 +82,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     permissionId: permissionId,
     token: [],
   };
-  data.user[j].token.push(getHashOf(token));
+  data.user[j].token.push(token);
   setData(data);
 
   return { token: token, authUserId: uID };

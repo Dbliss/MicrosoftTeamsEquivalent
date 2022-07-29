@@ -1,7 +1,6 @@
 import validator from 'validator';
 import { dataType, getData, setData } from './dataStore';
 
-
 // Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.
 // Arguments:
 // email (string) - This is the email string the user uses to register their account with

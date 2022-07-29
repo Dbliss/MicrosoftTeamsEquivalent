@@ -1,12 +1,18 @@
 
+// import { echo } from './echo';
+
 import request from 'sync-request';
 import config from './config.json';
 import { echo } from './echo';
 
 const OK = 200;
-const port = config.port;
+const INPUT_ERROR = 400;
 const url = config.url;
+const port = config.port;
 
+/*
+Iteration 3
+*/
 test('Filler', () => {
   expect(echo('filler')).toBe('filler');
 });
@@ -38,7 +44,7 @@ describe('HTTP tests using Jest', () => {
             }
     );
     const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toEqual({ error: 'error' });
+    expect(res.statusCode).toBe(INPUT_ERROR);
+    expect(bodyObj.error).toStrictEqual({ message: 'Cannot echo "echo"' });
   });
 });

@@ -51,6 +51,10 @@ function requestChannelsCreate(token: string, name: string, isPublic: boolean) {
   return post('channels/create/v2', { token, name, isPublic });
 }
 
+function requestChannelJoin(token: string, channelId: number) {
+  return post('channel/join/v2', { token, channelId });
+}
+
 describe('channel/leave/v1', () => {
   test('Success', () => {
     callingClear();
@@ -282,6 +286,39 @@ describe('channel/addowner/v1', () => {
     );
     expect(bodyObj).toMatchObject({ error: 'error' });
   });
+  test('channel owner can add owner when member', () => {
+    callingClear();
+    const owner = requestAuthRegister(
+      'email@email.com',
+      'password123',
+      'first',
+      'last'
+    );
+    const tokenTest = owner.token;
+    const member = requestAuthRegister(
+      'email1@email.com',
+      'password123',
+      'first1',
+      'last1'
+    );
+    const tokenTest1 = member.token;
+    const userId = member.authUserId;
+    const channelIdTest = requestChannelsCreate(
+      tokenTest,
+      'name',
+      false
+    );
+    requestChannelJoin(
+      tokenTest1,
+      channelIdTest
+    );
+    const bodyObj = requestAddOwner(
+      tokenTest1,
+      channelIdTest,
+      userId
+    );
+    expect(bodyObj).toMatchObject({});
+  });
 });
 
 describe('channel/removeowner/v1', () => {
@@ -461,5 +498,43 @@ describe('channel/removeowner/v1', () => {
       userId
     );
     expect(bodyObj).toMatchObject({ error: 'error' });
+  });
+  test('channel owner can add owner when member', () => {
+    callingClear();
+    const owner = requestAuthRegister(
+      'email@email.com',
+      'password123',
+      'first',
+      'last'
+    );
+    const tokenTest = owner.token;
+    const member = requestAuthRegister(
+      'email1@email.com',
+      'password123',
+      'first1',
+      'last1'
+    );
+    const tokenTest1 = member.token;
+    const userId = member.authUserId;
+    const channelIdTest = requestChannelsCreate(
+      tokenTest,
+      'name',
+      false
+    );
+    requestChannelJoin(
+      tokenTest1,
+      channelIdTest
+    );
+    requestAddOwner(
+      tokenTest1,
+      channelIdTest,
+      userId
+    );
+    const bodyObj = requestRemoveOwner(
+      tokenTest1,
+      channelIdTest,
+      userId
+    );
+    expect(bodyObj).toMatchObject({});
   });
 });

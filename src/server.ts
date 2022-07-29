@@ -3,6 +3,9 @@ import { echo } from './echo';
 import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
+
+import errorHandler from 'middleware-http-errors';
+
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { channelInviteV2, channelMessagesV2 } from './channel';
 import { channelsCreateV1 } from './channels';
@@ -57,6 +60,9 @@ app.get('/echo', (req, res, next) => {
     next(err);
   }
 });
+
+// handles errors nicely
+app.use(errorHandler());
 
 app.post('/auth/register/v2', (req, res, next) => {
   try {
@@ -289,6 +295,11 @@ app.post('/message/senddm/v1', (req, res) => {
 app.use(morgan('dev'));
 
 // start server
-app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, () => {
   console.log(`⚡️ Server listening on port ${PORT} at ${HOST}`);
+});
+
+// For coverage, handle Ctrl+C gracefully
+process.on('SIGINT', () => {
+  server.close(() => console.log('Shutting down server gracefully.'));
 });

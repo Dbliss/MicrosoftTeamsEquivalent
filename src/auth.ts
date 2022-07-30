@@ -73,7 +73,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   const j = data.user.length;
   data.user[j] = {
     email: email,
-    password: getHashOf (password),
+    password: getHashOf( password),
     nameFirst: nameFirst,
     nameLast: nameLast,
     authUserId: uID,
@@ -82,7 +82,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     permissionId: permissionId,
     token: [],
   };
-  data.user[j].token.push(getHashOf(token));
+  data.user[j].token.push(getHashOf( token));
   setData(data);
 
   return { token: token, authUserId: uID };

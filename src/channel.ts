@@ -1,5 +1,7 @@
 import console from 'console';
 import { getData, setData, channelType, usersType } from './dataStore';
+import { getHashOf } from './other';
+import { getTokenIndex } from './users';
 
 type returnObjectType = {
   name: string,
@@ -39,14 +41,15 @@ function channelDetailsV1 (token: string, channelId: number) {
 
   // The code finds the index of the object which contains the apropriate authUserId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
-  const userIndex = data.user.findIndex((object: any) => {
-    for (const tokenElem of object.token) {
-      if (tokenElem === token) {
-        return tokenElem === token;
-      }
-    }
-    return false;
-  });
+  // const userIndex = data.user.findIndex((object: any) => {
+  //   for (const tokenElem of object.token) {
+  //     if (tokenElem === token) {
+  //       return tokenElem === token;
+  //     }
+  //   }
+  //   return false;
+  // });
+  const userIndex = getTokenIndex(token, data);
     // code adapted from the website shorturl.at/eoJKY
 
   // The code finds the index of the object which contains the apropriate channelId, in the channel key array,
@@ -57,7 +60,12 @@ function channelDetailsV1 (token: string, channelId: number) {
 
   // if neither the authUserId nor the channelId is valid then the function
   // returns an error object
+  if ((userIndex === -1)) {
+    console.log('userIndex is wrong');
+    
+  }
   if ((userIndex === -1) || (channelIndex === -1)) {
+    console.log('input is wrong');
     return error;
   }
 
@@ -161,6 +169,9 @@ function channelJoinV1 (token: string, channelId: number) {
 
   // if neither the authUserId nor the channelId is valid then the function
   // returns an error object
+  if (userIndex === -1) {
+    console.log('token is invalid');
+  }
   if ((userIndex === -1) || (channelIndex === -1)) {
     console.log('token or channelId is invalid');
     return error;

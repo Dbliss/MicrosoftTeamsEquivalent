@@ -51,6 +51,9 @@ app.use(cors());
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
 
+// for logging errors
+app.use(morgan('dev'));
+
 // Example get request
 app.get('/echo', (req, res, next) => {
   try {
@@ -240,10 +243,11 @@ app.put('/user/profile/setname/v1', (req, res, next) => {
     next(err);
   }
 });
+
 app.put('/message/edit/v1', (req, res, next) => {
   try {
-    const { token, channelId, message } = req.body;
-    return res.json(messageEditV1(token, channelId, message));
+    const { token, messageId, message } = req.body;
+    res.json(messageEditV1(token, messageId, message));
   } catch (err) {
     next(err);
   }
@@ -276,13 +280,10 @@ app.put('/user/profile/sethandle/v1', (req, res, next) => {
 });
 
 app.delete('/message/remove/v1', (req, res, next) => {
-  try {
-    const token = req.query.token as string;
-    const messageId = req.query.messageId;
-    return res.json(messageRemoveV1(token, Number(messageId)));
-  } catch (err) {
-    next(err);
-  }
+  const token = req.query.token as string;
+  const messageId = parseInt(req.query.messageId as string);
+  const remove = messageRemoveV1(token, messageId);
+  res.json(remove);
 });
 
 app.post('/message/senddm/v1', (req, res) => {
@@ -290,9 +291,6 @@ app.post('/message/senddm/v1', (req, res) => {
   const leave = messageSenddmV1(token, dmId, message);
   res.json(leave);
 });
-
-// for logging errors
-app.use(morgan('dev'));
 
 // start server
 const server = app.listen(PORT, HOST, () => {

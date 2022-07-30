@@ -123,7 +123,6 @@ function channelDetailsV1 (token: string, channelId: number) {
   // setting the array of allMembers in the return object to the
   // tempMembers array
   returnObject.allMembers = tempMembers;
-
   return returnObject;
 }
 
@@ -406,13 +405,17 @@ const channelLeaveV1 = (token: string, channelId: number) => {
   const data = getData();
   let isTokenValid = false;
   let authUserId = -1;
+  let userIndex = -1;
+  let counter = 0;
   for (const user of data.user) {
     for (const tokens of user.token) {
       if (tokens === token) {
         authUserId = user.authUserId;
         isTokenValid = true;
+        userIndex = counter;
       }
     }
+    counter++;
   }
   if (isTokenValid === false) {
     return error;
@@ -447,6 +450,11 @@ const channelLeaveV1 = (token: string, channelId: number) => {
   // remove user as member of channel
   if (memberIndex > -1) {
     data.channel[channelIndex].members.splice(memberIndex, 1);
+    for (let i = 0; i < data.user[userIndex].channels.length; i++) {
+      if (data.user[userIndex].channels[i].cId === channelId) {
+        data.user[userIndex].channels.splice(i, 1);
+      }
+    }
     setData(data);
   }
   return {};

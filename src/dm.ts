@@ -1,5 +1,5 @@
 
-import { getData, setData, dmType } from './dataStore';
+import { getData, setData, dmType, dmmessageType } from './dataStore';
 
 // Funtion to create a dm
 
@@ -72,7 +72,6 @@ function dmCreate (token: string, uIds: number[]) {
   }
   // Adding single quotes to the name
   name = "'" + name + "'";
-
   uIds.push(data.user[flag].authUserId);
   const tempDm: dmType = {
     dmId: Math.floor(Math.random() * Date.now()),
@@ -118,11 +117,18 @@ function dmList (token: string) {
   // Assigning userId
   const authUserId = data.user[flag].authUserId;
   // Pushing details of dm into an array
-  const tempDms = [];
+  type retunDmType = {
+    dms: {
+      dmId: number,
+      name: string
+    }[]
+  }
+
+  const tempDms:retunDmType = { dms: [] };
   for (const dm of data.dm) {
     for (const member of dm.members) {
       if (member === authUserId) {
-        tempDms.push({ dmId: dm.dmId, name: dm.name });
+        tempDms.dms.push({ dmId: dm.dmId, name: dm.name });
       }
     }
   }
@@ -259,13 +265,13 @@ function dmDetails(token: string, dmId: number) {
           email: user.email,
           nameFirst: user.nameFirst,
           nameLast: user.nameLast,
-          handleStr: user.handle,
+          handleStr: user.handle
         });
       }
     }
   }
-
-  return ({ name: data.dm[dmIndex].name, members: tempMembers });
+  const returnObject = { name: data.dm[dmIndex].name, members: tempMembers };
+  return returnObject;
 }
 
 // Funtion to leave a dm
@@ -382,18 +388,13 @@ function dmMessages (token: string, dmId: number, start: number) {
   }
 
   // Returns error if start, dmId or user is invaid
-  // if (validDmId === 0) return { error: 'error1' };
-  // if(isMember === 0 ) return { error: 'error2' };
-  // if(data.dm[dmIndex].messages.length < start) {
-  //  return { error: 'error3' };
-  // }
   if (validDmId === 0 || isMember === 0 || data.dm[dmIndex].messages.length < start) {
     return { error: 'error' };
   }
 
   // Reversing data so that the latest messages are returned
   data.dm[dmIndex].messages.reverse();
-  const returnMessages = [];
+  const returnMessages: dmmessageType[] = [];
   let end = 0;
   let returnEnd = start + 50;
 
@@ -407,9 +408,8 @@ function dmMessages (token: string, dmId: number, start: number) {
 
   // Pushing the messages to a array
   for (let i = start; i < end; i++) {
-    returnMessages.push(data.dm[dmIndex].messages[i].message);
+    returnMessages.push(data.dm[dmIndex].messages[i]);
   }
-
   return { messages: returnMessages, start: start, end: returnEnd };
 }
 

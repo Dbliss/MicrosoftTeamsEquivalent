@@ -16,8 +16,10 @@ const post = (path: any, body: any) => {
           },
         }
   );
-  const bodyObj = JSON.parse(res.body as string);
-  expect(res.statusCode).toBe(OK);
+  let bodyObj: any;
+  if(res.statusCode === 200) {
+     bodyObj = JSON.parse(res.body as string);
+  }
   return bodyObj;
 };
 
@@ -48,7 +50,7 @@ function requestAuthRegister(email: string, password: string, nameFirst: string,
 }
 
 function requestChannelsCreate(token: string, name: string, isPublic: boolean) {
-  return post('channels/create/v2', { token, name, isPublic });
+  return post('channels/create/v3', { token, name, isPublic });
 }
 
 function requestChannelJoin(token: string, channelId: number) {

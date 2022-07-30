@@ -8,15 +8,15 @@ import errorHandler from 'middleware-http-errors';
 
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { channelInviteV2, channelMessagesV2 } from './channel';
-import { channelsCreateV1 } from './channels';
 import { clearV1 } from './other';
 
 import { channelDetailsV1, channelJoinV1 } from './channel';
 import { usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1 } from './users';
 
 import {
-  channelsListV1,
-  channelsListallV1,
+  channelsCreateV3,
+  channelsListV3,
+  channelsListallV3,
 } from './channels';
 
 import {
@@ -113,19 +113,20 @@ app.delete('/clear/v1', (req, res, next) => {
   }
 });
 
-app.post('/channels/create/v2', (req, res) => {
-  const { token, name, isPublic } = req.body;
-  const cId = channelsCreateV1(token, name, isPublic);
+app.post('/channels/create/v3', (req, res) => {
+  const { name, isPublic } = req.body;
+  const token = req.headers.token;
+  const cId = channelsCreateV3(token as string, name, isPublic);
   res.json(cId);
 });
 
-app.get('/channels/list/v2', (req, res) => {
-  const channel = channelsListV1(req.query.token as string);
+app.get('/channels/list/v3', (req, res) => {
+  const channel = channelsListV3(req.headers.token as string);
   res.json(channel);
 });
 
-app.get('/channels/listall/v2', (req, res) => {
-  const channel = channelsListallV1(req.query.token as string);
+app.get('/channels/listall/v3', (req, res) => {
+  const channel = channelsListallV3(req.headers.token as string);
   res.json(channel);
 });
 

@@ -15,14 +15,14 @@ function callingClear () {
 function callingChannelsCreate (token: string, name: string, isPublic: boolean) {
   const res = request(
     'POST',
-        `${url}:${port}/channels/create/v2`,
+        `${url}:${port}/channels/create/v3`,
         {
           body: JSON.stringify({
-            token: token,
             name: name,
             isPublic: isPublic
           }),
           headers: {
+            token: token,
             'Content-type': 'application/json',
           },
         }

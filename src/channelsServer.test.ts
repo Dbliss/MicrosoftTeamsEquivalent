@@ -9,14 +9,14 @@ const port = config.port;
 function callingChannelsCreate (token: string, name: string, isPublic: boolean) {
   const res = request(
     'POST',
-        `${url}:${port}/channels/create/v2`,
+        `${url}:${port}/channels/create/v3`,
         {
           body: JSON.stringify({
-            token: token,
             name: name,
             isPublic: isPublic
           }),
           headers: {
+            token: token,
             'Content-type': 'application/json',
           },
         }
@@ -27,10 +27,10 @@ function callingChannelsCreate (token: string, name: string, isPublic: boolean) 
 function callingChannelslist (token: string) {
   const res = request(
     'GET',
-        `${url}:${port}/channels/list/v2`,
+        `${url}:${port}/channels/list/v3`,
         {
-          qs: {
-            token: token
+          headers: {
+            token: token,
           }
         }
   );
@@ -40,10 +40,10 @@ function callingChannelslist (token: string) {
 function callingChannelslistAll (token: string) {
   const res = request(
     'GET',
-        `${url}:${port}/channels/listall/v2`,
+        `${url}:${port}/channels/listall/v3`,
         {
-          qs: {
-            token: token
+          headers: {
+            token: token,
           }
         }
   );
@@ -90,9 +90,7 @@ describe('Testing channelsCreateV1', () => {
     const registered = JSON.parse(String(auth.getBody()));
 
     const res = callingChannelsCreate(registered.token, '', false);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(400);
   });
 
   test('Name length > 20', () => {
@@ -109,10 +107,9 @@ describe('Testing channelsCreateV1', () => {
     const res = callingChannelsCreate(
       registered.token,
       'abcdefghijklmnopqrstuv',
-      false);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+      false
+    );
+    expect(res.statusCode).toBe(400);
   });
 
   test('Valid parameters', () => {
@@ -134,7 +131,7 @@ describe('Testing channelsCreateV1', () => {
     expect(result).toMatchObject({ channelId: expect.any(Number) });
   });
 
-  test('Invalid authUserId', () => {
+  test('Invalid token', () => {
     expect(callingClear().statusCode).toBe(OK);
 
     expect(callingAuthRegister('email@email.com',
@@ -145,9 +142,7 @@ describe('Testing channelsCreateV1', () => {
       '-9999',
       'name',
       false);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 });
 
@@ -267,9 +262,7 @@ describe('Testing channelsListV1', () => {
       false).statusCode).toBe(OK);
 
     const result = callingChannelslist('-99999');
-    expect(result.statusCode).toBe(OK);
-    const result1 = JSON.parse(String(result.getBody()));
-    expect(result1).toMatchObject({ channels: [] });
+    expect(result.statusCode).toBe(403);
   });
 });
 
@@ -410,8 +403,6 @@ describe('Testing channelsListV1', () => {
       false);
 
     const result = callingChannelslistAll('-99999');
-    expect(result.statusCode).toBe(OK);
-    const result1 = JSON.parse(String(result.getBody()));
-    expect(result1).toMatchObject({ channels: [] });
+    expect(result.statusCode).toBe(403);
   });
 });

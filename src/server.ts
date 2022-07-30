@@ -3,6 +3,9 @@ import { echo } from './echo';
 import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
+
+import errorHandler from 'middleware-http-errors';
+
 import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
 import { channelInviteV2, channelMessagesV2 } from './channel';
 import { channelsCreateV1 } from './channels';
@@ -48,6 +51,9 @@ app.use(cors());
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
 
+// for logging errors
+app.use(morgan('dev'));
+
 // Example get request
 app.get('/echo', (req, res, next) => {
   try {
@@ -57,6 +63,9 @@ app.get('/echo', (req, res, next) => {
     next(err);
   }
 });
+
+// handles errors nicely
+app.use(errorHandler());
 
 app.post('/auth/register/v2', (req, res, next) => {
   try {
@@ -234,10 +243,11 @@ app.put('/user/profile/setname/v1', (req, res, next) => {
     next(err);
   }
 });
+
 app.put('/message/edit/v1', (req, res, next) => {
   try {
-    const { token, channelId, message } = req.body;
-    return res.json(messageEditV1(token, channelId, message));
+    const { token, messageId, message } = req.body;
+    res.json(messageEditV1(token, messageId, message));
   } catch (err) {
     next(err);
   }
@@ -270,13 +280,10 @@ app.put('/user/profile/sethandle/v1', (req, res, next) => {
 });
 
 app.delete('/message/remove/v1', (req, res, next) => {
-  try {
-    const token = req.query.token as string;
-    const messageId = req.query.messageId;
-    return res.json(messageRemoveV1(token, Number(messageId)));
-  } catch (err) {
-    next(err);
-  }
+  const token = req.query.token as string;
+  const messageId = parseInt(req.query.messageId as string);
+  const remove = messageRemoveV1(token, messageId);
+  res.json(remove);
 });
 
 app.post('/message/senddm/v1', (req, res) => {
@@ -285,10 +292,12 @@ app.post('/message/senddm/v1', (req, res) => {
   res.json(leave);
 });
 
-// for logging errors
-app.use(morgan('dev'));
-
 // start server
-app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, () => {
   console.log(`⚡️ Server listening on port ${PORT} at ${HOST}`);
+});
+
+// For coverage, handle Ctrl+C gracefully
+process.on('SIGINT', () => {
+  server.close(() => console.log('Shutting down server gracefully.'));
 });

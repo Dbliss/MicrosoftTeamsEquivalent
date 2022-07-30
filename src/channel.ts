@@ -2,6 +2,7 @@ import console from 'console';
 import { getData, setData, channelType, usersType, dataType } from './dataStore';
 import { getHashOf } from './other';
 import { getTokenIndex } from './users';
+import HTTPError from 'http-errors';
 
 type returnObjectType = {
   name: string,

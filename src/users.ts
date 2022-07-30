@@ -1,7 +1,8 @@
 import validator from 'validator';
 import { dataType, getData, setData, userType, channelsInUserType } from './dataStore';
 import { getHashOf } from './other';
-// import { getHashOf } from './other';
+import HTTPError from 'http-errors';
+
 const error = { error: 'error' };
 
 // Helper Function which finds the user which has the token,

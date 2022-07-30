@@ -1,5 +1,6 @@
-
-import { getData, setData, dmType, dmmessageType } from './dataStore';
+import { getData, setData, dmType, dmmessageType, dataType } from './dataStore';
+import { getTokenIndex } from './users';
+import HTTPError from 'http-errors';
 
 // Funtion to create a dm
 
@@ -13,23 +14,14 @@ import { getData, setData, dmType, dmmessageType } from './dataStore';
 // Returns {error: 'error'} on invalid uIds - If a uId does not exist or is repeated
 
 function dmCreate (token: string, uIds: number[]) {
-  const data = getData();
+  const data:dataType = getData();
 
   // Checking if token is valid and taking out the userId of the user
   // Also gets the index of user and stores it on flag
-  let validToken = 0;
-  let flag = 0;
-  for (let i = 0; i < data.user.length; i++) {
-    for (const tokens of data.user[i].token) {
-      if (tokens === token) {
-        validToken = 1;
-        flag = i;
-      }
-    }
-  }
+  const flag = getTokenIndex(token, data);
 
-  if (validToken === 0) {
-    return { error: 'error' };
+  if (flag === -1) {
+    throw HTTPError(403, 'Invalid Token');
   }
 
   // Checking if uId is valid and if no uId is being repeated
@@ -53,7 +45,7 @@ function dmCreate (token: string, uIds: number[]) {
   }
 
   if (validUId < uIds.length || uIdRepeat > uIds.length) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Invalid uIds');
   }
 
   // Creating name bu sorting and joining handles of all users
@@ -96,22 +88,13 @@ function dmCreate (token: string, uIds: number[]) {
 // Returns {error: 'error'} on invalid token - Being token does not exist
 
 function dmList (token: string) {
-  const data = getData();
+  const data:dataType = getData();
   // Checking if token is valid and taking out the userId of the user
   // Also gets the index of user and stores it on flag
-  let validToken = 0;
-  let flag = 0;
-  for (let i = 0; i < data.user.length; i++) {
-    for (const tokens of data.user[i].token) {
-      if (tokens === token) {
-        validToken = 1;
-        flag = i;
-      }
-    }
-  }
+  const flag = getTokenIndex(token, data);
 
-  if (validToken === 0) {
-    return { error: 'error' };
+  if (flag === -1) {
+    throw HTTPError(403, 'Invalid Token');
   }
 
   // Assigning userId
@@ -148,22 +131,13 @@ function dmList (token: string) {
 // Returns {error: 'error'} on invalid user - user not an owner of the dm
 
 function dmRemove (token: string, dmId: number) {
-  const data = getData();
+  const data:dataType = getData();
   // Checking if token is valid and taking out the userId of the user
   // Also gets the index of user and stores it on flag
-  let validToken = 0;
-  let flag = 0;
-  for (let i = 0; i < data.user.length; i++) {
-    for (const tokens of data.user[i].token) {
-      if (tokens === token) {
-        validToken = 1;
-        flag = i;
-      }
-    }
-  }
+  const flag = getTokenIndex(token, data);
 
-  if (validToken === 0) {
-    return { error: 'error' };
+  if (flag === -1) {
+    throw HTTPError(403, 'Invalid Token');
   }
   // Validates dmId and if uer is part of dm
   // Also splices the dm if everything is valid
@@ -183,7 +157,7 @@ function dmRemove (token: string, dmId: number) {
       }
       // Returning error if user is not a member
       if (isMember === 0) {
-        return { error: 'error' };
+        throw HTTPError(403, 'Not Member');
       }
 
       // Checking if user if owner of dm
@@ -195,8 +169,12 @@ function dmRemove (token: string, dmId: number) {
     dmIndex++;
   }
 
-  if (validDmId === 0 || validCreator === 0) {
-    return { error: 'error' };
+  if (validDmId === 0) {
+    throw HTTPError(400, 'Invalid dmId');
+  }
+
+  if (validCreator === 0) {
+    throw HTTPError(403, 'Not original creator');
   }
 
   setData(data);
@@ -215,22 +193,13 @@ function dmRemove (token: string, dmId: number) {
 // Returns {error: 'error'} on invalid dmId - dmId not valid
 
 function dmDetails(token: string, dmId: number) {
-  const data = getData();
+  const data:dataType = getData();
   // Checking if token is valid and taking out the userId of the user
   // Also gets the index of user and stores it on flag
-  let validToken = 0;
-  let flag = 0;
-  for (let i = 0; i < data.user.length; i++) {
-    for (const tokens of data.user[i].token) {
-      if (tokens === token) {
-        validToken = 1;
-        flag = i;
-      }
-    }
-  }
+  const flag = getTokenIndex(token, data);
 
-  if (validToken === 0) {
-    return { error: 'error' };
+  if (flag === -1) {
+    throw HTTPError(403, 'Invalid Token');
   }
   // Validates dmId and if uer is part of dm
   let validDmId = 0;
@@ -251,8 +220,11 @@ function dmDetails(token: string, dmId: number) {
     looper++;
   }
 
-  if (validDmId === 0 || isMember === 0) {
-    return { error: 'error' };
+  if (validDmId === 0) {
+    throw HTTPError(400, 'Invalid dmId');
+  }
+  if (isMember === 0) {
+    throw HTTPError(403, 'Not a member');
   }
 
   // Extraction and pushing necessary data of the member to an array of the members
@@ -287,22 +259,13 @@ function dmDetails(token: string, dmId: number) {
 // Returns {error: 'error'} on invalid user - user not a member of the dm
 
 function dmLeave(token: string, dmId: number) {
-  const data = getData();
+  const data:dataType = getData();
   // Checking if token is valid and taking out the userId of the user
   // Also gets the index of user and stores it on flag
-  let validToken = 0;
-  let flag = 0;
-  for (let i = 0; i < data.user.length; i++) {
-    for (const tokens of data.user[i].token) {
-      if (tokens === token) {
-        validToken = 1;
-        flag = i;
-      }
-    }
-  }
+  const flag = getTokenIndex(token, data);
 
-  if (validToken === 0) {
-    return { error: 'error' };
+  if (flag === -1) {
+    throw HTTPError(403, 'Invalid Token');
   }
 
   // Validates dmId and if uer is part of dm
@@ -325,9 +288,13 @@ function dmLeave(token: string, dmId: number) {
     dmIndex++;
   }
 
-  if (validDmId === 0 || isMember === 0) {
-    return { error: 'error' };
+  if (validDmId === 0) {
+    throw HTTPError(400, 'Invalid dmId');
   }
+  if (isMember === 0) {
+    throw HTTPError(403, 'Not a member');
+  }
+
   setData(data);
   return {};
 }
@@ -351,22 +318,13 @@ function dmLeave(token: string, dmId: number) {
 // Returns {error: 'error'} on invalid start - start is larger than messages existing
 
 function dmMessages (token: string, dmId: number, start: number) {
-  const data = getData();
+  const data:dataType = getData();
   // Checking if token is valid and taking out the userId of the user
   // Also gets the index of user and stores it on flag
-  let validToken = 0;
-  let flag = 0;
-  for (let i = 0; i < data.user.length; i++) {
-    for (const tokens of data.user[i].token) {
-      if (tokens === token) {
-        validToken = 1;
-        flag = i;
-      }
-    }
-  }
+  const flag = getTokenIndex(token, data);
 
-  if (validToken === 0) {
-    return { error: 'error' };
+  if (flag === -1) {
+    throw HTTPError(403, 'Invalid Token');
   }
 
   // Validates dmId and if user is part of dm
@@ -388,8 +346,14 @@ function dmMessages (token: string, dmId: number, start: number) {
   }
 
   // Returns error if start, dmId or user is invaid
-  if (validDmId === 0 || isMember === 0 || data.dm[dmIndex].messages.length < start) {
-    return { error: 'error' };
+  if (validDmId === 0) {
+    throw HTTPError(400, 'Invalid dmId');
+  }
+  if (isMember === 0) {
+    throw HTTPError(403, 'Not a member');
+  }
+  if (data.dm[dmIndex].messages.length < start) {
+    throw HTTPError(400, 'Invalid Start');
   }
 
   // Reversing data so that the latest messages are returned

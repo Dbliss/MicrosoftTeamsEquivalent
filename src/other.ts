@@ -2,8 +2,8 @@ import {
   setData, dataType
 } from './dataStore';
 
-import crypto from "crypto";
-const SECRET = "SecretSAUCE"
+import crypto from 'crypto';
+const SECRET = 'SecretSAUCE';
 
 // <Resets the internal data of the application to its initial state>
 
@@ -30,5 +30,4 @@ function getHashOf(plaintext: string) {
   console.log(`The hashed token value is: ${hashed}`);
   return crypto.createHash('sha256').update(plaintext + SECRET).digest('hex');
 }
-                                         
 export { clearV1, getHashOf };

@@ -32,15 +32,13 @@ describe('Testing clearV1', () => {
     );
     const res2 = request(
       'GET',
-        `${url}:${port}/channels/listall/v2`,
+        `${url}:${port}/channels/listall/v3`,
         {
-          qs: {
+          headers: {
             token: tokenTest,
           },
         }
     );
-    const bodyObj1 = JSON.parse(res2.body as string);
-    expect(res2.statusCode).toBe(OK);
-    expect(bodyObj1).toMatchObject({ channels: [] });
+    expect(res2.statusCode).toBe(403);
   });
 });

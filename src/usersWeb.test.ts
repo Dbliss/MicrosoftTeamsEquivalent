@@ -303,17 +303,19 @@ describe('Testing user/profile/setname/v1', () => {
       'First',
       'Last').getBody()));
 
-    const result = callingUserProfileSetName(authUserId.token, 'NewFirstName', 'NewLastName');
+    const result = JSON.parse(String(callingUserProfileSetName(authUserId.token, 'NewFirstName', 'NewLastName').getBody()));
     callingUserProfileSetName(authUserId.token, 'NewFirstName', 'NewLastName');
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
 
-    expect(result).toMatchObject({});
+    expect(result).toStrictEqual({});
     expect(edited).toMatchObject({
-      uId: authUserId.authUserId,
-      email: 'email@email.com',
-      nameFirst: 'NewFirstName',
-      nameLast: 'NewLastName',
-      handleStr: 'firstlast',
+      user: {
+        uId: authUserId.authUserId,
+        email: 'email@email.com',
+        nameFirst: 'NewFirstName',
+        nameLast: 'NewLastName',
+        handleStr: 'firstlast',
+      }
     });
   });
 
@@ -328,11 +330,13 @@ describe('Testing user/profile/setname/v1', () => {
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toMatchObject({ error: 'error' });
     expect(edited).toMatchObject({
-      uId: authUserId.authUserId,
-      email: 'email@email.com',
-      nameFirst: 'First',
-      nameLast: 'Last',
-      handleStr: 'firstlast',
+      user: {
+        uId: authUserId.authUserId,
+        email: 'email@email.com',
+        nameFirst: 'First',
+        nameLast: 'Last',
+        handleStr: 'firstlast',
+      }
     });
 
     const bigFirstName = '510000000000000000000000000000000000000000000000000';
@@ -340,11 +344,13 @@ describe('Testing user/profile/setname/v1', () => {
     const edited1 = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result1).toMatchObject({ error: 'error' });
     expect(edited1).toMatchObject({
-      uId: authUserId.authUserId,
-      email: 'email@email.com',
-      nameFirst: 'First',
-      nameLast: 'Last',
-      handleStr: 'firstlast',
+      user: {
+        uId: authUserId.authUserId,
+        email: 'email@email.com',
+        nameFirst: 'First',
+        nameLast: 'Last',
+        handleStr: 'firstlast',
+      }
     });
   });
 
@@ -359,11 +365,13 @@ describe('Testing user/profile/setname/v1', () => {
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toMatchObject({ error: 'error' });
     expect(edited).toMatchObject({
-      uId: authUserId.authUserId,
-      email: 'email@email.com',
-      nameFirst: 'First',
-      nameLast: 'Last',
-      handleStr: 'firstlast',
+      user: {
+        uId: authUserId.authUserId,
+        email: 'email@email.com',
+        nameFirst: 'First',
+        nameLast: 'Last',
+        handleStr: 'firstlast',
+      }
     });
 
     const bigLastName = '510000000000000000000000000000000000000000000000000';
@@ -371,11 +379,13 @@ describe('Testing user/profile/setname/v1', () => {
     const edited1 = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result1).toMatchObject({ error: 'error' });
     expect(edited1).toMatchObject({
-      uId: authUserId.authUserId,
-      email: 'email@email.com',
-      nameFirst: 'First',
-      nameLast: 'Last',
-      handleStr: 'firstlast',
+      user: {
+        uId: authUserId.authUserId,
+        email: 'email@email.com',
+        nameFirst: 'First',
+        nameLast: 'Last',
+        handleStr: 'firstlast',
+      }
     });
   });
 
@@ -396,15 +406,17 @@ describe('Testing user/profile/setemail/v1', () => {
       'Last').getBody()));
 
     // const result = JSON.parse(String(callingUserProfileSetEmail(authUserId.token, 'newemail@email.com').getBody()));
-    const result = callingUserProfileSetEmail(authUserId.token, 'newemail@email.com');
+    const result = JSON.parse(String(callingUserProfileSetEmail(authUserId.token, 'newemail@email.com').getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
-    expect(result).toMatchObject({});
+    expect(result).toStrictEqual({});
     expect(edited).toMatchObject({
-      uId: authUserId.authUserId,
-      email: 'newemail@email.com',
-      nameFirst: 'First',
-      nameLast: 'Last',
-      handleStr: 'firstlast',
+      user: {
+        uId: authUserId.authUserId,
+        email: 'newemail@email.com',
+        nameFirst: 'First',
+        nameLast: 'Last',
+        handleStr: 'firstlast',
+      }
     });
   });
 
@@ -419,11 +431,13 @@ describe('Testing user/profile/setemail/v1', () => {
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toMatchObject({ error: 'error' });
     expect(edited).toMatchObject({
-      uId: authUserId.authUserId,
-      email: 'email@email.com',
-      nameFirst: 'First',
-      nameLast: 'Last',
-      handleStr: 'firstlast',
+      user: {
+        uId: authUserId.authUserId,
+        email: 'email@email.com',
+        nameFirst: 'First',
+        nameLast: 'Last',
+        handleStr: 'firstlast',
+      }
     });
   });
 
@@ -443,11 +457,13 @@ describe('Testing user/profile/setemail/v1', () => {
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toMatchObject({ error: 'error' });
     expect(edited).toMatchObject({
-      uId: authUserId.authUserId,
-      email: 'email@email.com',
-      nameFirst: 'First',
-      nameLast: 'Last',
-      handleStr: 'firstlast',
+      user: {
+        uId: authUserId.authUserId,
+        email: 'email@email.com',
+        nameFirst: 'First',
+        nameLast: 'Last',
+        handleStr: 'firstlast',
+      }
     });
   });
 
@@ -467,15 +483,17 @@ describe('Testing user/profile/sethandle/v1', () => {
       'password',
       'First',
       'Last').getBody()));
-    const result = callingUserProfileSetHandle(authUserId.token, 'NewHandle');
+    const result = JSON.parse(String(callingUserProfileSetHandle(authUserId.token, 'NewHandle').getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
-    expect(result).toMatchObject({});
+    expect(result).toStrictEqual({});
     expect(edited).toMatchObject({
-      uId: authUserId.authUserId,
-      email: 'email@email.com',
-      nameFirst: 'First',
-      nameLast: 'Last',
-      handleStr: 'NewHandle',
+      user: {
+        uId: authUserId.authUserId,
+        email: 'email@email.com',
+        nameFirst: 'First',
+        nameLast: 'Last',
+        handleStr: 'NewHandle',
+      }
     });
   });
 
@@ -490,11 +508,13 @@ describe('Testing user/profile/sethandle/v1', () => {
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toMatchObject({ error: 'error' });
     expect(edited).toMatchObject({
-      uId: authUserId.authUserId,
-      email: 'email@email.com',
-      nameFirst: 'First',
-      nameLast: 'Last',
-      handleStr: 'firstlast',
+      user: {
+        uId: authUserId.authUserId,
+        email: 'email@email.com',
+        nameFirst: 'First',
+        nameLast: 'Last',
+        handleStr: 'firstlast',
+      }
     });
   });
 
@@ -510,11 +530,13 @@ describe('Testing user/profile/sethandle/v1', () => {
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toMatchObject({ error: 'error' });
     expect(edited).toMatchObject({
-      uId: authUserId.authUserId,
-      email: 'email@email.com',
-      nameFirst: 'First',
-      nameLast: 'Last',
-      handleStr: 'firstlast',
+      user: {
+        uId: authUserId.authUserId,
+        email: 'email@email.com',
+        nameFirst: 'First',
+        nameLast: 'Last',
+        handleStr: 'firstlast',
+      }
     });
   });
 

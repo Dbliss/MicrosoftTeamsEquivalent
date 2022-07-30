@@ -82,6 +82,23 @@ function callingChannelMessages (token:string, channelId: number, start: number)
   return res;
 }
 
+function callingChannelJoin (token: string, channelId: number) {
+  const res = request(
+    'POST',
+        `${url}:${port}/channel/join/v2`,
+        {
+          body: JSON.stringify({
+            token: token,
+            channelId: channelId,
+          }),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
+}
+
 // describe('Testing channelDetailsV1', () => {
 //   test('Testing successful return of channelDetailsV1', () => {
 //     clearV1();
@@ -473,5 +490,76 @@ describe('Testing channelMessages1', () => {
     const bodyObj5 = JSON.parse(res5.body as string);
 
     expect(bodyObj5).toEqual({ messages: [], start: 0, end: -1 });
+  });
+});
+
+describe('Testing channelJoinV1', () => {
+  test('successfull joining of public channel', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const person1 = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    const person2 = JSON.parse(res2.body as string);
+    expect(res2.statusCode).toBe(OK);
+
+    const res3 = callingChannelsCreate(person1.token, 'channel1', true);
+    const channel1 = JSON.parse(res3.body as string);
+    expect(res3.statusCode).toBe(OK);
+
+    const res4 = callingChannelJoin(person2.token, channel1.channelId);
+    const bodyObj4 = JSON.parse(res4.body as string);
+    expect(res4.statusCode).toBe(OK);
+
+    expect(bodyObj4).toStrictEqual({});
+  });
+
+  test('globalMember tries to join private channel', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const person1 = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    const person2 = JSON.parse(res2.body as string);
+    expect(res2.statusCode).toBe(OK);
+
+    const res3 = callingChannelsCreate(person1.token, 'channel1', false);
+    const channel1 = JSON.parse(res3.body as string);
+    expect(res3.statusCode).toBe(OK);
+
+    const res4 = callingChannelJoin(person2.token, channel1.channelId);
+    const bodyObj4 = JSON.parse(res4.body as string);
+    expect(res4.statusCode).toBe(OK);
+
+    expect(bodyObj4).toMatchObject({ error: 'error' });
+  });
+
+  test('successfull joining of globalOwner to private channel', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const globalOwner = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    const globalMember = JSON.parse(res2.body as string);
+    expect(res2.statusCode).toBe(OK);
+
+    const res3 = callingChannelsCreate(globalMember.token, 'channel1', false);
+    const channel1 = JSON.parse(res3.body as string);
+    expect(res3.statusCode).toBe(OK);
+
+    const res4 = callingChannelJoin(globalOwner.token, channel1.channelId);
+    const bodyObj4 = JSON.parse(res4.body as string);
+    expect(res4.statusCode).toBe(OK);
+
+    expect(bodyObj4).toStrictEqual({});
   });
 });

@@ -1,3 +1,4 @@
+import console from 'console';
 import { getData, setData, channelType, usersType } from './dataStore';
 
 type returnObjectType = {
@@ -161,6 +162,7 @@ function channelJoinV1 (token: string, channelId: number) {
   // if neither the authUserId nor the channelId is valid then the function
   // returns an error object
   if ((userIndex === -1) || (channelIndex === -1)) {
+    console.log('token or channelId is invalid');
     return error;
   }
 
@@ -180,6 +182,7 @@ function channelJoinV1 (token: string, channelId: number) {
   });
 
   if (currentMember !== -1) {
+    console.log('Already a member');
     return error;
   }
 
@@ -192,7 +195,9 @@ function channelJoinV1 (token: string, channelId: number) {
   // checking if the channel is public or not if not true then error is returned
   const isPublic = data.channel[channelIndex].isPublic;
   // if member is not a global owner and channel is private then return error
+  console.log(data);
   if (isPublic === false && isGlobalMember === 0) {
+    console.log('Not a global owner joining private');
     return error;
   }
 

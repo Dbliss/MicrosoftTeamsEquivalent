@@ -1,4 +1,3 @@
-
 import request from 'sync-request';
 import config from './config.json';
 
@@ -9,13 +8,13 @@ const port = config.port;
 function callingDmCreate(token: string, uIds: number[]) {
   const res = request(
     'POST',
-        `${url}:${port}/dm/create/v1`,
+        `${url}:${port}/dm/create/v2`,
         {
           body: JSON.stringify({
-            token: token,
             uIds: uIds,
           }),
           headers: {
+            token: token,
             'Content-type': 'application/json',
           },
         }
@@ -26,10 +25,10 @@ function callingDmCreate(token: string, uIds: number[]) {
 function callingDmList(token: string) {
   const res = request(
     'GET',
-        `${url}:${port}/dm/list/v1`,
+        `${url}:${port}/dm/list/v2`,
         {
-          qs: {
-            token: token
+          headers: {
+            token: token,
           }
         }
   );
@@ -39,11 +38,13 @@ function callingDmList(token: string) {
 function callingDmRemove(token: string, dmId: number) {
   const res = request(
     'DELETE',
-        `${url}:${port}/dm/remove/v1`,
+        `${url}:${port}/dm/remove/v2`,
         {
           qs: {
-            token: token,
             dmId: dmId,
+          },
+          headers: {
+            token: token,
           }
         }
   );
@@ -53,11 +54,13 @@ function callingDmRemove(token: string, dmId: number) {
 function callingDmDetails(token: string, dmId: number) {
   const res = request(
     'GET',
-        `${url}:${port}/dm/details/v1`,
+        `${url}:${port}/dm/details/v2`,
         {
           qs: {
-            token: token,
             dmId: dmId,
+          },
+          headers: {
+            token: token,
           }
         }
   );
@@ -67,13 +70,14 @@ function callingDmDetails(token: string, dmId: number) {
 function callingDmLeave(token: string, dmId: number) {
   const res = request(
     'POST',
-        `${url}:${port}/dm/leave/v1`,
+        `${url}:${port}/dm/leave/v2`,
         {
           body: JSON.stringify({
-            token: token,
+
             dmId: dmId,
           }),
           headers: {
+            token: token,
             'Content-type': 'application/json',
           },
         }
@@ -84,12 +88,14 @@ function callingDmLeave(token: string, dmId: number) {
 function callingDmMessages(token: string, dmId: number, start: number) {
   const res = request(
     'GET',
-        `${url}:${port}/dm/messages/v1`,
+        `${url}:${port}/dm/messages/v2`,
         {
           qs: {
-            token: token,
             dmId: dmId,
             start: start,
+          },
+          headers: {
+            token: token,
           }
         }
   );
@@ -99,14 +105,15 @@ function callingDmMessages(token: string, dmId: number, start: number) {
 function callingMessageSendDm(token: string, dmId: number, message: string) {
   const res = request(
     'POST',
-        `${url}:${port}/message/senddm/v1`,
+        `${url}:${port}/message/senddm/v2`,
         {
           body: JSON.stringify({
-            token: token,
+
             dmId: dmId,
             message: message,
           }),
           headers: {
+            token: token,
             'Content-type': 'application/json',
           },
         }
@@ -208,9 +215,7 @@ describe('Testing dmCreate', () => {
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const res = callingDmCreate(registered1.token, [-9999]);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(400);
   });
 
   test('Repeat uIds', () => {
@@ -229,9 +234,7 @@ describe('Testing dmCreate', () => {
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const res = callingDmCreate(registered1.token, [registered2.authUserId, registered2.authUserId]);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(400);
   });
 
   test('Invalid token', () => {
@@ -249,9 +252,7 @@ describe('Testing dmCreate', () => {
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const res = callingDmCreate('-9999', [registered2.authUserId]);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 });
 
@@ -264,9 +265,7 @@ describe('Testing dmList', () => {
       'Last').statusCode).toBe(OK);
 
     const res = callingDmList('-9999');
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 
   test('Valid Parameters, 1 dm, Listing by owner', () => {
@@ -382,9 +381,7 @@ describe('Testing dmRemove', () => {
     const dm1 = JSON.parse(String(dm.getBody()));
 
     const res = callingDmRemove('-9999', dm1.dmId);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 
   test('Invalid dmId', () => {
@@ -397,9 +394,7 @@ describe('Testing dmRemove', () => {
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const res = callingDmRemove(registered1.token, -9999);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(400);
   });
 
   test('User not the owner of dm', () => {
@@ -422,9 +417,7 @@ describe('Testing dmRemove', () => {
     const dm1 = JSON.parse(String(dm.getBody()));
 
     const res = callingDmRemove(registered2.token, dm1.dmId);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 
   test('Valid dmId, but user not part of dm', () => {
@@ -449,9 +442,7 @@ describe('Testing dmRemove', () => {
     expect(callingDmLeave(registered1.token, dm1.dmId).statusCode).toBe(OK);
 
     const res = callingDmRemove(registered1.token, dm1.dmId);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 
   test('Valid Parameters', () => {
@@ -507,9 +498,7 @@ describe('Testing dmDetails', () => {
     const dm1 = JSON.parse(String(dm.getBody()));
 
     const res = callingDmDetails('-9999', dm1.dmId);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 
   test('invalid dmId', () => {
@@ -522,9 +511,7 @@ describe('Testing dmDetails', () => {
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const res = callingDmDetails(registered1.token, -9999);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(400);
   });
 
   test('dmId valid, user not a member', () => {
@@ -555,9 +542,7 @@ describe('Testing dmDetails', () => {
     const dm1 = JSON.parse(String(dm.getBody()));
 
     const res = callingDmDetails(registered3.authUserId, dm1.dmId);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 
   test('valid parameters', () => {
@@ -685,9 +670,7 @@ describe('Testing dmLeave', () => {
     const dm1 = JSON.parse(String(dm.getBody()));
 
     const res = callingDmLeave('-9999', dm1.dmId);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 
   test('invalid dmId', () => {
@@ -700,9 +683,7 @@ describe('Testing dmLeave', () => {
     const registered1 = JSON.parse(String(auth1.getBody()));
 
     const res = callingDmLeave(registered1.token, -9999);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(400);
   });
 
   test('dmId valid, user not a member', () => {
@@ -733,9 +714,7 @@ describe('Testing dmLeave', () => {
     const dm1 = JSON.parse(String(dm.getBody()));
 
     const res = callingDmLeave(registered3.token, dm1.dmId);
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 
   test('valid parameters, owner leaves', () => {
@@ -827,9 +806,7 @@ describe('Testing dmMessages', () => {
     const dm1 = JSON.parse(String(dm.getBody()));
 
     const res = callingDmMessages('-99999', dm1.dmId, 0);
-    expect(res.statusCode).toBe(OK);
-    const res1 = JSON.parse(String(res.getBody()));
-    expect(res1).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 
   test('Invalid dmId', () => {
@@ -851,9 +828,7 @@ describe('Testing dmMessages', () => {
     expect(callingDmCreate(registered1.token, [registered2.authUserId]).statusCode).toBe(OK);
 
     const res = callingDmMessages(registered1.token, -99999, 0);
-    expect(res.statusCode).toBe(OK);
-    const res1 = JSON.parse(String(res.getBody()));
-    expect(res1).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(400);
   });
 
   test('Invalid Start', () => {
@@ -877,9 +852,7 @@ describe('Testing dmMessages', () => {
     const dm1 = JSON.parse(String(dm.getBody()));
 
     const res = callingDmMessages(registered1.token, dm1.dmId, 1);
-    expect(res.statusCode).toBe(OK);
-    const res1 = JSON.parse(String(res.getBody()));
-    expect(res1).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(400);
   });
 
   test('User not member of DM', () => {
@@ -910,9 +883,7 @@ describe('Testing dmMessages', () => {
     const dm1 = JSON.parse(String(dm.getBody()));
 
     const res = callingDmMessages(registered3.token, dm1.dmId, 0);
-    expect(res.statusCode).toBe(OK);
-    const res1 = JSON.parse(String(res.getBody()));
-    expect(res1).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 
   test('Valid Parameters, 55 messgaes send, Receave 50', () => {

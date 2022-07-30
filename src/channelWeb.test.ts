@@ -77,19 +77,18 @@ function callingAuthRegister (email:string, password:string, nameFirst:string, n
 function callingChannelsCreate (token: string, name: string, isPublic: boolean) {
   const res = request(
     'POST',
-        `${url}:${port}/channels/create/v2`,
+        `${url}:${port}/channels/create/v3`,
         {
           body: JSON.stringify({
-            token: token,
             name: name,
             isPublic: isPublic,
           }),
           headers: {
+            token: token,
             'Content-type': 'application/json',
           },
         }
   );
-  expect(res.statusCode).toBe(OK);
   return res;
 }
 
@@ -320,8 +319,8 @@ describe('Testing channelJoinV1', () => {
       'password1',
       'First1',
       'Last1').getBody()));
-
-    const channelId = JSON.parse(String(callingChannelsCreate(globalMember.authUserId, 'name', false).getBody()));
+    console.log(globalMember.token);
+    const channelId = JSON.parse(String(callingChannelsCreate(globalMember.token, 'name', false).getBody()));
 
     const result = JSON.parse(String(callingChannelJoin(globalOwner.token, channelId.channelId).getBody()));
     expect(result).toMatchObject({});

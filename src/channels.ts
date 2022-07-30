@@ -1,5 +1,7 @@
+import { channelType, getData, setData, channelsType, dataType } from './dataStore';
+import { getTokenIndex } from './users';
 
-import { channelType, getData, setData, channelsType } from './dataStore';
+import HTTPError from 'http-errors';
 
 type storeChannelsType = {
   channels: channelsType[],
@@ -17,24 +19,18 @@ type storeChannelsType = {
 // Returns {error: 'error'} on invalid authUserId - Being authUserId does not exist
 // Returns {error: 'error'} on invalid name - name must be in between 1 and 20 characters inclusive
 
-function channelsCreateV1(token: string, name: string, isPublic: boolean) {
-  const data = getData();
-
+function channelsCreateV3(token: string, name: string, isPublic: boolean) {
+  const data:dataType = getData();
+  console.log('TOKEN =' + token);
   // Checking if token is valid and taking out the userId of the user
-  let validToken = 0;
-  let flag = 0;
-  for (let i = 0; i < data.user.length; i++) {
-    for (const tokens of data.user[i].token) {
-      if (tokens === token) {
-        validToken = 1;
-        flag = i;
-      }
-    }
-  }
-
+  const flag = getTokenIndex(token, data);
+  console.log('FLAG =' + flag);
   // Returns error message when token or name is invalid
-  if (validToken === 0 || name.length < 1 || name.length > 20) {
-    return { error: 'error' };
+  if (flag === -1) {
+    throw HTTPError(403, 'Invalid Token');
+  }
+  if (name.length < 1 || name.length > 20) {
+    throw HTTPError(400, 'Name Length Invalid');
   }
 
   // New channel to be saved in data
@@ -73,26 +69,15 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
 //                        channelId: <ID of channel>,
 //                        name: <name of channel> },] } on valid inputs
 
-function channelsListV1(token: string) {
-  const data = getData();
+function channelsListV3(token: string) {
+  const data:dataType = getData();
 
   // Checking if token is valid and taking out the userId of the user
-  let validToken = 0;
-  let flag = 0;
-  for (let i = 0; i < data.user.length; i++) {
-    for (const tokens of data.user[i].token) {
-      if (tokens === token) {
-        validToken = 1;
-        flag = i;
-      }
-    }
-  }
+  const flag = getTokenIndex(token, data);
 
   // return empty channel if the token is invalid
-  if (validToken === 0) {
-    return {
-      channels: []
-    };
+  if (flag === -1) {
+    throw HTTPError(403, 'Invalid Token');
   }
 
   // Loop through the channels and save the ones user is part of in an array
@@ -125,23 +110,13 @@ function channelsListV1(token: string) {
 //                        channelId: <ID of channel>,
 //                        name: <name of channel> },] } on valid inputs
 
-function channelsListallV1(token: string) {
-  const data = getData();
+function channelsListallV3(token: string) {
+  const data:dataType = getData();
 
   // Checking if token is valid and taking out the userId of the user
-  let validToken = 0;
-  for (let i = 0; i < data.user.length; i++) {
-    for (const tokens of data.user[i].token) {
-      if (tokens === token) {
-        validToken = 1;
-      }
-    }
-  }
-
-  if (validToken === 0) {
-    return {
-      channels: []
-    };
+  const flag = getTokenIndex(token, data);
+  if (flag === -1) {
+    throw HTTPError(403, 'Invalid Token');
   }
 
   // Loop though data to store all the channels in a array
@@ -156,4 +131,4 @@ function channelsListallV1(token: string) {
   return storeChannels;
 }
 
-export { channelsCreateV1, channelsListV1, channelsListallV1 };
+export { channelsCreateV3, channelsListV3, channelsListallV3 };

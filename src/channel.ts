@@ -1,5 +1,7 @@
 import console from 'console';
-import { getData, setData, channelType, usersType } from './dataStore';
+import { getData, setData, channelType, usersType, dataType } from './dataStore';
+import { getHashOf } from './other';
+import { getTokenIndex } from './users';
 
 type returnObjectType = {
   name: string,
@@ -39,15 +41,8 @@ function channelDetailsV1 (token: string, channelId: number) {
 
   // The code finds the index of the object which contains the apropriate authUserId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
-  const userIndex = data.user.findIndex((object: any) => {
-    for (const tokenElem of object.token) {
-      if (tokenElem === token) {
-        return tokenElem === token;
-      }
-    }
-    return false;
-  });
-    // code adapted from the website shorturl.at/eoJKY
+  const userIndex = getTokenIndex(token, data);
+  // code adapted from the website shorturl.at/eoJKY
 
   // The code finds the index of the object which contains the apropriate channelId, in the channel key array,
   // and stores it within a variable. If not found -1 is stored
@@ -150,14 +145,7 @@ function channelJoinV1 (token: string, channelId: number) {
 
   // The code finds the index of the object which contains the apropriate authUserId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
-  const userIndex = data.user.findIndex((object: any) => {
-    for (const tokenElem of object.token) {
-      if (tokenElem === token) {
-        return tokenElem === token;
-      }
-    }
-    return false;
-  }); // code adapted from the website shorturl.at/eoJKY
+  const userIndex = getTokenIndex(token, data); // code adapted from the website shorturl.at/eoJKY
 
   // if neither the authUserId nor the channelId is valid then the function
   // returns an error object
@@ -240,7 +228,7 @@ function channelJoinV1 (token: string, channelId: number) {
 
 function channelInviteV2(token: string, channelId: number, uId: number) {
   // getting the dataset
-  const data = getData();
+  const data:dataType = getData();
 
   let validChannel = false;
   let validUid = false;
@@ -279,7 +267,7 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
       return { error: 'error' };
     }
     for (const tokenn of member.token) {
-      if (tokenn === token) {
+      if (tokenn === getHashOf(token)) {
         flag = 1;
       }
     }
@@ -365,7 +353,7 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
   let flag = 0;
   for (const member of currentChannel.members) {
     for (const tokenn of member.token) {
-      if (tokenn === token) {
+      if (tokenn === getHashOf(token)) {
         flag = 1;
       }
     }

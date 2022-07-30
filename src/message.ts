@@ -1,8 +1,10 @@
 import { getData, setData, channelType, messageType, dataType } from './dataStore';
 import { getTokenIndex } from './users';
+import HTTPError from 'http-errors';
+import { getHashOf } from './other';
 
 function messageSendV1(token: string, channelId: number, message: string) {
-  const data = getData();
+  const data:dataType = getData();
   let currentChannel: channelType;
 
   // checking the channelId is valid and setting currentChannel to the valid channel
@@ -32,7 +34,7 @@ function messageSendV1(token: string, channelId: number, message: string) {
   let uId = 0;
   for (const member of currentChannel.members) {
     for (const tokenn of member.token) {
-      if (tokenn === token) {
+      if (tokenn === getHashOf(token)) {
         flag = 1;
         uId = member.authUserId;
       }
@@ -87,7 +89,7 @@ function messageEditV1(token: string, messageId: number, message: string) {
 
   // finding the checking if the token user has global permissions
   for (let i = 0; i < data.user.length; i++) {
-    if (data.user[i].token[tokenIndex] === token) {
+    if (data.user[i].token[tokenIndex] === getHashOf(token)) {
       userIndex = i;
       if (data.user[i].permissionId === 1) {
         hasGlobalPermission = true;
@@ -228,7 +230,7 @@ function messageEditV1(token: string, messageId: number, message: string) {
     let flag = 0;
     for (const member of data.channel[key1].members) {
       for (const tokenn of member.token) {
-        if (tokenn === token) {
+        if (tokenn === getHashOf(token)) {
           flag = 1;
         }
       }
@@ -293,11 +295,9 @@ function messageRemoveV1(token: string, messageId: number) {
   }
 
   if (isChannelMessage === true) {
-    let key1 = -1;
     for (let i = 0; i < data.channel.length; i++) {
       for (let j = 0; i < data.channel[i].messages.length; j++) {
         if (data.channel[i].messages[j].messageId === messageId) {
-          key1 = i;
           data.channel[i].messages.splice(j, 1);
           break;
         }
@@ -305,15 +305,9 @@ function messageRemoveV1(token: string, messageId: number) {
     }
 
     // checking the user is a member of the channel
-    let flag = 0;
-    for (const member of data.channel[key1].members) {
-      for (const tokenn of member.token) {
-        if (tokenn === token) {
-          flag = 1;
-        }
-      }
-    }
-    if (flag === 0) {
+    const flag = getTokenIndex(token, data);
+
+    if (flag === -1) {
       return { error: 'error' };
     }
   }
@@ -332,32 +326,19 @@ function messageRemoveV1(token: string, messageId: number) {
   return {};
 }
 
-function messageSenddmV1 (token: string, dmId: number, message: string) {
-  const data = getData();
+function messageSenddmV2 (token: string, dmId: number, message: string) {
+  const data:dataType = getData();
 
   // checking the token is valid
-  if (getTokenIndex(token, data) === -1) {
-    return { error: 'error' };
+  const flag = getTokenIndex(token, data);
+  if (flag === -1) {
+    throw HTTPError(403, 'Invalid Token');
   }
+  const uId = data.user[flag].authUserId;
 
-  // Checking if token is valid and taking out the userId of the user
-  // Also gets the index of user and stores it on flag
-  let validToken = 0;
-  let flag = 0;
-  let uId = 0;
-  for (let i = 0; i < data.user.length; i++) {
-    for (const tokens of data.user[i].token) {
-      if (tokens === token) {
-        validToken = 1;
-        flag = i;
-        uId = data.user[i].authUserId;
-      }
-    }
-  }
-
-  // returns ettor on invalid token and message length
-  if (validToken === 0 || message.length < 1 || message.length > 1000) {
-    return { error: 'error' };
+  // Return error if message is not of valid length
+  if (message.length < 1 || message.length > 1000) {
+    throw HTTPError(400, 'Invalid Message');
   }
 
   // Validates dmId and if user is part of dm
@@ -379,8 +360,11 @@ function messageSenddmV1 (token: string, dmId: number, message: string) {
   }
 
   // Returns error if dmId or user is invaid
-  if (validDmId === 0 || isMember === 0) {
-    return { error: 'error' };
+  if (validDmId === 0) {
+    throw HTTPError(400, 'Invalid dmId');
+  }
+  if (isMember === 0) {
+    throw HTTPError(403, 'Not a Member');
   }
 
   const tempMessage = {
@@ -396,4 +380,4 @@ function messageSenddmV1 (token: string, dmId: number, message: string) {
   return { messageId: tempMessage.messageId };
 }
 
-export { messageSendV1, messageRemoveV1, messageEditV1, messageSenddmV1 };
+export { messageSendV1, messageRemoveV1, messageEditV1, messageSenddmV2 };

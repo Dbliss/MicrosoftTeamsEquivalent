@@ -17,8 +17,8 @@ const post = (path: any, body: any) => {
         }
   );
   let bodyObj: any;
-  if(res.statusCode === 200) {
-     bodyObj = JSON.parse(res.body as string);
+  if (res.statusCode === OK) {
+    bodyObj = JSON.parse(res.body as string);
   }
   return bodyObj;
 };

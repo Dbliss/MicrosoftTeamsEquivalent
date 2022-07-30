@@ -21,15 +21,15 @@ type storeChannelsType = {
 
 function channelsCreateV3(token: string, name: string, isPublic: boolean) {
   const data:dataType = getData();
-  console.log("TOKEN =" + token);
+  console.log('TOKEN =' + token);
   // Checking if token is valid and taking out the userId of the user
-  let flag = getTokenIndex(token, data);
-  console.log("FLAG =" + flag);
+  const flag = getTokenIndex(token, data);
+  console.log('FLAG =' + flag);
   // Returns error message when token or name is invalid
-  if (flag === -1)  {
+  if (flag === -1) {
     throw HTTPError(403, 'Invalid Token');
-  } 
-  if ( name.length < 1 || name.length > 20) {
+  }
+  if (name.length < 1 || name.length > 20) {
     throw HTTPError(400, 'Name Length Invalid');
   }
 
@@ -73,7 +73,7 @@ function channelsListV3(token: string) {
   const data:dataType = getData();
 
   // Checking if token is valid and taking out the userId of the user
-  let flag = getTokenIndex(token, data);
+  const flag = getTokenIndex(token, data);
 
   // return empty channel if the token is invalid
   if (flag === -1) {
@@ -112,9 +112,9 @@ function channelsListV3(token: string) {
 
 function channelsListallV3(token: string) {
   const data:dataType = getData();
-  
+
   // Checking if token is valid and taking out the userId of the user
-  let flag = getTokenIndex(token, data);
+  const flag = getTokenIndex(token, data);
   if (flag === -1) {
     throw HTTPError(403, 'Invalid Token');
   }

@@ -39,7 +39,7 @@ import {
   messageSendV1,
   messageEditV1,
   messageRemoveV1,
-  messageSenddmV1,
+  messageSenddmV2,
 } from './message';
 
 // Set up web app, use JSON
@@ -159,35 +159,38 @@ app.post('/channel/join/v2', (req, res, next) => {
     next(err);
   }
 });
-app.post('/dm/create/v1', (req, res) => {
-  const { token, uIds } = req.body;
-  const dmId = dmCreate(token, uIds);
+
+app.post('/dm/create/v2', (req, res) => {
+  const uIds = req.body.uIds;
+  const token = req.headers.token;
+  const dmId = dmCreate(token as string, uIds);
   res.json(dmId);
 });
 
-app.get('/dm/list/v1', (req, res) => {
-  const dms = dmList(req.query.token as string);
+app.get('/dm/list/v2', (req, res) => {
+  const dms = dmList(req.headers.token as string);
   res.json(dms);
 });
 
-app.delete('/dm/remove/v1', (req, res) => {
-  const remove = dmRemove(req.query.token as string, parseInt(req.query.dmId as string));
+app.delete('/dm/remove/v2', (req, res) => {
+  const remove = dmRemove(req.headers.token as string, parseInt(req.query.dmId as string));
   res.json(remove);
 });
 
-app.get('/dm/details/v1', (req, res) => {
-  const dms = dmDetails(req.query.token as string, parseInt(req.query.dmId as string));
+app.get('/dm/details/v2', (req, res) => {
+  const dms = dmDetails(req.headers.token as string, parseInt(req.query.dmId as string));
   res.json(dms);
 });
 
-app.post('/dm/leave/v1', (req, res) => {
-  const { token, dmId } = req.body;
-  const leave = dmLeave(token, dmId);
+app.post('/dm/leave/v2', (req, res) => {
+  const dmId = req.body.dmId;
+  const token = req.headers.token;
+  const leave = dmLeave(token as string, dmId);
   res.json(leave);
 });
 
-app.get('/dm/messages/v1', (req, res) => {
-  const messages = dmMessages(req.query.token as string, parseInt(req.query.dmId as string), parseInt(req.query.start as string));
+app.get('/dm/messages/v2', (req, res) => {
+  const messages = dmMessages(req.headers.token as string, parseInt(req.query.dmId as string), parseInt(req.query.start as string));
   res.json(messages);
 });
 
@@ -287,9 +290,10 @@ app.delete('/message/remove/v1', (req, res, next) => {
   res.json(remove);
 });
 
-app.post('/message/senddm/v1', (req, res) => {
-  const { token, dmId, message } = req.body;
-  const leave = messageSenddmV1(token, dmId, message);
+app.post('/message/senddm/v2', (req, res) => {
+  const { dmId, message } = req.body;
+  const token = req.headers.token;
+  const leave = messageSenddmV2(token as string, dmId, message);
   res.json(leave);
 });
 

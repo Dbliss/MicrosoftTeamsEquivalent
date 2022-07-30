@@ -611,8 +611,7 @@ describe('Testing messageSendDm', () => {
     const dm1 = JSON.parse(String(dm.getBody()));
 
     const res = callingMessageSendDm('-9999', dm1.dmId, 'Hello Message');
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 
   test('Invalid dmId', () => {
@@ -633,8 +632,7 @@ describe('Testing messageSendDm', () => {
     expect(dm.statusCode).toBe(OK);
 
     const res = callingMessageSendDm(registered1.token, -9999, 'Hello Message');
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(400);
   });
 
   test('Message < 1 character', () => {
@@ -656,8 +654,7 @@ describe('Testing messageSendDm', () => {
     const dm1 = JSON.parse(String(dm.getBody()));
 
     const res = callingMessageSendDm(registered1.token, dm1.dmId, '');
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(400);
   });
 
   test('Message > 1000 characters', () => {
@@ -683,8 +680,7 @@ describe('Testing messageSendDm', () => {
       message = message + i;
     }
     const res = callingMessageSendDm(registered1.token, dm1.dmId, message);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(400);
   });
 
   test('User is not part of dm', () => {
@@ -711,8 +707,7 @@ describe('Testing messageSendDm', () => {
     const dm1 = JSON.parse(String(dm.getBody()));
 
     const res = callingMessageSendDm(registered3.token, dm1.dmId, 'Hello Message');
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(403);
   });
 
   test('Valid Parameters', () => {

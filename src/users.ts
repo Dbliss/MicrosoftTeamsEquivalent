@@ -1,14 +1,16 @@
 import validator from 'validator';
 import { dataType, getData, setData, userType, channelsInUserType } from './dataStore';
+import { getHashOf } from './other';
 const error = { error: 'error' };
 
 // Helper Function which finds the user which has the token,
 // if not then -1 is returned meaning token does not exist
 function getTokenIndex(token: string, data: dataType) {
+  const hashedToken = getHashOf(token);
   const tokenIndex = data.user.findIndex((object: any) => {
     for (const tokenElem of object.token) {
-      if (tokenElem === token) {
-        return tokenElem === token;
+      if (tokenElem === hashedToken) {
+        return tokenElem === hashedToken;
       }
     }
     return false;

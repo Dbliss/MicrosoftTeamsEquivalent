@@ -53,13 +53,12 @@ function channelDetailsV1 (token: string, channelId: number) {
 
   // if neither the authUserId nor the channelId is valid then the function
   // returns an error object
-  if ((userIndex === -1)) {
-    console.log('userIndex is wrong');
-    
+  if((userIndex === -1)) {
+    throw HTTPError(403, 'Invalid token');
   }
-  if ((userIndex === -1) || (channelIndex === -1)) {
-    console.log('input is wrong');
-    return error;
+
+  if ((channelIndex === -1)) {
+    throw HTTPError(400, 'Invalid channelId');
   }
 
   // returns the index of the channelId in the channels array of the valid user
@@ -70,8 +69,7 @@ function channelDetailsV1 (token: string, channelId: number) {
 
   // when the user is not a part of the channel error onject is returned
   if (cIdIndex === -1) {
-    return error;
-  }
+    throw HTTPError(403, 'Valid channelId but user is not part of channel');  }
 
   // store relevant information from the user into a return object
   const returnObject: returnObjectType = {
@@ -156,11 +154,10 @@ function channelJoinV1 (token: string, channelId: number) {
   // if neither the authUserId nor the channelId is valid then the function
   // returns an error object
   if (userIndex === -1) {
-    console.log('token is invalid');
+    throw HTTPError(403, 'Invalid token');
   }
   if ((userIndex === -1) || (channelIndex === -1)) {
-    console.log('token or channelId is invalid');
-    return error;
+    throw HTTPError(400, 'Invalid channelId');
   }
 
   // Check to see if new user is a member
@@ -179,8 +176,7 @@ function channelJoinV1 (token: string, channelId: number) {
   });
 
   if (currentMember !== -1) {
-    console.log('Already a member');
-    return error;
+    throw HTTPError(400, 'Already member of the channel');
   }
 
   // for (let i = 0; i < data.channel[channelIndex].members.length; i++) {
@@ -194,8 +190,7 @@ function channelJoinV1 (token: string, channelId: number) {
   // if member is not a global owner and channel is private then return error
   console.log(data);
   if (isPublic === false && isGlobalMember === 0) {
-    console.log('Not a global owner joining private');
-    return error;
+    throw HTTPError(403, 'Not a global owner joining private channel');
   }
 
   const addingChannel = { cId: channelId, channelPermissionsId: 2 };

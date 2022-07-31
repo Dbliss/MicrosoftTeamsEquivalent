@@ -1007,4 +1007,4 @@ describe('Testing dmMessages', () => {
 });
 */
 
-export { callingDmCreate, callingMessageSendDm, callingDmMessages };
+export { callingDmCreate, callingMessageSendDm, callingDmMessages, callingAuthRegister, callingDmLeave };

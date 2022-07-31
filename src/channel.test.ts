@@ -1,4 +1,5 @@
 import request from 'sync-request';
+import { channelInviteV2 } from './channel';
 import config from './config.json';
 
 const OK = 200;
@@ -563,3 +564,5 @@ describe('Testing channelJoinV1', () => {
     expect(bodyObj4).toStrictEqual({});
   });
 });
+
+export {callingChannelInvite};

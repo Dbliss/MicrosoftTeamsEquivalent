@@ -540,3 +540,5 @@ describe('channel/removeowner/v1', () => {
     expect(bodyObj).toMatchObject({});
   });
 });
+
+export {requestChannelLeave}

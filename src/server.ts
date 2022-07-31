@@ -41,6 +41,7 @@ import {
   messageRemoveV1,
   messageSenddmV2,
 } from './message';
+import { getNotifications } from './notifications';
 
 // Set up web app, use JSON
 const app = express();
@@ -295,6 +296,11 @@ app.post('/message/senddm/v2', (req, res) => {
   const token = req.headers.token;
   const leave = messageSenddmV2(token as string, dmId, message);
   res.json(leave);
+});
+
+app.get('/notifications/get/v1', (req, res) => {
+  const notifications = getNotifications(req.headers.token as string);
+  res.json(notifications);
 });
 
 // start server

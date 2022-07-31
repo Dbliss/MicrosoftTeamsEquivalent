@@ -7,6 +7,16 @@ type channelsInUserType = {
   channelPermissionsId: number,
 };
 
+// *Important*: type = 1 => tagged
+//              type = 2 => reacted
+//              type = 3 => added
+type notificationType = {
+  channelId: number,
+  dmId: number,
+  notificationMessage: string,
+  type: number,
+}
+
 // Storing User in data
 type userType = {
   email: string,
@@ -18,6 +28,7 @@ type userType = {
   handle: string,
   permissionId: number,
   token: string[],
+  notifications: notificationType[],
 };
 
 // Used for output in channelDetails
@@ -107,5 +118,5 @@ function setData(newData: dataType) {
 
 export {
   getData, setData, dataType, userType, channelType, channelsType, usersType, dmType, messageType,
-  channelsInUserType, dmmessageType
+  channelsInUserType, dmmessageType, notificationType
 };

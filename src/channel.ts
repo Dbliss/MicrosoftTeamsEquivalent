@@ -304,6 +304,19 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
     }
   }
 
+  // Adding notifications to added user
+  const userIndex = getTokenIndex(token, data);
+  for (const user in data.user) {
+    if (data.user[user].authUserId === uId) {
+      data.user[user].notifications.push({
+        channelId: channelId,
+        dmId: -1,
+        notificationMessage: data.user[userIndex].handle + ' added you to ' + currentChannel.name,
+        type: 3
+      });
+    }
+  }
+
   setData(data);
 
   return { };

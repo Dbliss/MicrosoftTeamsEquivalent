@@ -2,6 +2,7 @@ import console from 'console';
 import { getData, setData, channelType, usersType, dataType } from './dataStore';
 import { getHashOf } from './other';
 import { getTokenIndex } from './users';
+import HTTPError from 'http-errors';
 
 type returnObjectType = {
   name: string,
@@ -18,9 +19,9 @@ type tempMembersType = {
     uId: number,
 };
 
-type errorType = {
-  error: string;
-};
+// type errorType = {
+//   error: string;
+// };
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
 
@@ -37,7 +38,7 @@ type errorType = {
 function channelDetailsV1 (token: string, channelId: number) {
   const data = getData();
 
-  const error: errorType = { error: 'error' };
+  // const error: errorType = { error: 'error' };
 
   // The code finds the index of the object which contains the apropriate authUserId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
@@ -52,8 +53,12 @@ function channelDetailsV1 (token: string, channelId: number) {
 
   // if neither the authUserId nor the channelId is valid then the function
   // returns an error object
-  if ((userIndex === -1) || (channelIndex === -1)) {
-    return error;
+  if ((userIndex === -1)) {
+    throw HTTPError(403, 'Invalid token');
+  }
+
+  if ((channelIndex === -1)) {
+    throw HTTPError(400, 'Invalid channelId');
   }
 
   // returns the index of the channelId in the channels array of the valid user
@@ -64,7 +69,7 @@ function channelDetailsV1 (token: string, channelId: number) {
 
   // when the user is not a part of the channel error onject is returned
   if (cIdIndex === -1) {
-    return error;
+    throw HTTPError(403, 'Valid channelId but user is not part of channel');
   }
 
   // store relevant information from the user into a return object
@@ -135,7 +140,7 @@ function channelDetailsV1 (token: string, channelId: number) {
 function channelJoinV1 (token: string, channelId: number) {
   const data = getData();
   const returnObject = {};
-  const error = { error: 'error' };
+  // const error = { error: 'error' };
 
   // The code finds the index of the object which contains the apropriate channelId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
@@ -149,9 +154,11 @@ function channelJoinV1 (token: string, channelId: number) {
 
   // if neither the authUserId nor the channelId is valid then the function
   // returns an error object
+  if (userIndex === -1) {
+    throw HTTPError(403, 'Invalid token');
+  }
   if ((userIndex === -1) || (channelIndex === -1)) {
-    console.log('token or channelId is invalid');
-    return error;
+    throw HTTPError(400, 'Invalid channelId');
   }
 
   // Check to see if new user is a member
@@ -170,8 +177,7 @@ function channelJoinV1 (token: string, channelId: number) {
   });
 
   if (currentMember !== -1) {
-    console.log('Already a member');
-    return error;
+    throw HTTPError(400, 'Already member of the channel');
   }
 
   // for (let i = 0; i < data.channel[channelIndex].members.length; i++) {
@@ -185,8 +191,7 @@ function channelJoinV1 (token: string, channelId: number) {
   // if member is not a global owner and channel is private then return error
   console.log(data);
   if (isPublic === false && isGlobalMember === 0) {
-    console.log('Not a global owner joining private');
-    return error;
+    throw HTTPError(403, 'Not a global owner joining private channel');
   }
 
   const addingChannel = { cId: channelId, channelPermissionsId: 2 };

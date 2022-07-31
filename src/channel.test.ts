@@ -535,7 +535,7 @@ describe('Testing channelJoinV1', () => {
 
     const res4 = callingChannelJoin(person2.token, channel1.channelId);
     const bodyObj4 = JSON.parse(res4.body as string);
-    expect(res4.statusCode).toBe(OK);
+    expect(res4.statusCode).toBe(403);
 
     expect(bodyObj4).toMatchObject({ error: 'error' });
   });

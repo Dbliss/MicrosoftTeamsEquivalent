@@ -72,8 +72,22 @@ function dmCreate (token: string, uIds: number[]) {
     owners: [data.user[flag].authUserId],
     messages: [],
   };
-
   data.dm.push(tempDm);
+
+  // Adding Notifications to each added member
+  for (const uId of uIds) {
+    for (const user in data.user) {
+      if (data.user[user].authUserId === uId && data.user[user].authUserId !== data.user[flag].authUserId) {
+        data.user[user].notifications.push({
+          channelId: -1,
+          dmId: tempDm.dmId,
+          notificationMessage: data.user[flag].handle + ' added you to ' + name,
+          type: 3
+        });
+      }
+    }
+  }
+
   setData(data);
   return { dmId: tempDm.dmId };
 }

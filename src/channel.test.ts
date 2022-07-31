@@ -563,3 +563,5 @@ describe('Testing channelJoinV1', () => {
     expect(bodyObj4).toStrictEqual({});
   });
 });
+
+export { callingChannelInvite };

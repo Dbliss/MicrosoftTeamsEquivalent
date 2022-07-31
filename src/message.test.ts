@@ -733,3 +733,5 @@ describe('Testing messageSendDm', () => {
     expect(result).toMatchObject({ messageId: expect.any(Number) });
   });
 });
+
+export { callingMessageSend };

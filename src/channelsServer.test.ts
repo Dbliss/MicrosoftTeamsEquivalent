@@ -406,3 +406,5 @@ describe('Testing channelsListV1', () => {
     expect(result.statusCode).toBe(403);
   });
 });
+
+export { callingChannelsCreate };

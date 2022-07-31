@@ -541,4 +541,4 @@ describe('channel/removeowner/v1', () => {
   });
 });
 
-export {requestChannelLeave}
+export { requestChannelLeave };

@@ -53,7 +53,7 @@ function callingUserProfile (token: string, uId: number) {
             uId: uId,
           }
         }
-  ); 
+  );
   // expect(res.statusCode).toBe(OK);
   return res;
 }
@@ -292,45 +292,10 @@ describe('Testing users/all/v1', () => {
   test('Testing error return when invalid token is given', () => {
     callingClear();
     const result = callingUsersAll('');
-    expect(result.statusCode).toBe(403) // assuming that an invlaid token is given that it produces an error this
+    expect(result.statusCode).toBe(403); // assuming that an invlaid token is given that it produces an error this
     // condition is not given in the spec
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 describe('Testing user/profile/setname/v1', () => {
   test('Testing successful return', () => {
@@ -339,7 +304,7 @@ describe('Testing user/profile/setname/v1', () => {
       'password',
       'First',
       'Last').getBody()));
-    
+
     const res = callingUserProfileSetName(authUserId.token, 'NewFirstName', 'NewLastName');
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
@@ -365,7 +330,7 @@ describe('Testing user/profile/setname/v1', () => {
       'First',
       'Last').getBody()));
 
-    const res = callingUserProfileSetName(authUserId.token, '', 'NewLastName')
+    const res = callingUserProfileSetName(authUserId.token, '', 'NewLastName');
     expect(res.statusCode).toBe(400);
     // const result = JSON.parse(String(res.getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
@@ -379,7 +344,6 @@ describe('Testing user/profile/setname/v1', () => {
         handleStr: 'firstlast',
       }
     });
-
 
     const bigFirstName = '510000000000000000000000000000000000000000000000000';
     const res1 = callingUserProfileSetName(authUserId.token, bigFirstName, 'NewLastName');
@@ -405,7 +369,7 @@ describe('Testing user/profile/setname/v1', () => {
       'First',
       'Last').getBody()));
 
-    const res = callingUserProfileSetName(authUserId.token, 'NewFirstName', '')
+    const res = callingUserProfileSetName(authUserId.token, 'NewFirstName', '');
     expect(res.statusCode).toBe(400);
     // const result = JSON.parse(String(res.getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
@@ -421,8 +385,8 @@ describe('Testing user/profile/setname/v1', () => {
     });
 
     const bigLastName = '510000000000000000000000000000000000000000000000000';
-    const res1 = callingUserProfileSetName(authUserId.token, 'NewFirstName', bigLastName)
-    expect(res.statusCode).toBe(400);
+    const res1 = callingUserProfileSetName(authUserId.token, 'NewFirstName', bigLastName);
+    expect(res1.statusCode).toBe(400);
     // const result1 = JSON.parse(String(res1.getBody()));
     const edited1 = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     // expect(result1).toMatchObject({ error: 'error' });
@@ -439,45 +403,13 @@ describe('Testing user/profile/setname/v1', () => {
 
   test('Testing error return when invalid token is given', () => {
     callingClear();
-    const res = callingUserProfileSetName('', 'NewFirst', 'NewLast')
+    const res = callingUserProfileSetName('', 'NewFirst', 'NewLast');
     expect(res.statusCode).toBe(403);
     // const result = JSON.parse(String(res.getBody()));
     // expect(result).toMatchObject({ error: 'error' }); // assuming that an invlaid token is given that it produces an error this
     // condition is not given in the spec
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 describe('Testing user/profile/setemail/v1', () => {
   test('Testing successful return', () => {
@@ -488,7 +420,7 @@ describe('Testing user/profile/setemail/v1', () => {
       'Last').getBody()));
 
     // const result = JSON.parse(String(callingUserProfileSetEmail(authUserId.token, 'newemail@email.com').getBody()));
-    const res = callingUserProfileSetEmail(authUserId.token, 'newemail@email.com')
+    const res = callingUserProfileSetEmail(authUserId.token, 'newemail@email.com');
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
@@ -511,10 +443,10 @@ describe('Testing user/profile/setemail/v1', () => {
       'First',
       'Last').getBody()));
 
-      const res = callingUserProfileSetEmail(authUserId.token, 'newemail')
-      expect(res.statusCode).toBe(400);
-      // const result = JSON.parse(String(res.getBody()));
-    
+    const res = callingUserProfileSetEmail(authUserId.token, 'newemail');
+    expect(res.statusCode).toBe(400);
+    // const result = JSON.parse(String(res.getBody()));
+
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     // expect(result).toMatchObject({ error: 'error' });
     expect(edited).toMatchObject({
@@ -540,9 +472,9 @@ describe('Testing user/profile/setemail/v1', () => {
       'First1',
       'Last1');
 
-      const res = callingUserProfileSetEmail(authUserId.token, 'email1@email.com')
-      expect(res.statusCode).toBe(400);
-      // const result = JSON.parse(String(res.getBody()));
+    const res = callingUserProfileSetEmail(authUserId.token, 'email1@email.com');
+    expect(res.statusCode).toBe(400);
+    // const result = JSON.parse(String(res.getBody()));
 
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     // expect(result).toMatchObject({ error: 'error' });
@@ -559,7 +491,7 @@ describe('Testing user/profile/setemail/v1', () => {
 
   test('Testing error return when invalid token is given', () => {
     callingClear();
-    const res = callingUserProfileSetEmail('!@#$', 'email1@email.com')
+    const res = callingUserProfileSetEmail('!@#$', 'email1@email.com');
     expect(res.statusCode).toBe(403);
     // const result = JSON.parse(String(res.getBody()));
 
@@ -567,28 +499,6 @@ describe('Testing user/profile/setemail/v1', () => {
     // condition is not given in the spec
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 describe('Testing user/profile/sethandle/v1', () => {
   test('Testing successful return', () => {
@@ -598,10 +508,10 @@ describe('Testing user/profile/sethandle/v1', () => {
       'First',
       'Last').getBody()));
 
-    const res = callingUserProfileSetHandle(authUserId.token, 'NewHandle')
+    const res = callingUserProfileSetHandle(authUserId.token, 'NewHandle');
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
-  
+
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toStrictEqual({});
     expect(edited).toMatchObject({
@@ -622,7 +532,7 @@ describe('Testing user/profile/sethandle/v1', () => {
       'First',
       'Last').getBody()));
 
-    const res = callingUserProfileSetHandle(authUserId.token, '')
+    const res = callingUserProfileSetHandle(authUserId.token, '');
     expect(res.statusCode).toBe(400);
     // const result = JSON.parse(String(res.getBody()));
 
@@ -647,7 +557,7 @@ describe('Testing user/profile/sethandle/v1', () => {
       'Last').getBody()));
 
     const bigHandle = '200000000000000000000';
-    const res = callingUserProfileSetHandle(authUserId.token, bigHandle)
+    const res = callingUserProfileSetHandle(authUserId.token, bigHandle);
     expect(res.statusCode).toBe(400);
     // const result = JSON.parse(String(res.getBody()));
 
@@ -676,7 +586,7 @@ describe('Testing user/profile/sethandle/v1', () => {
       'First1',
       'Last1');
 
-    const res = callingUserProfileSetHandle(authUserId.token, 'first1last1')
+    const res = callingUserProfileSetHandle(authUserId.token, 'first1last1');
     expect(res.statusCode).toBe(400);
     // const result = JSON.parse(String(res.getBody()));
 
@@ -686,7 +596,7 @@ describe('Testing user/profile/sethandle/v1', () => {
   test('Testing error when token is invalid', () => {
     callingClear();
 
-    const res = callingUserProfileSetHandle('!@#$', 'NewHandle')
+    const res = callingUserProfileSetHandle('!@#$', 'NewHandle');
     expect(res.statusCode).toBe(403);
     // const result = JSON.parse(String(res.getBody()));
 

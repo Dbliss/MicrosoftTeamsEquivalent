@@ -3,7 +3,7 @@ import { dataType, getData, setData, userType, channelsInUserType } from './data
 import { getHashOf } from './other';
 import HTTPError from 'http-errors';
 
-const error = { error: 'error' };
+// const error = { error: 'error' };
 
 // Helper function that takes all the fields stored in a users and picks relevent information for
 // the user object
@@ -98,11 +98,11 @@ function userProfileV1(token: string, uId: number) {
   // returns an error object
 
   if (tokenIndex === -1) {
-    throw HTTPError(403,'Invalid token entered');
+    throw HTTPError(403, 'Invalid token entered');
   }
 
   if ((uIdIndex === -1)) {
-    throw HTTPError(400,'Invalid uId');
+    throw HTTPError(400, 'Invalid uId');
   }
 
   // Setting the values of the returned user object with the necessary details
@@ -116,7 +116,6 @@ function userProfileV1(token: string, uId: number) {
   console.log(returnUser);
   return returnUser;
 }
-
 
 // <For a valid token, an array of all the users in the system>
 
@@ -134,7 +133,7 @@ function usersAllV1 (token: string) {
   const tokenIndex = getTokenIndex(token, data);
 
   if (tokenIndex === -1) {
-    throw HTTPError(403,'Invalid token entered');
+    throw HTTPError(403, 'Invalid token entered');
   }
   const usersArray = [];
   for (const user of data.user) {
@@ -161,19 +160,18 @@ function usersAllV1 (token: string) {
 function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: string) {
   const data = getData();
   if ((nameFirst.length > 50) || (nameFirst.length < 1)) {
-    throw HTTPError(400,'First name is not valid length');
+    throw HTTPError(400, 'First name is not valid length');
   }
-  
+
   if ((nameLast.length > 50) || (nameLast.length < 1)) {
-    throw HTTPError(400,'Last name is not valid length');
-    
+    throw HTTPError(400, 'Last name is not valid length');
   }
 
   // Checks if the token exists and returns the index of the user which has that token,
   // if not found then returns -1
   const tokenIndex = getTokenIndex(token, data);
   if (tokenIndex === -1) {
-    throw HTTPError(403,'Invalid token entered');
+    throw HTTPError(403, 'Invalid token entered');
   }
 
   // locating the user and changing the first and last name, then checking the users channels and changing their name there or just updating the object at that location
@@ -205,11 +203,11 @@ function userProfileSetEmailV1 (token: string, email: string) {
   const tokenIndex = getTokenIndex(token, data);
 
   if ((tokenIndex === -1)) {
-    throw HTTPError(403,'Invalid token entered');
+    throw HTTPError(403, 'Invalid token entered');
   }
 
   if (!(validator.isEmail(email))) {
-    throw HTTPError(400,'Email enetered is not valid');
+    throw HTTPError(400, 'Email enetered is not valid');
   }
 
   const emailIndex = data.user.findIndex((object: any) => {
@@ -218,7 +216,7 @@ function userProfileSetEmailV1 (token: string, email: string) {
 
   // if the input email already exists return error
   if (emailIndex !== -1) {
-    throw HTTPError(400,'Email entered is already being used');
+    throw HTTPError(400, 'Email entered is already being used');
   }
 
   data.user[tokenIndex].email = email;
@@ -245,11 +243,11 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   // if neither the token nor the uId is found then the function
   // returns an error object
   if ((tokenIndex === -1)) {
-    throw HTTPError(403,'Invalid token entered');
+    throw HTTPError(403, 'Invalid token entered');
   }
 
   if ((handleStr.length < 3) || (handleStr.length > 20)) {
-    throw HTTPError(400,'Hendle is not valid length');
+    throw HTTPError(400, 'Hendle is not valid length');
   }
 
   const handleIndex = data.user.findIndex((object: any) => { // check whether the hadndle is already being used
@@ -257,12 +255,12 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   });
 
   if (handleIndex !== -1) {
-    throw HTTPError(400,'Handle entered is already being used');
+    throw HTTPError(400, 'Handle entered is already being used');
   }
 
   if (handleStr.match(/^[0-9A-Za-z]+$/) === null) { // idk if this works, coded adapted from: https://tinyurl.com/2ps8ms94
     // handleStr not alphanumeric
-    throw HTTPError(400,'Handle constians non-alphanumeric characters');;
+    throw HTTPError(400, 'Handle constians non-alphanumeric characters');
   }
 
   data.user[tokenIndex].handle = handleStr;

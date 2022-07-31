@@ -19,9 +19,9 @@ type tempMembersType = {
     uId: number,
 };
 
-type errorType = {
-  error: string;
-};
+// type errorType = {
+//   error: string;
+// };
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
 
@@ -38,7 +38,7 @@ type errorType = {
 function channelDetailsV1 (token: string, channelId: number) {
   const data = getData();
 
-  const error: errorType = { error: 'error' };
+  // const error: errorType = { error: 'error' };
 
   // The code finds the index of the object which contains the apropriate authUserId, in the user key array,
   // and stores it within a variable. If not found -1 is stored
@@ -53,7 +53,7 @@ function channelDetailsV1 (token: string, channelId: number) {
 
   // if neither the authUserId nor the channelId is valid then the function
   // returns an error object
-  if((userIndex === -1)) {
+  if ((userIndex === -1)) {
     throw HTTPError(403, 'Invalid token');
   }
 
@@ -69,7 +69,8 @@ function channelDetailsV1 (token: string, channelId: number) {
 
   // when the user is not a part of the channel error onject is returned
   if (cIdIndex === -1) {
-    throw HTTPError(403, 'Valid channelId but user is not part of channel');  }
+    throw HTTPError(403, 'Valid channelId but user is not part of channel');
+  }
 
   // store relevant information from the user into a return object
   const returnObject: returnObjectType = {
@@ -139,7 +140,7 @@ function channelDetailsV1 (token: string, channelId: number) {
 function channelJoinV1 (token: string, channelId: number) {
   const data = getData();
   const returnObject = {};
-  const error = { error: 'error' };
+  // const error = { error: 'error' };
 
   // The code finds the index of the object which contains the apropriate channelId, in the user key array,
   // and stores it within a variable. If not found -1 is stored

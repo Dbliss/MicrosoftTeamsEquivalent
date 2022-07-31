@@ -106,8 +106,6 @@ describe('HTTP tests for channelDetailsV2', () => {
     const chanId = callingChannelsCreate(registered.token, 'name', true);
     const channelId = JSON.parse(String(chanId.getBody()));
 
-  
-  
     const res = callingChannelDetails(registered.token, channelId.channelId);
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
@@ -311,7 +309,7 @@ describe('Testing channelJoinV1', () => {
     expect(res.statusCode).toBe(OK);
 
     const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
-    const globalOwner = JSON.parse(res1.body as string);
+    // const globalOwner = JSON.parse(res1.body as string);
     expect(res1.statusCode).toBe(OK);
 
     const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
@@ -329,7 +327,7 @@ describe('Testing channelJoinV1', () => {
     // expect(bodyObj4).toStrictEqual({});
   });
 
-  test('Valid token and invalid channelId', () => { //NEED TO DO THIS ~ already done need to double check
+  test('Valid token and invalid channelId', () => { // NEED TO DO THIS ~ already done need to double check
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
 
@@ -342,7 +340,7 @@ describe('Testing channelJoinV1', () => {
     expect(res2.statusCode).toBe(OK);
 
     const res3 = callingChannelsCreate(globalMember.token, 'channel1', false);
-    const channel1 = JSON.parse(res3.body as string);
+    // const channel1 = JSON.parse(res3.body as string);
     expect(res3.statusCode).toBe(OK);
 
     const res4 = callingChannelJoin(globalOwner.token, 0);
@@ -352,12 +350,12 @@ describe('Testing channelJoinV1', () => {
     // expect(bodyObj4).toStrictEqual({});
   });
 
-  test('User is already member of the channel', () => { //NEED TO DO THIS ~ already done need to double check
+  test('User is already member of the channel', () => { // NEED TO DO THIS ~ already done need to double check
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
 
     const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
-    const globalOwner = JSON.parse(res1.body as string);
+    // const globalOwner = JSON.parse(res1.body as string);
     expect(res1.statusCode).toBe(OK);
 
     const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
@@ -375,6 +373,3 @@ describe('Testing channelJoinV1', () => {
     // expect(bodyObj4).toStrictEqual({});
   });
 });
-
-
-

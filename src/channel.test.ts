@@ -82,22 +82,22 @@ function callingChannelMessages (token:string, channelId: number, start: number)
   return res;
 }
 
-function callingChannelJoin (token: string, channelId: number) {
-  const res = request(
-    'POST',
-        `${url}:${port}/channel/join/v2`,
-        {
-          body: JSON.stringify({
-            token: token,
-            channelId: channelId,
-          }),
-          headers: {
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
+// function callingChannelJoin (token: string, channelId: number) {
+//   const res = request(
+//     'POST',
+//         `${url}:${port}/channel/join/v2`,
+//         {
+//           body: JSON.stringify({
+//             token: token,
+//             channelId: channelId,
+//           }),
+//           headers: {
+//             'Content-type': 'application/json',
+//           },
+//         }
+//   );
+//   return res;
+// }
 
 // describe('Testing channelDetailsV1', () => {
 //   test('Testing successful return of channelDetailsV1', () => {

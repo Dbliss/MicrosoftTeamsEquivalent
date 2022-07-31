@@ -2,6 +2,8 @@ import request from 'sync-request';
 import config from './config.json';
 
 const OK = 200;
+const BADREQ = 400;
+const FORBID = 403;
 const port = config.port;
 const url = config.url;
 
@@ -17,7 +19,7 @@ describe('Test auth/register/v2', () => {
     );
     const res = request(
       'POST',
-      `${url}:${port}/auth/register/v2`,
+      `${url}:${port}/auth/register/v3`,
       {
         body: JSON.stringify({
           email: 'email@email.com', password: 'password123', nameFirst: 'first', nameLast: 'last'
@@ -43,7 +45,7 @@ describe('Test auth/register/v2', () => {
     );
     const res = request(
       'POST',
-      `${url}:${port}/auth/register/v2`,
+      `${url}:${port}/auth/register/v3`,
       {
         body: JSON.stringify({
           email: 'emailemail.com', password: 'password123', nameFirst: 'first', nameLast: 'last'
@@ -52,10 +54,8 @@ describe('Test auth/register/v2', () => {
           'Content-type': 'application/json'
         },
       }
-    );
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    )
+    expect(res.statusCode).toBe(BADREQ);
   });
 
   test('email taken by another user', () => {
@@ -69,7 +69,7 @@ describe('Test auth/register/v2', () => {
     );
     const res = request(
       'POST',
-      `${url}:${port}/auth/register/v2`,
+      `${url}:${port}/auth/register/v3`,
       {
         body: JSON.stringify({
           email: 'email@email.com', password: 'password123', nameFirst: 'first', nameLast: 'last'
@@ -82,7 +82,7 @@ describe('Test auth/register/v2', () => {
     expect(res.statusCode).toBe(OK);
     const res1 = request(
       'POST',
-      `${url}:${port}/auth/register/v2`,
+      `${url}:${port}/auth/register/v3`,
       {
         body: JSON.stringify({
           email: 'emailemail.com', password: 'password123', nameFirst: 'first1', nameLast: 'last1'
@@ -92,9 +92,7 @@ describe('Test auth/register/v2', () => {
         },
       }
     );
-    const bodyObj = JSON.parse(res1.body as string);
-    expect(res1.statusCode).toBe(OK);
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    expect(res1.statusCode).toBe(BADREQ);
   });
 
   test('password length less than 6 characters', () => {
@@ -108,7 +106,7 @@ describe('Test auth/register/v2', () => {
     );
     const res = request(
       'POST',
-      `${url}:${port}/auth/register/v2`,
+      `${url}:${port}/auth/register/v3`,
       {
         body: JSON.stringify({
           email: 'email@email.com', password: 'pass', nameFirst: 'first', nameLast: 'last'
@@ -118,9 +116,7 @@ describe('Test auth/register/v2', () => {
         },
       }
     );
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(BADREQ);
   });
 
   test('length of first name not between 1 and 50 characters inclusive', () => {
@@ -134,7 +130,7 @@ describe('Test auth/register/v2', () => {
     );
     const res = request(
       'POST',
-      `${url}:${port}/auth/register/v2`,
+      `${url}:${port}/auth/register/v3`,
       {
         body: JSON.stringify({
           email: 'email@email.com', password: 'password123', nameFirst: '', nameLast: 'last'
@@ -144,12 +140,18 @@ describe('Test auth/register/v2', () => {
         },
       }
     );
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(BADREQ);
+    request(
+      'DELETE',
+        `${url}:${port}/clear/v1`,
+        {
+          qs: {
+          },
+        }
+    );
     const res1 = request(
       'POST',
-      `${url}:${port}/auth/register/v2`,
+      `${url}:${port}/auth/register/v3`,
       {
         body: JSON.stringify({
           email: 'email@email.com', password: 'password123', nameFirst: 'abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz', nameLast: 'last'
@@ -159,9 +161,7 @@ describe('Test auth/register/v2', () => {
         },
       }
     );
-    const bodyObj1 = JSON.parse(res1.body as string);
-    expect(res1.statusCode).toBe(OK);
-    expect(bodyObj1).toMatchObject({ error: 'error' });
+    expect(res1.statusCode).toBe(BADREQ);
   });
 
   test('length of last name not between 1 and 50 characters inclusive', () => {
@@ -175,7 +175,7 @@ describe('Test auth/register/v2', () => {
     );
     const res = request(
       'POST',
-      `${url}:${port}/auth/register/v2`,
+      `${url}:${port}/auth/register/v3`,
       {
         body: JSON.stringify({
           email: 'email@email.com', password: 'password123', nameFirst: 'first', nameLast: ''
@@ -185,12 +185,18 @@ describe('Test auth/register/v2', () => {
         },
       }
     );
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(BADREQ);
+    request(
+      'DELETE',
+        `${url}:${port}/clear/v1`,
+        {
+          qs: {
+          },
+        }
+    );
     const res1 = request(
       'POST',
-      `${url}:${port}/auth/register/v2`,
+      `${url}:${port}/auth/register/v3`,
       {
         body: JSON.stringify({
           email: 'email@email.com', password: 'password123', nameFirst: 'first', nameLast: 'abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz'
@@ -200,9 +206,7 @@ describe('Test auth/register/v2', () => {
         },
       }
     );
-    const bodyObj1 = JSON.parse(res1.body as string);
-    expect(res1.statusCode).toBe(OK);
-    expect(bodyObj1).toMatchObject({ error: 'error' });
+    expect(res1.statusCode).toBe(BADREQ);
   });
 });
 
@@ -218,7 +222,7 @@ describe('Test auth/login/v2', () => {
     );
     const res = request(
       'POST',
-      `${url}:${port}/auth/register/v2`,
+      `${url}:${port}/auth/register/v3`,
       {
         body: JSON.stringify({
           email: 'email@email.com', password: 'password123', nameFirst: 'first', nameLast: 'last',
@@ -231,7 +235,7 @@ describe('Test auth/login/v2', () => {
     expect(res.statusCode).toBe(OK);
     const res1 = request(
       'POST',
-      `${url}:${port}/auth/login/v2`,
+      `${url}:${port}/auth/login/v3`,
       {
         body: JSON.stringify({
           email: 'email@email.com', password: 'password123',
@@ -241,7 +245,7 @@ describe('Test auth/login/v2', () => {
         },
       }
     );
-    const bodyObj = JSON.parse(res.body as string);
+    const bodyObj = JSON.parse(String(res1.getBody()));
     expect(res1.statusCode).toBe(OK);
     expect(bodyObj).toMatchObject({ token: expect.any(String), authUserId: expect.any(Number) });
   });
@@ -256,7 +260,7 @@ describe('Test auth/login/v2', () => {
     );
     const res = request(
       'POST',
-      `${url}:${port}/auth/login/v2`,
+      `${url}:${port}/auth/login/v3`,
       {
         body: JSON.stringify({
           email: 'email@email.com', password: 'password123',
@@ -266,9 +270,7 @@ describe('Test auth/login/v2', () => {
         },
       }
     );
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(BADREQ);
   });
   test('password is not correct', () => {
     request(
@@ -281,7 +283,7 @@ describe('Test auth/login/v2', () => {
     );
     const res = request(
       'POST',
-      `${url}:${port}/auth/register/v2`,
+      `${url}:${port}/auth/register/v3`,
       {
         body: JSON.stringify({
           email: 'email@email.com', password: 'password123', nameFirst: 'first', nameLast: 'last',
@@ -294,7 +296,7 @@ describe('Test auth/login/v2', () => {
     expect(res.statusCode).toBe(OK);
     const res1 = request(
       'POST',
-      `${url}:${port}/auth/login/v2`,
+      `${url}:${port}/auth/login/v3`,
       {
         body: JSON.stringify({
           email: 'email@email.com', password: '',
@@ -304,13 +306,11 @@ describe('Test auth/login/v2', () => {
         },
       }
     );
-    const bodyObj = JSON.parse(res1.body as string);
-    expect(res1.statusCode).toBe(OK);
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    expect(res1.statusCode).toBe(BADREQ);
   });
 });
 
-describe('Test auth/login/v2', () => {
+describe('Test auth/logout/v2', () => {
   test('Invalid token is passed in', () => {
     request(
       'DELETE',
@@ -322,7 +322,7 @@ describe('Test auth/login/v2', () => {
     );
     const res = request(
       'POST',
-      `${url}:${port}/auth/logout/v1`,
+      `${url}:${port}/auth/logout/v2`,
       {
         body: JSON.stringify({
           token: '',
@@ -332,8 +332,6 @@ describe('Test auth/login/v2', () => {
         },
       }
     );
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    expect(res.statusCode).toBe(FORBID);
   });
 });

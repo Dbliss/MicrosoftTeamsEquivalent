@@ -2,6 +2,7 @@ import console from 'console';
 import { getData, setData, channelType, usersType, dataType } from './dataStore';
 import { getHashOf } from './other';
 import { getTokenIndex } from './users';
+import HTTPError from 'http-errors';
 
 type returnObjectType = {
   name: string,
@@ -390,25 +391,12 @@ const error = { error: 'error' };
 // Returns { error: 'error' } on authorised user not being part of channel
 
 const channelLeaveV1 = (token: string, channelId: number) => {
-  const data = getData();
-  let isTokenValid = false;
-  let authUserId = -1;
-  let userIndex = -1;
-  let counter = 0;
-  for (const user of data.user) {
-    for (const tokens of user.token) {
-      if (tokens === token) {
-        authUserId = user.authUserId;
-        isTokenValid = true;
-        userIndex = counter;
-      }
-    }
-    counter++;
+  const data:dataType = getData();
+  const userIndex = getTokenIndex(token, data); 
+  if (userIndex === -1) {
+    throw HTTPError(403, 'Invalid token');
   }
-  if (isTokenValid === false) {
-    return error;
-  }
-
+  let authUserId = data.user[userIndex].authUserId;
   // check to see if channelId is valid
   let isChannelIdValid = false;
   let channelIndex = -1;
@@ -419,7 +407,7 @@ const channelLeaveV1 = (token: string, channelId: number) => {
     }
   }
   if (isChannelIdValid === false) {
-    return error;
+    throw HTTPError(400, 'Invalid channel Id');
   }
 
   // check to see if member is in channel
@@ -432,9 +420,8 @@ const channelLeaveV1 = (token: string, channelId: number) => {
     }
   }
   if (isMemberValid === false) {
-    return error;
+    throw HTTPError(403, 'Authorised user not member of channel');
   }
-
   // remove user as member of channel
   if (memberIndex > -1) {
     data.channel[channelIndex].members.splice(memberIndex, 1);
@@ -464,22 +451,14 @@ const channelLeaveV1 = (token: string, channelId: number) => {
 // Returns { error: 'error' } on authorised user not having owner permissions
 
 const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
-  const data = getData();
-  // check if valid token
-  const tokenIndex = data.user.findIndex((object: any) => {
-    for (const tokenElem of object.token) {
-      if (tokenElem === token) {
-        return tokenElem === token;
-      }
-    }
-    return false;
-  }); // code adapted from the website shorturl.at/eoJKY
+  const data:dataType = getData();
 
-  // if neither the token nor the uId is found then the function
-  // returns an error object
-  if ((tokenIndex === -1)) {
-    return error;
+  // Checking if token is valid and taking out the userId of the user
+  const tokenIndex = getTokenIndex(token, data);
+  if (tokenIndex === -1) {
+    throw HTTPError(403, 'Invalid Token');
   }
+
   // check if valid channel id
   let isChannelIdValid = false;
   let channelIndex = -1;
@@ -490,7 +469,7 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
     }
   }
   if (isChannelIdValid === false) {
-    return error;
+    throw HTTPError(400, 'Invalid channel Id');
   }
   // check if uId is valid
   let isUserIdValid = false;
@@ -502,7 +481,7 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
     }
   }
   if (isUserIdValid === false) {
-    return error;
+    throw HTTPError(400, 'Invalid user Id');
   }
 
   // check to see if member is in channel
@@ -513,13 +492,13 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
     }
   }
   if (isMemberValid === false) {
-    return error;
+    throw HTTPError(400, 'Member not in channel');
   }
 
   // user already an owner of channel
   for (let l = 0; l < data.channel[channelIndex].owners.length; l++) {
     if (data.channel[channelIndex].owners[l].authUserId === uId) {
-      return error;
+      throw HTTPError(400, 'User already an owner of channel');
     }
   }
 
@@ -527,7 +506,7 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
   for (let m = 0; m < data.user[tokenIndex].channels.length; m++) {
     if (data.user[tokenIndex].channels[m].cId === channelId) {
       if (data.user[tokenIndex].channels[m].channelPermissionsId === 2) {
-        return error;
+        throw HTTPError(403, 'User does not have owner permissions');
       }
     }
   }
@@ -567,21 +546,12 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
 // Returns { error: 'error' } on authorised user not having owner permissions
 
 const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => {
-  const data = getData();
-  // check if valid token
-  const tokenIndex = data.user.findIndex((object: any) => {
-    for (const tokenElem of object.token) {
-      if (tokenElem === token) {
-        return tokenElem === token;
-      }
-    }
-    return false;
-  }); // code adapted from the website shorturl.at/eoJKY
+  const data:dataType = getData();
 
-  // if neither the token nor the uId is found then the function
-  // returns an error object
-  if ((tokenIndex === -1)) {
-    return error;
+  // Checking if token is valid and taking out the userId of the user
+  const tokenIndex = getTokenIndex(token, data);
+  if (tokenIndex === -1) {
+    throw HTTPError(403, 'Invalid Token');
   }
   // check if valid channel id
   let isChannelIdValid = false;
@@ -593,7 +563,7 @@ const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => 
     }
   }
   if (isChannelIdValid === false) {
-    return error;
+    throw HTTPError(400, 'Invalid channel Id');
   }
   // check if uId is valid
   let isUserIdValid = false;
@@ -603,7 +573,7 @@ const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => 
     }
   }
   if (isUserIdValid === false) {
-    return error;
+    throw HTTPError(400, 'Invalid user Id');
   }
 
   // check to see if owner is in channel
@@ -616,19 +586,19 @@ const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => 
     }
   }
   if (isOwnerValid === false) {
-    return error;
+    throw HTTPError(400, 'Owner is not in channel');
   }
 
   // user only owner in channel
   if (data.channel[channelIndex].owners.length === 1) {
-    return error;
+    throw HTTPError(400, 'User is only owner in channel');
   }
 
   // check to see if user has owner permissions
   for (let m = 0; m < data.user[tokenIndex].channels.length; m++) {
     if (data.user[tokenIndex].channels[m].cId === channelId) {
       if (data.user[tokenIndex].channels[m].channelPermissionsId === 2) {
-        return error;
+        throw HTTPError(403, 'User does not have owner permissions');
       }
     }
   }

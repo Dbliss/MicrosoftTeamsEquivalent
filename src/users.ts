@@ -228,7 +228,7 @@ function userProfileSetEmailV1 (token: string, email: string) {
 }
 
 // Arguments:
-// <token> (<integer>)    - <This is the unique string given to each session for a user>
+// <token> (<string>)    - <This is the unique string given to each session for a user>
 // <handleStr> (<string>)    - <New email to replace the users current email>
 
 // Return Value:
@@ -270,4 +270,6 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   setData(data);
   return {};
 }
+
+
 export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, getTokenIndex };

@@ -87,8 +87,8 @@ app.post('/auth/login/v3', (req, res, next) => {
 
 app.post('/channel/invite/v2', (req, res, next) => {
   try {
-    const { token, channelId, uId } = req.body;
-    return res.json(channelInviteV2(token, channelId, uId));
+    const { channelId, uId } = req.body;
+    return res.json(channelInviteV2(req.headers.token as string, channelId, uId));
   } catch (err) {
     next(err);
   }
@@ -196,8 +196,8 @@ app.get('/dm/messages/v2', (req, res) => {
 
 app.post('/channel/leave/v3', (req, res, next) => {
   try {
-    const { token, channelId } = req.body;
-    return res.json(channelLeaveV1(token, channelId));
+    const { channelId } = req.body;
+    return res.json(channelLeaveV1(req.headers.token as string, channelId));
   } catch (err) {
     next(err);
   }
@@ -231,8 +231,8 @@ app.get('/users/all/v1', (req, res, next) => {
 });
 app.post('/channel/addowner/v2', (req, res, next) => {
   try {
-    const { token, channelId, uId } = req.body;
-    return res.json(channelAddOwnerV1(token, channelId, uId));
+    const { channelId, uId } = req.body;
+    return res.json(channelAddOwnerV1(req.headers.token as string, channelId, uId));
   } catch (err) {
     next(err);
   }
@@ -267,8 +267,8 @@ app.put('/user/profile/setemail/v1', (req, res, next) => {
 });
 app.post('/channel/removeowner/v2', (req, res, next) => {
   try {
-    const { token, channelId, uId } = req.body;
-    return res.json(channelRemoveOwnerV1(token, channelId, uId));
+    const { channelId, uId } = req.body;
+    return res.json(channelRemoveOwnerV1(req.headers.token as string, channelId, uId));
   } catch (err) {
     next(err);
   }

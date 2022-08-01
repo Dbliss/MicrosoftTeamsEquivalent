@@ -268,7 +268,7 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
       return { error: 'error' };
     }
     for (const tokenn of member.token) {
-      if (tokenn === getHashOf(token)) {
+      if (tokenn === token) {
         flag = 1;
       }
     }
@@ -288,7 +288,7 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
       if (data.user[j].permissionId === 1) {
         isGlobalMember = 1;
       }
-      const pushObject = { cId: channelId, channelPermissionsId: isGlobalMember };
+      const pushObject = { cId: channelId, channelPermissionsId: 2 };
       data.user[i].channels.push(pushObject);
     }
   }
@@ -486,9 +486,11 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
 
   // check to see if member is in channel
   let isMemberValid = false;
+  let memberIndex = -1
   for (let k = 0; k < data.channel[channelIndex].members.length; k++) {
     if (data.channel[channelIndex].members[k].authUserId === uId) {
       isMemberValid = true;
+      memberIndex = k;
     }
   }
   if (isMemberValid === false) {
@@ -511,17 +513,20 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
     }
   }
 
+  // update channel permissions of newly added owner
+  data.channel[channelIndex].members[memberIndex].permissionId = 1;
+
   // add user as owner of channel
   const newOwner = {
-    authUserId: data.user[userIndex].authUserId,
-    email: data.user[userIndex].email,
-    nameFirst: data.user[userIndex].nameFirst,
-    nameLast: data.user[userIndex].nameLast,
-    handle: data.user[userIndex].handle,
-    password: data.user[userIndex].password,
-    channels: [...data.user[userIndex].channels],
-    permissionId: data.user[userIndex].permissionId,
-    token: [...data.user[userIndex].token],
+    authUserId: data.channel[channelIndex].members[memberIndex].authUserId,
+    email: data.channel[channelIndex].members[memberIndex].email,
+    nameFirst: data.channel[channelIndex].members[memberIndex].nameFirst,
+    nameLast: data.channel[channelIndex].members[memberIndex].nameLast,
+    handle: data.channel[channelIndex].members[memberIndex].handle,
+    password: data.channel[channelIndex].members[memberIndex].password,
+    channels: [...data.channel[channelIndex].members[memberIndex].channels],
+    permissionId: data.channel[channelIndex].members[memberIndex].permissionId,
+    token: [...data.channel[channelIndex].members[memberIndex].token],
   };
 
   data.channel[channelIndex].owners.push(newOwner);
@@ -579,7 +584,7 @@ const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => 
   // check to see if owner is in channel
   let isOwnerValid = false;
   let ownerIndex = -1;
-  for (let k = 0; k < data.channel[channelIndex].members.length; k++) {
+  for (let k = 0; k < data.channel[channelIndex].owners.length; k++) {
     if (data.channel[channelIndex].owners[k].authUserId === uId) {
       isOwnerValid = true;
       ownerIndex = k;
@@ -602,6 +607,16 @@ const channelRemoveOwnerV1 = (token: string, channelId: number, uId: number) => 
       }
     }
   }
+
+  // update channel permissions of newly added owner
+  let memberIndex = -1
+  for (let k = 0; k < data.channel[channelIndex].members.length; k++) {
+    if (data.channel[channelIndex].members[k].authUserId === uId) {
+      memberIndex = k;
+    }
+  }
+  data.channel[channelIndex].members[memberIndex].permissionId = 2;
+
   // remove owner from array
   if (ownerIndex > -1) {
     data.channel[channelIndex].owners.splice(ownerIndex, 1);

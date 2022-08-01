@@ -30,5 +30,4 @@ function getHashOf(plaintext: string) {
   console.log(`The hashed token value is: ${hashed}`);
   return crypto.createHash('sha256').update(plaintext + SECRET).digest('hex');
 }
-
 export { clearV1, getHashOf };

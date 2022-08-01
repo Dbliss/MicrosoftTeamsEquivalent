@@ -1,7 +1,48 @@
 import validator from 'validator';
 import { dataType, getData, setData, userType, channelsInUserType } from './dataStore';
-import { getHashOf } from './other';
-const error = { error: 'error' };
+import HTTPError from 'http-errors';
+
+// const error = { error: 'error' };
+
+// Helper function that takes all the fields stored in a users and picks relevent information for
+// the user object
+function extractUserDetails (user: userType) {
+  const returnUser =
+  {
+    uId: user.authUserId,
+    email: user.email,
+    nameFirst: user.nameFirst,
+    nameLast: user.nameLast,
+    handleStr: user.handle
+  };
+
+  return returnUser;
+}
+
+// Helper function which takes in the data, the updateed user and the channels they are part of and updates all of
+// the instances fo that user
+function updateUserInfo(data: dataType, channels: channelsInUserType[], user: any) { // need to typescript channels as an array of channels
+  for (const channel of channels) {
+    const channelId = channel.cId;
+    const channelIndex = data.channel.findIndex((object: any) => {
+      return object.cId === channelId;
+    });
+    const ownerIndex = data.channel[channelIndex].owners.findIndex((object: any) => {
+      return object.authUserId === user.authUserId;
+    });
+    const memberIndex = data.channel[channelIndex].members.findIndex((object: any) => {
+      return object.authUserId === user.authUserId;
+    });
+
+    const perms = channel.channelPermissionsId;
+    if (perms === 1) {
+      data.channel[channelIndex].owners[ownerIndex] = user;
+      data.channel[channelIndex].members[memberIndex] = user;
+    } else {
+      data.channel[channelIndex].members[memberIndex] = user;
+    }
+  }
+}
 
 // Helper Function which finds the user which has the token,
 // if not then -1 is returned meaning token does not exist
@@ -54,8 +95,13 @@ function userProfileV1(token: string, uId: number) {
 
   // if neither the token nor the uId is found then the function
   // returns an error object
-  if ((tokenIndex === -1) || (uIdIndex === -1)) {
-    return error;
+
+  if (tokenIndex === -1) {
+    throw HTTPError(403, 'Invalid token entered');
+  }
+
+  if ((uIdIndex === -1)) {
+    throw HTTPError(400, 'Invalid uId');
   }
 
   // Setting the values of the returned user object with the necessary details
@@ -68,46 +114,6 @@ function userProfileV1(token: string, uId: number) {
 
   console.log(returnUser);
   return returnUser;
-}
-
-// Helper function that takes all the fields stored in a users and picks relevent information for
-// the user object
-function extractUserDetails (user: userType) {
-  const returnUser =
-  {
-    uId: user.authUserId,
-    email: user.email,
-    nameFirst: user.nameFirst,
-    nameLast: user.nameLast,
-    handleStr: user.handle
-  };
-
-  return returnUser;
-}
-
-// Helper function which takes in the data, the updateed user and the channels they are part of and updates all of
-// the instances fo that user
-function updateUserInfo(data: dataType, channels: channelsInUserType[], user: any) { // need to typescript channels as an array of channels
-  for (const channel of channels) {
-    const channelId = channel.cId;
-    const channelIndex = data.channel.findIndex((object: any) => {
-      return object.cId === channelId;
-    });
-    const ownerIndex = data.channel[channelIndex].owners.findIndex((object: any) => {
-      return object.authUserId === user.authUserId;
-    });
-    const memberIndex = data.channel[channelIndex].members.findIndex((object: any) => {
-      return object.authUserId === user.authUserId;
-    });
-
-    const perms = channel.channelPermissionsId;
-    if (perms === 1) {
-      data.channel[channelIndex].owners[ownerIndex] = user;
-      data.channel[channelIndex].members[memberIndex] = user;
-    } else {
-      data.channel[channelIndex].members[memberIndex] = user;
-    }
-  }
 }
 
 // <For a valid token, an array of all the users in the system>
@@ -126,7 +132,7 @@ function usersAllV1 (token: string) {
   const tokenIndex = getTokenIndex(token, data);
 
   if (tokenIndex === -1) {
-    return error;
+    throw HTTPError(403, 'Invalid token entered');
   }
   const usersArray = [];
   for (const user of data.user) {
@@ -153,18 +159,18 @@ function usersAllV1 (token: string) {
 function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: string) {
   const data = getData();
   if ((nameFirst.length > 50) || (nameFirst.length < 1)) {
-    return error;
+    throw HTTPError(400, 'First name is not valid length');
   }
 
   if ((nameLast.length > 50) || (nameLast.length < 1)) {
-    return error;
+    throw HTTPError(400, 'Last name is not valid length');
   }
 
   // Checks if the token exists and returns the index of the user which has that token,
   // if not found then returns -1
   const tokenIndex = getTokenIndex(token, data);
   if (tokenIndex === -1) {
-    return error;
+    throw HTTPError(403, 'Invalid token entered');
   }
 
   // locating the user and changing the first and last name, then checking the users channels and changing their name there or just updating the object at that location
@@ -196,11 +202,11 @@ function userProfileSetEmailV1 (token: string, email: string) {
   const tokenIndex = getTokenIndex(token, data);
 
   if ((tokenIndex === -1)) {
-    return error;
+    throw HTTPError(403, 'Invalid token entered');
   }
 
   if (!(validator.isEmail(email))) {
-    return error;
+    throw HTTPError(400, 'Email enetered is not valid');
   }
 
   const emailIndex = data.user.findIndex((object: any) => {
@@ -209,7 +215,7 @@ function userProfileSetEmailV1 (token: string, email: string) {
 
   // if the input email already exists return error
   if (emailIndex !== -1) {
-    return error;
+    throw HTTPError(400, 'Email entered is already being used');
   }
 
   data.user[tokenIndex].email = email;
@@ -221,7 +227,7 @@ function userProfileSetEmailV1 (token: string, email: string) {
 }
 
 // Arguments:
-// <token> (<integer>)    - <This is the unique string given to each session for a user>
+// <token> (<string>)    - <This is the unique string given to each session for a user>
 // <handleStr> (<string>)    - <New email to replace the users current email>
 
 // Return Value:
@@ -236,11 +242,11 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   // if neither the token nor the uId is found then the function
   // returns an error object
   if ((tokenIndex === -1)) {
-    return error;
+    throw HTTPError(403, 'Invalid token entered');
   }
 
   if ((handleStr.length < 3) || (handleStr.length > 20)) {
-    return error;
+    throw HTTPError(400, 'Hendle is not valid length');
   }
 
   const handleIndex = data.user.findIndex((object: any) => { // check whether the hadndle is already being used
@@ -248,12 +254,12 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   });
 
   if (handleIndex !== -1) {
-    return error;
+    throw HTTPError(400, 'Handle entered is already being used');
   }
 
   if (handleStr.match(/^[0-9A-Za-z]+$/) === null) { // idk if this works, coded adapted from: https://tinyurl.com/2ps8ms94
     // handleStr not alphanumeric
-    return error;
+    throw HTTPError(400, 'Handle constians non-alphanumeric characters');
   }
 
   data.user[tokenIndex].handle = handleStr;
@@ -263,4 +269,5 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   setData(data);
   return {};
 }
+
 export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, getTokenIndex };

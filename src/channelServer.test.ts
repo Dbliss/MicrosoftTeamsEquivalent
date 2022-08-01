@@ -1,4 +1,3 @@
-import { token } from 'morgan';
 import request from 'sync-request';
 import config from './config.json';
 
@@ -7,7 +6,6 @@ const BADREQ = 400;
 const FORBID = 403;
 const port = config.port;
 const url = config.url;
-
 
 function callingClear () {
   const res = request(
@@ -109,23 +107,6 @@ function requestChannelsCreate(token: string, name: string, isPublic: boolean) {
   return res;
 }
 
-function requestChannelJoin(token: string, channelId: number) {
-  const res = request(
-    'POST',
-        `${url}:${port}/channels/join/v3`,
-        {
-          body: JSON.stringify({
-            channelId: channelId
-          }),
-          headers: {
-            token: token,
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
-
 function requestChannelInvite(token: string, channelId: number, uId: number) {
   const res = request(
     'POST',
@@ -167,7 +148,7 @@ describe('channel/leave/v1', () => {
       'password123',
       'first1',
       'last1'
-    )
+    );
     expect(auth1.statusCode).toBe(OK);
     const member = JSON.parse(String(auth1.getBody()));
     const invite = requestChannelInvite(owner.token, channel.channelId, member.authUserId);
@@ -177,7 +158,7 @@ describe('channel/leave/v1', () => {
     const leave = requestChannelLeave(member.token, channel.channelId);
     expect(leave.statusCode).toBe(OK);
     const bodyObj = JSON.parse(String(leave.getBody()));
-    expect(bodyObj).toMatchObject({}); 
+    expect(bodyObj).toMatchObject({});
   });
 
   test('Invalid token', () => {
@@ -201,7 +182,6 @@ describe('channel/leave/v1', () => {
       false
     );
     expect(res.statusCode).toBe(OK);
-    const channel = JSON.parse(String(res.getBody()));
     const bodyObj1 = requestChannelLeave(owner.token, 1);
     expect(bodyObj1.statusCode).toBe(BADREQ);
   });
@@ -270,7 +250,7 @@ describe('channel/addowner/v1', () => {
     const added = JSON.parse(String(bodyObj.getBody()));
     expect(added).toStrictEqual({});
   });
-  
+
   test('invalid token', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = requestAuthRegister(
@@ -296,7 +276,7 @@ describe('channel/addowner/v1', () => {
     const bodyObj = requestAddOwner('', channel.channelId, member.authUserId);
     expect(bodyObj.statusCode).toBe(FORBID);
   });
-  
+
   test('channelId invalid', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = requestAuthRegister(
@@ -313,16 +293,15 @@ describe('channel/addowner/v1', () => {
       'last1'
     );
     const member = JSON.parse(String(auth1.getBody()));
-    const create = requestChannelsCreate(
+    requestChannelsCreate(
       owner.token,
       'name',
       true
     );
-    const channel = JSON.parse(String(create.getBody()));
     const bodyObj = requestAddOwner(owner.token, -1, member.authUserId);
     expect(bodyObj.statusCode).toBe(BADREQ);
   });
-  
+
   test('invalid uId', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = requestAuthRegister(
@@ -332,13 +311,12 @@ describe('channel/addowner/v1', () => {
       'last'
     );
     const owner = JSON.parse(String(auth.getBody()));
-    const auth1 = requestAuthRegister(
+    requestAuthRegister(
       'email1@email.com',
       'password123',
       'first1',
       'last1'
     );
-    const member = JSON.parse(String(auth1.getBody()));
     const create = requestChannelsCreate(
       owner.token,
       'name',
@@ -348,7 +326,7 @@ describe('channel/addowner/v1', () => {
     const bodyObj = requestAddOwner(owner.token, channel.channelId, -1);
     expect(bodyObj.statusCode).toBe(BADREQ);
   });
-  
+
   test('uId refers to user who is not a member of the channel', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = requestAuthRegister(
@@ -374,7 +352,7 @@ describe('channel/addowner/v1', () => {
     const bodyObj = requestAddOwner(owner.token, channel.channelId, member.authUserId);
     expect(bodyObj.statusCode).toBe(BADREQ);
   });
-  
+
   test('uId refers to an owner of the channel', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = requestAuthRegister(
@@ -393,7 +371,7 @@ describe('channel/addowner/v1', () => {
     const bodyObj = requestAddOwner(owner.token, channel.channelId, owner.authUserId);
     expect(bodyObj.statusCode).toBe(BADREQ);
   });
-  
+
   test('channelId is valid, authorised user does not have owner permissions in the channel', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = requestAuthRegister(
@@ -455,7 +433,7 @@ describe('channel/removeowner/v1', () => {
     const removed = JSON.parse(String(remove.getBody()));
     expect(removed).toStrictEqual({});
   });
-  
+
   test('invalid token', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = requestAuthRegister(
@@ -486,7 +464,7 @@ describe('channel/removeowner/v1', () => {
     const remove = requestRemoveOwner('', channel.channelId, member.authUserId);
     expect(remove.statusCode).toBe(FORBID);
   });
-  
+
   test('channelId invalid', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = requestAuthRegister(
@@ -547,7 +525,7 @@ describe('channel/removeowner/v1', () => {
     const remove = requestRemoveOwner(owner.token, channel.channelId, -1);
     expect(remove.statusCode).toBe(BADREQ);
   });
-  
+
   test('uId refers to user who is not an owner of the channel', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = requestAuthRegister(
@@ -570,7 +548,7 @@ describe('channel/removeowner/v1', () => {
       'last1'
     );
     const member = JSON.parse(String(auth1.getBody()));
-    const invite = requestChannelInvite(owner.token, channel.channelId, member.authUserId);
+    requestChannelInvite(owner.token, channel.channelId, member.authUserId);
     const bodyObj = requestRemoveOwner(
       owner.token,
       channel.channelId,
@@ -578,7 +556,7 @@ describe('channel/removeowner/v1', () => {
     );
     expect(bodyObj.statusCode).toBe(BADREQ);
   });
-  
+
   test('uId refers to the only owner of the channel', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = requestAuthRegister(
@@ -601,7 +579,7 @@ describe('channel/removeowner/v1', () => {
     );
     expect(remove.statusCode).toBe(BADREQ);
   });
-  
+
   test('channelId is valid, authorised user does not have owner permissions in the channel', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = requestAuthRegister(
@@ -634,4 +612,4 @@ describe('channel/removeowner/v1', () => {
     );
     expect(remove.statusCode).toBe(FORBID);
   });
-}); 
+});

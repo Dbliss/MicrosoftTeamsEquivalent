@@ -1,4 +1,4 @@
-import { getData, setData, dmType, dmmessageType, dataType } from './dataStore';
+import { getData, setData, dmType, messageType, dataType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
 
@@ -72,8 +72,22 @@ function dmCreate (token: string, uIds: number[]) {
     owners: [data.user[flag].authUserId],
     messages: [],
   };
-
   data.dm.push(tempDm);
+
+  // Adding Notifications to each added member
+  for (const uId of uIds) {
+    for (const user in data.user) {
+      if (data.user[user].authUserId === uId && data.user[user].authUserId !== data.user[flag].authUserId) {
+        data.user[user].notifications.push({
+          channelId: -1,
+          dmId: tempDm.dmId,
+          notificationMessage: data.user[flag].handle + ' added you to ' + name,
+          type: 3
+        });
+      }
+    }
+  }
+
   setData(data);
   return { dmId: tempDm.dmId };
 }
@@ -358,7 +372,7 @@ function dmMessages (token: string, dmId: number, start: number) {
 
   // Reversing data so that the latest messages are returned
   data.dm[dmIndex].messages.reverse();
-  const returnMessages: dmmessageType[] = [];
+  const returnMessages: messageType[] = [];
   let end = 0;
   let returnEnd = start + 50;
 

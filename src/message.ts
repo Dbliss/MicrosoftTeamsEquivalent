@@ -34,7 +34,7 @@ function messageSendV1(token: string, channelId: number, message: string) {
   let uId = 0;
   for (const member of currentChannel.members) {
     for (const tokenn of member.token) {
-      if (tokenn === getHashOf(token)) {
+      if (tokenn === token) {
         flag = 1;
         uId = member.authUserId;
       }
@@ -55,7 +55,9 @@ function messageSendV1(token: string, channelId: number, message: string) {
     messageId: messageId,
     uId: uId,
     message: message,
-    timeSent: timeSent
+    timeSent: timeSent,
+    reacts: [],
+    isPinned: false
   };
 
   for (let i = 0; i < data.channel.length; i++) {
@@ -64,6 +66,38 @@ function messageSendV1(token: string, channelId: number, message: string) {
     }
   }
   // storing the new message into the data
+
+  // Notification Sending to tagged people
+  // Extracting tags from message
+  const handles = [];
+  for (let i = 0; i < message.length; i++) {
+    if (message[i] === '@') {
+      let handle = '';
+      for (let j = i + 1; message[j] !== ' ' && message[j] !== '@'; j++) {
+        handle = handle + message[j];
+      }
+      handles.push(handle);
+    }
+  }
+
+  const userIndex = getTokenIndex(token, data);
+
+  // Cutting message for notification
+  const sedingMessage = message.slice(0, 20);
+  console.log(handles);
+  // Sending the notification
+  for (const handle of handles) {
+    for (const user in data.user) {
+      if (data.user[user].handle === handle) {
+        data.user[user].notifications.push({
+          channelId: channelId,
+          dmId: -1,
+          notificationMessage: data.user[userIndex].handle + ' tagged you in ' + currentChannel.name + ': ' + sedingMessage,
+          type: 1
+        });
+      }
+    }
+  }
 
   setData(data);
 
@@ -89,7 +123,7 @@ function messageEditV1(token: string, messageId: number, message: string) {
 
   // finding the checking if the token user has global permissions
   for (let i = 0; i < data.user.length; i++) {
-    if (data.user[i].token[tokenIndex] === getHashOf(token)) {
+    if (data.user[i].token[tokenIndex] === token) {
       userIndex = i;
       if (data.user[i].permissionId === 1) {
         hasGlobalPermission = true;
@@ -208,6 +242,8 @@ function messageEditV1(token: string, messageId: number, message: string) {
     uId: uId,
     message: message,
     timeSent: timeSent,
+    reacts: [],
+    isPinned: false
   };
 
   // editing the message for the channel case
@@ -305,7 +341,14 @@ function messageRemoveV1(token: string, messageId: number) {
     }
 
     // checking the user is a member of the channel
-    const flag = getTokenIndex(token, data);
+    let flag = 0;
+    for (let i = 0; i < data.user.length; i++) {
+      for (const tokens of data.user[i].token) {
+        if (tokens === token) {
+          flag = i;
+        }
+      }
+    }
 
     if (flag === -1) {
       return { error: 'error' };
@@ -367,14 +410,46 @@ function messageSenddmV2 (token: string, dmId: number, message: string) {
     throw HTTPError(403, 'Not a Member');
   }
 
-  const tempMessage = {
+  const tempMessage:messageType = {
     messageId: Math.floor(Math.random() * Date.now()),
     uId: uId,
     message: message,
     timeSent: Math.floor(Date.now() / 1000),
+    reacts: [],
+    isPinned: false
   };
 
   data.dm[dmIndex].messages.push(tempMessage);
+
+  // Notification Sending to tagged people
+  // Extracting tags from message
+  const handles = [];
+  for (let i = 0; i < message.length; i++) {
+    if (message[i] === '@') {
+      let handle = '';
+      for (let j = i + 1; message[j] !== ' ' && message[j] !== '@'; j++) {
+        handle = handle + message[j];
+      }
+      handles.push(handle);
+    }
+  }
+
+  // Cutting message for notification
+  const sedingMessage = message.slice(0, 20);
+  console.log(handles);
+  // Sending the notification
+  for (const handle of handles) {
+    for (const user in data.user) {
+      if (data.user[user].handle === handle) {
+        data.user[user].notifications.push({
+          channelId: -1,
+          dmId: dmId,
+          notificationMessage: data.user[flag].handle + ' tagged you in ' + data.dm[dmIndex].name + ': ' + sedingMessage,
+          type: 1
+        });
+      }
+    }
+  }
 
   setData(data);
   return { messageId: tempMessage.messageId };

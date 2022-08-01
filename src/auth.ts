@@ -82,6 +82,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     handle: handleName,
     permissionId: permissionId,
     token: [],
+    notifications: []
   };
   data.user[j].token.push(token);
   setData(data);
@@ -108,14 +109,13 @@ function authLoginV1(email: string, password: string) {
     // check to see if email is in index
     if (email === data.user[i].email) {
       emailCheck = true;
-      userIndex = i; 
+      userIndex = i;
     }
   }
   // if the for loop as gone to the end and there is no matches then return error object
   if (emailCheck === false) {
     throw HTTPError(400, 'Email does not belong to any user');
   }
-  
   if (getHashOf(password) === data.user[userIndex].password) {
     // generate token and store
     const rand = () => {
@@ -131,10 +131,9 @@ function authLoginV1(email: string, password: string) {
 
     return { token: token, authUserId: data.user[userIndex].authUserId };
   } else {
-      throw HTTPError(400, 'Incorrect password');
+    throw HTTPError(400, 'Incorrect password');
   }
 }
-  
 
 // Given an active token, invalidates the token to log the user out
 // Arguments:

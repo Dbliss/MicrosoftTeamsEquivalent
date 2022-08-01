@@ -54,7 +54,7 @@ describe('Test auth/register/v2', () => {
           'Content-type': 'application/json'
         },
       }
-    )
+    );
     expect(res.statusCode).toBe(BADREQ);
   });
 

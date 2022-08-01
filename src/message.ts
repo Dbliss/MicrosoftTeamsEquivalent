@@ -19,8 +19,9 @@ function messageSendV1(token: string, channelId: number, message: string) {
     return { error: 'error' };
   }
 
+  let userIndex = getTokenIndex(token, data);
   // checking the token is valid
-  if (getTokenIndex(token, data) === -1) {
+  if (userIndex === -1) {
     return { error: 'error' };
   }
 
@@ -29,9 +30,8 @@ function messageSendV1(token: string, channelId: number, message: string) {
     return { error: 'error' };
   }
 
-  // checking the user is a member of the channel
-  let flag = 0;
   let uId = 0;
+  let flag = -1;
   for (const member of currentChannel.members) {
     for (const tokenn of member.token) {
       if (tokenn === getHashOf(token)) {
@@ -40,9 +40,10 @@ function messageSendV1(token: string, channelId: number, message: string) {
       }
     }
   }
-  if (flag === 0) {
+  if (flag === -1) {
     return { error: 'error' };
   }
+
 
   // generating the messageId
   const messageId = Math.floor(Math.random() * Date.now());
@@ -81,7 +82,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
   let isDmMember = false;
   let isDmOwner = false;
   let isOwnerMember = false;
-  let hasGlobalPermission = false;
   let userIndex = 0;
   let userId = 0;
   let isMemberOfChannel = false;
@@ -91,9 +91,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
   for (let i = 0; i < data.user.length; i++) {
     if (data.user[i].token[tokenIndex] === getHashOf(token)) {
       userIndex = i;
-      if (data.user[i].permissionId === 1) {
-        hasGlobalPermission = true;
-      }
       userId = data.user[i].authUserId;
     }
   }
@@ -122,8 +119,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
 
   for (let i = 0; i < data.channel.length; i++) {
     for (const message of data.channel[i].messages) {
-      console.log(message.messageId);
-      console.log(messageId);
       if (message.messageId === messageId) {
         validMessageId = true;
         uId = message.uId;
@@ -187,16 +182,14 @@ function messageEditV1(token: string, messageId: number, message: string) {
         return { error: 'error' };
       }
     } else if (isChannelMessage === true) {
-      if (isMemberOfChannel === false) {
-        return { error: 'error' };
-      } else if (isMemberOfChannel === true) {
-        if (isOwnerMember === false) {
-          if (hasGlobalPermission === false) {
-            return { error: 'error' };
-          }
+        if (isMemberOfChannel === false) {
+          return { error: 'error' };
+        } else if (isMemberOfChannel === true) {
+          if (isOwnerMember === false) {
+              return { error: 'error' };
+            }
         }
       }
-    }
   }
 
   if (validMessageId === false) {
@@ -219,7 +212,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
           key1 = i;
           newMessage.uId = data.channel[i].messages[j].uId;
           newMessage.timeSent = data.channel[i].messages[j].timeSent;
-          validMessageId = true;
           deleteCondition === true ? data.channel[i].messages.splice(j, 1) : data.channel[i].messages.splice(j, 1, newMessage);
           break;
         }
@@ -246,7 +238,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
         if (data.dm[i].messages[j].messageId === messageId) {
           newMessage.uId = data.dm[i].messages[j].uId;
           newMessage.timeSent = data.dm[i].messages[j].timeSent;
-          validMessageId = true;
           deleteCondition === true ? data.dm[i].messages.splice(j, 1) : data.dm[i].messages.splice(j, 1, newMessage);
           break;
         }
@@ -259,35 +250,85 @@ function messageEditV1(token: string, messageId: number, message: string) {
 
 function messageRemoveV1(token: string, messageId: number) {
   const data = getData();
-
+  let uId = 0;
+  let tokenIndex = getTokenIndex(token, data);
   // checking the token is valid
-  if (getTokenIndex(token, data) === -1) {
+  if (tokenIndex === -1) {
     return { error: 'error' };
   }
+
+  //need to find the authUserId of the token
+  uId = data.user[tokenIndex].authUserId;
 
   // Need to check if the message is a dm or channel message
   let isDmMessage = false;
   let isChannelMessage = false;
+  let isOwnerMember = false;
+  let isMessageSender = false;
+  let isApartOfChannelOrDm = false;
 
-  // checking the messageId refers to a real message
+  // checking the messageId refers to a real message in a channel
   let validMessageId = false;
   for (let i = 0; i < data.channel.length; i++) {
     for (const message of data.channel[i].messages) {
       if (message.messageId === messageId) {
         validMessageId = true;
         isChannelMessage = true;
+        //checking the channel contains the person calling the function
+        if (data.channel[i].members.includes(uId) === true){
+          isApartOfChannelOrDm = true;
+        }
+        //checking the person calling the function is a owner of the channel
+        if (data.channel[i].owners.includes(uId) === true){
+          isOwnerMember = true;
+        }
+        //checking the if the person calling the function sent the original message
+        if (uId === message.uId){
+          isMessageSender = true;
+        }
+
       }
     }
   }
-
-  // checking the messageId refers to a real message
+  let flag = 0;
+  // checking the messageId refers to a real message in a dm
   for (let i = 0; i < data.dm.length; i++) {
     for (const message of data.dm[i].messages) {
       if (message.messageId === messageId) {
         validMessageId = true;
         isDmMessage = true;
+        //checking the if the person calling the function sent the original message
+        if (uId === message.uId){
+          isMessageSender = true;
+        }
+        //checking the dm contains the person calling the function
+        if (data.dm[i].members.includes(uId) === true){
+          isApartOfChannelOrDm = true;
+        }
+        //checking the person calling the function is a owner of the channel
+        if (data.dm[i].owners.includes(uId) === true){
+          isOwnerMember = true;
+        }
+        flag = i;
       }
     }
+  }
+
+  let re = data.dm[flag];
+  if (isMessageSender === false) {
+    if (isDmMessage === true) {
+      if (isApartOfChannelOrDm === false || isOwnerMember === false) {
+        return { re, uId };
+      }
+    } else if (isChannelMessage === true) {
+        if (isApartOfChannelOrDm === false) {
+          return { error: 'error' };
+        } else if (isApartOfChannelOrDm === true) {
+          if (isOwnerMember === false) {
+              return { error: 'error' };
+            }
+        }
+      }
   }
 
   if (validMessageId === false) {
@@ -298,17 +339,13 @@ function messageRemoveV1(token: string, messageId: number) {
     for (let i = 0; i < data.channel.length; i++) {
       for (let j = 0; i < data.channel[i].messages.length; j++) {
         if (data.channel[i].messages[j].messageId === messageId) {
+          if (data.channel[i].owners.includes(uId) === true){
+            isOwnerMember = true;
+          }
           data.channel[i].messages.splice(j, 1);
           break;
         }
       }
-    }
-
-    // checking the user is a member of the channel
-    const flag = getTokenIndex(token, data);
-
-    if (flag === -1) {
-      return { error: 'error' };
     }
   }
 

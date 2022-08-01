@@ -55,7 +55,9 @@ function messageSendV1(token: string, channelId: number, message: string) {
     messageId: messageId,
     uId: uId,
     message: message,
-    timeSent: timeSent
+    timeSent: timeSent,
+    reacts: [],
+    isPinned: false
   };
 
   for (let i = 0; i < data.channel.length; i++) {
@@ -240,6 +242,8 @@ function messageEditV1(token: string, messageId: number, message: string) {
     uId: uId,
     message: message,
     timeSent: timeSent,
+    reacts: [],
+    isPinned: false
   };
 
   // editing the message for the channel case
@@ -399,11 +403,13 @@ function messageSenddmV2 (token: string, dmId: number, message: string) {
     throw HTTPError(403, 'Not a Member');
   }
 
-  const tempMessage = {
+  const tempMessage:messageType = {
     messageId: Math.floor(Math.random() * Date.now()),
     uId: uId,
     message: message,
     timeSent: Math.floor(Date.now() / 1000),
+    reacts: [],
+    isPinned: false
   };
 
   data.dm[dmIndex].messages.push(tempMessage);

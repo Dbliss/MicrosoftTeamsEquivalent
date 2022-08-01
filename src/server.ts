@@ -42,6 +42,7 @@ import {
   messageSenddmV2,
 } from './message';
 import { getNotifications } from './notifications';
+import { search } from './search';
 
 // Set up web app, use JSON
 const app = express();
@@ -301,6 +302,11 @@ app.post('/message/senddm/v2', (req, res) => {
 app.get('/notifications/get/v1', (req, res) => {
   const notifications = getNotifications(req.headers.token as string);
   res.json(notifications);
+});
+
+app.get('/search/v1', (req, res) => {
+  const messages = search(req.headers.token as string, req.query.queryStr as string);
+  res.json(messages);
 });
 
 // start server

@@ -34,7 +34,7 @@ function messageSendV1(token: string, channelId: number, message: string) {
   let uId = 0;
   for (const member of currentChannel.members) {
     for (const tokenn of member.token) {
-      if (tokenn === getHashOf(token)) {
+      if (tokenn === token) {
         flag = 1;
         uId = member.authUserId;
       }
@@ -123,7 +123,7 @@ function messageEditV1(token: string, messageId: number, message: string) {
 
   // finding the checking if the token user has global permissions
   for (let i = 0; i < data.user.length; i++) {
-    if (data.user[i].token[tokenIndex] === getHashOf(token)) {
+    if (data.user[i].token[tokenIndex] === token) {
       userIndex = i;
       if (data.user[i].permissionId === 1) {
         hasGlobalPermission = true;
@@ -341,7 +341,14 @@ function messageRemoveV1(token: string, messageId: number) {
     }
 
     // checking the user is a member of the channel
-    const flag = getTokenIndex(token, data);
+    let flag = 0;
+    for (let i = 0; i < data.user.length; i++) {
+      for (const tokens of data.user[i].token) {
+        if (tokens === token) {
+          flag = i;
+        }
+      }
+    }
 
     if (flag === -1) {
       return { error: 'error' };

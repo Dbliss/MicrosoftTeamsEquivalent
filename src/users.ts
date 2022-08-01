@@ -1,6 +1,5 @@
 import validator from 'validator';
 import { dataType, getData, setData, userType, channelsInUserType } from './dataStore';
-import { getHashOf } from './other';
 import HTTPError from 'http-errors';
 
 // const error = { error: 'error' };
@@ -48,7 +47,7 @@ function updateUserInfo(data: dataType, channels: channelsInUserType[], user: an
 // Helper Function which finds the user which has the token,
 // if not then -1 is returned meaning token does not exist
 function getTokenIndex(token: string, data: dataType) {
-  const hashedToken = getHashOf(token);
+  const hashedToken = token;
   const tokenIndex = data.user.findIndex((object: any) => {
     for (const tokenElem of object.token) {
       if (tokenElem === hashedToken) {
@@ -270,6 +269,5 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   setData(data);
   return {};
 }
-
 
 export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, getTokenIndex };

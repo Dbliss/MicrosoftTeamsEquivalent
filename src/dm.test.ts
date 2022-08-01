@@ -124,7 +124,7 @@ function callingMessageSendDm(token: string, dmId: number, message: string) {
 function callingAuthRegister (email: string, password: string, nameFirst: string, nameLast: string) {
   const res = request(
     'POST',
-        `${url}:${port}/auth/register/v2`,
+        `${url}:${port}/auth/register/v3`,
         {
           body: JSON.stringify({
             email: email,

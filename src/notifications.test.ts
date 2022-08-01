@@ -448,6 +448,8 @@ describe('Testing Notifications', () => {
 
       const join = callingChannelInvite(registered1.token, channelCreated.channelId, registered2.authUserId);
       expect(join.statusCode).toBe(OK);
+      const joined = JSON.parse(String(join.getBody()));
+      expect(joined).toStrictEqual({});
 
       const message = callingMessageSend(registered1.token, channelCreated.channelId, '@first2last2 Hi!');
       expect(message.statusCode).toBe(OK);

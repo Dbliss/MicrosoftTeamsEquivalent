@@ -46,12 +46,20 @@ type channelsType = {
   name: string,
 };
 
+type reactsType = {
+  reactId: number,
+  uIds: number,
+  isThisUserReacted: boolean
+}
+
 // Storing messages with its Id
 type messageType = {
   messageId: number,
   uId: number,
   message: string,
-  timeSent: number
+  timeSent: number,
+  reacts: reactsType[],
+  isPinned: boolean
 };
 
 // Storing channel information in data
@@ -64,20 +72,13 @@ type channelType = {
   messages: messageType[],
 };
 
-type dmmessageType = {
-  messageId: number,
-  uId: number,
-  message: string,
-  timeSent: number
-};
-
 // Storing dm information in data
 type dmType = {
   dmId: number,
   name: string,
   members: number[],
   owners: number[],
-  messages: dmmessageType[]
+  messages: messageType[]
 }
 
 type dataType = {
@@ -118,5 +119,5 @@ function setData(newData: dataType) {
 
 export {
   getData, setData, dataType, userType, channelType, channelsType, usersType, dmType, messageType,
-  channelsInUserType, dmmessageType, notificationType
+  channelsInUserType, notificationType
 };

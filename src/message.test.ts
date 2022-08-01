@@ -307,7 +307,7 @@ describe('Testing messageEdit', () => {
     const messages = JSON.parse(res5.body as string);
     expect(res5.statusCode).toBe(OK);
 
-    expect(messages).toEqual({ messages: [{ message: 'dsfwe2131wef', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'dsfwe2131wef', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 
   test('succesful deletion via edit for a message', () => {
@@ -340,7 +340,7 @@ describe('Testing messageEdit', () => {
 
     expect(edit1).toEqual({});
 
-    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 
   test('succesful edit for a message 2', () => {
@@ -373,7 +373,7 @@ describe('Testing messageEdit', () => {
 
     expect(edit1).toEqual({});
 
-    expect(messages).toEqual({ messages: [{ message: 'cba', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }, { message: 'abc', messageId: message.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'cba', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }, { message: 'abc', messageId: message.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 
   test('succesful edit for a message in a dm', () => {
@@ -410,7 +410,7 @@ describe('Testing messageEdit', () => {
 
     expect(edit1).toEqual({});
 
-    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }, { message: 'cba', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }, { message: 'cba', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 
   test('succesful edit for a message in a dm', () => {
@@ -447,7 +447,7 @@ describe('Testing messageEdit', () => {
 
     expect(edit1).toEqual({});
 
-    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 });
 
@@ -550,7 +550,7 @@ describe('Testing messageRemove', () => {
     const messages = JSON.parse(res5.body as string);
     expect(res5.statusCode).toBe(OK);
 
-    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 
   test('succesful deletion of a message in a dm', () => {
@@ -587,7 +587,7 @@ describe('Testing messageRemove', () => {
 
     expect(edit1).toEqual({});
 
-    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 });
 

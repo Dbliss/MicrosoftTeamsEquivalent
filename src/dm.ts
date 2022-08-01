@@ -1,4 +1,4 @@
-import { getData, setData, dmType, dmmessageType, dataType } from './dataStore';
+import { getData, setData, dmType, messageType, dataType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
 
@@ -372,7 +372,7 @@ function dmMessages (token: string, dmId: number, start: number) {
 
   // Reversing data so that the latest messages are returned
   data.dm[dmIndex].messages.reverse();
-  const returnMessages: dmmessageType[] = [];
+  const returnMessages: messageType[] = [];
   let end = 0;
   let returnEnd = start + 50;
 

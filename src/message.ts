@@ -80,8 +80,6 @@ function messageSendV1(token: string, channelId: number, message: string) {
     }
   }
 
-  const userIndex = getTokenIndex(token, data);
-
   // Cutting message for notification
   const sedingMessage = message.slice(0, 20);
   console.log(handles);
@@ -324,7 +322,6 @@ function messageRemoveV1(token: string, messageId: number) {
       }
     }
   }
-  let flag = 0;
   // checking the messageId refers to a real message in a dm
   for (let i = 0; i < data.dm.length; i++) {
     for (const message of data.dm[i].messages) {
@@ -343,16 +340,14 @@ function messageRemoveV1(token: string, messageId: number) {
         if (data.dm[i].owners.includes(uId) === true) {
           isOwnerMember = true;
         }
-        flag = i;
       }
     }
   }
 
-  const re = data.dm[flag];
   if (isMessageSender === false) {
     if (isDmMessage === true) {
       if (isApartOfChannelOrDm === false || isOwnerMember === false) {
-        return { re, uId };
+        return { error: 'error' };
       }
     } else if (isChannelMessage === true) {
       if (isApartOfChannelOrDm === false) {

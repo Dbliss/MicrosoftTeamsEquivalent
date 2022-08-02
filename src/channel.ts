@@ -333,7 +333,7 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
 
 function channelMessagesV2 (token: string, channelId: number, start: number) {
   // getting the dataset
-  const data = getData();
+  const data:dataType = getData();
 
   let currentChannel: channelType;
   const messages = [];
@@ -375,8 +375,18 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
     return { error: 'error' };
   }
 
+  const user = getTokenIndex(token, data);
+  const uId = data.user[user].authUserId;
+
   let j = 0;
   for (let i = start; i < currentChannel.messages.length && j < 50; i++) {
+    if (currentChannel.messages[i].reacts[0] !== undefined) {
+      for (const user of currentChannel.messages[i].reacts[0].uIds) {
+        if (user === uId) {
+          currentChannel.messages[i].reacts[0].isThisUserReacted = true;
+        }
+      }
+    }
     messages[j] = currentChannel.messages[i];
     j++;
   }

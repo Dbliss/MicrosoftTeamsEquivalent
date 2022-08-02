@@ -613,3 +613,5 @@ describe('channel/removeowner/v1', () => {
     expect(remove.statusCode).toBe(FORBID);
   });
 });
+
+export { requestChannelLeave };

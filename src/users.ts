@@ -112,7 +112,6 @@ function userProfileV1(token: string, uId: number) {
   returnUser.user.nameLast = data.user[uIdIndex].nameLast;
   returnUser.user.handleStr = data.user[uIdIndex].handle;
 
-  console.log(returnUser);
   return returnUser;
 }
 

@@ -552,8 +552,8 @@ describe('Testing messageRemove', () => {
     expect(res4.statusCode).toBe(OK);
 
     const res5 = callingDmMessages(user1.token, dm1.dmId, 0);
-    const messages = JSON.parse(res5.body as string);
     expect(res5.statusCode).toBe(OK);
+    const messages = JSON.parse(res5.body as string);
 
     expect(edit1).toEqual({});
 

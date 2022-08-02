@@ -21,10 +21,8 @@ type storeChannelsType = {
 
 function channelsCreateV3(token: string, name: string, isPublic: boolean) {
   const data:dataType = getData();
-  console.log('TOKEN =' + token);
   // Checking if token is valid and taking out the userId of the user
   const flag = getTokenIndex(token, data);
-  console.log('FLAG =' + flag);
   // Returns error message when token or name is invalid
   if (flag === -1) {
     throw HTTPError(403, 'Invalid Token');

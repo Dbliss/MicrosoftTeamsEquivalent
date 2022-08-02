@@ -546,4 +546,4 @@ describe('Testing channelMessages1', () => {
 //   });
 // });
 
-export { callingChannelInvite };
+export { callingChannelInvite, callingChannelMessages };

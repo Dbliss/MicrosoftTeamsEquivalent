@@ -43,6 +43,7 @@ import {
 } from './message';
 import { getNotifications } from './notifications';
 import { search } from './search';
+import { messageReact, messageUnreact } from './messageReact';
 
 // Set up web app, use JSON
 const app = express();
@@ -307,6 +308,20 @@ app.get('/notifications/get/v1', (req, res) => {
 app.get('/search/v1', (req, res) => {
   const messages = search(req.headers.token as string, req.query.queryStr as string);
   res.json(messages);
+});
+
+app.post('/message/react/v1', (req, res) => {
+  const { messageId, reactId } = req.body;
+  const token = req.headers.token;
+  const leave = messageReact(token as string, messageId, reactId);
+  res.json(leave);
+});
+
+app.post('/message/unreact/v1', (req, res) => {
+  const { messageId, reactId } = req.body;
+  const token = req.headers.token;
+  const leave = messageUnreact(token as string, messageId, reactId);
+  res.json(leave);
 });
 
 // start server

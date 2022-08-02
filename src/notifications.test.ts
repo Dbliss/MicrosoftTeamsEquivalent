@@ -9,7 +9,8 @@ import { callingAuthRegister, callingDmCreate, callingDmLeave, callingMessageSen
 import { callingChannelsCreate } from './channelsServer.test';
 import { callingChannelInvite } from './channel.test';
 import { callingMessageSend } from './message.test';
-// import { requestChannelLeave } from './channelServer.test';
+import { requestChannelLeave } from './channelServer.test';
+import { callingMessageReact } from './messageReact.test';
 
 function callingNotificationsGet(token: string) {
   const res = request(
@@ -31,25 +32,7 @@ function callingClear () {
   );
   return res;
 }
-/*
-function callingMessageReact(token: string, messageId: number, reactId: number) {
-  const res = request(
-    'POST',
-        `${url}:${port}/dm/create/v2`,
-        {
-          body: JSON.stringify({
-            messageId: messageId,
-            reactId: reactId
-          }),
-          headers: {
-            token: token,
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
-*/
+
 describe('Testing Notifications', () => {
   test('Invalid Token', () => {
     expect(callingClear().statusCode).toBe(OK);
@@ -290,8 +273,8 @@ describe('Testing Notifications', () => {
         ]
       });
     });
-    /*
-    test("Valid, Reacted to dm message, Is member", () => {
+
+    test('Valid, Reacted to dm message, Is member', () => {
       expect(callingClear().statusCode).toBe(OK);
       const auth1 = callingAuthRegister('email@email.com',
         'password',
@@ -311,37 +294,38 @@ describe('Testing Notifications', () => {
       expect(dm.statusCode).toBe(OK);
       const dmCreated = JSON.parse(String(dm.getBody()));
 
-      const message = callingMessageSendDm(registered2.token, dmCreated.dmId, "@first2last2 Whats up?");
+      const message = callingMessageSendDm(registered2.token, dmCreated.dmId, '@first2last2 Whats up?');
       expect(message.statusCode).toBe(OK);
       const messageSent = JSON.parse(String(message.getBody()));
 
       const reaction = callingMessageReact(registered1.token, messageSent.messageId, 1);
       expect(reaction.statusCode).toBe(OK);
-      const reactionCreated = JSON.parse(String(reaction.getBody()));
 
       const res = callingNotificationsGet(registered2.token);
       expect(res.statusCode).toBe(OK);
       const result = JSON.parse(String(res.getBody()));
 
-      expect(result).toStrictEqual({notifications: [{
-        channelId: -1,
-        dmId: dmCreated.dmId,
-        notificationMessage: "firstlast added you to 'first1last1, firstlast'",
-      },
-      {
-        channelId: -1,
-        dmId: dmCreated.dmId,
-        notificationMessage: "first2last2 tagged you in 'first1last1, firstlast': @first2last2 Whats u",
-      },
-      {
-        channelId: -1,
-        dmId: dmCreated.dmId,
-        notificationMessage: "firstlast reacted to your message in 'first1last1, firstlast'",
-      }
-      ]});
+      expect(result).toStrictEqual({
+        notifications: [{
+          channelId: -1,
+          dmId: dmCreated.dmId,
+          notificationMessage: "firstlast added you to 'first2last2, firstlast'",
+        },
+        {
+          channelId: -1,
+          dmId: dmCreated.dmId,
+          notificationMessage: "first2last2 tagged you in 'first2last2, firstlast': @first2last2 Whats u",
+        },
+        {
+          channelId: -1,
+          dmId: dmCreated.dmId,
+          notificationMessage: "firstlast reacted to your message in 'first2last2, firstlast'",
+        }
+        ]
+      });
     });
 
-    test("Valid, Reacted to dm message, Is NOT member ", () => {
+    test('Valid, Reacted to dm message, Is NOT member ', () => {
       expect(callingClear().statusCode).toBe(OK);
       const auth1 = callingAuthRegister('email@email.com',
         'password',
@@ -361,7 +345,7 @@ describe('Testing Notifications', () => {
       expect(dm.statusCode).toBe(OK);
       const dmCreated = JSON.parse(String(dm.getBody()));
 
-      const message = callingMessageSendDm(registered2.token, dmCreated.dmId, "@first2last2 Whats up?");
+      const message = callingMessageSendDm(registered2.token, dmCreated.dmId, '@first2last2 Whats up?');
       expect(message.statusCode).toBe(OK);
       const messageSent = JSON.parse(String(message.getBody()));
 
@@ -370,25 +354,21 @@ describe('Testing Notifications', () => {
 
       const reaction = callingMessageReact(registered1.token, messageSent.messageId, 1);
       expect(reaction.statusCode).toBe(OK);
-      const reactionCreated = JSON.parse(String(reaction.getBody()));
 
       const res = callingNotificationsGet(registered2.token);
       expect(res.statusCode).toBe(OK);
       const result = JSON.parse(String(res.getBody()));
 
-      expect(result).toStrictEqual({notifications: [{
-        channelId: -1,
-        dmId: dmCreated.dmId,
-        notificationMessage: "firstlast added you to 'first1last1, firstlast'",
-      },
-      {
-        channelId: -1,
-        dmId: dmCreated.dmId,
-        notificationMessage: "first2last2 tagged you in 'first1last1, firstlast': @first2last2 Whats u",
-      },
-      ]});
+      expect(result).toStrictEqual({
+        notifications: [{
+          channelId: -1,
+          dmId: dmCreated.dmId,
+          notificationMessage: "firstlast added you to 'first2last2, firstlast'",
+        },
+        ]
+      });
     });
-    */
+
     test('Valid, Added to dm', () => {
       expect(callingClear().statusCode).toBe(OK);
       const auth1 = callingAuthRegister('email@email.com',
@@ -549,8 +529,8 @@ describe('Testing Notifications', () => {
 
       expect(result).toStrictEqual({ notifications: [] });
     });
-    /*
-    test("Valid, Reacted to channel message, Is member", () => {
+
+    test('Valid, Reacted to channel message, Is member', () => {
       expect(callingClear().statusCode).toBe(OK);
 
       const auth1 = callingAuthRegister('email@email.com',
@@ -573,7 +553,6 @@ describe('Testing Notifications', () => {
 
       const join = callingChannelInvite(registered1.token, channelCreated.channelId, registered2.authUserId);
       expect(join.statusCode).toBe(OK);
-      const joinChannel = JSON.parse(String(join.getBody()));
 
       const message = callingMessageSend(registered2.token, channelCreated.channelId, '@first2last2 Hi!');
       expect(message.statusCode).toBe(OK);
@@ -581,31 +560,32 @@ describe('Testing Notifications', () => {
 
       const react = callingMessageReact(registered1.token, messageSent.messageId, 1);
       expect(react.statusCode).toBe(OK);
-      const reactSent = JSON.parse(String(react.getBody()));
 
       const res = callingNotificationsGet(registered2.token);
       expect(res.statusCode).toBe(OK);
       const result = JSON.parse(String(res.getBody()));
 
-      expect(result).toStrictEqual({notifications: [{
-        channelId: channelCreated.channelId,
-        dmId: -1,
-        notificationMessage: "firstlast added you to channelName",
-      },
-      {
-        channelId: channelCreated.channelId,
-        dmId: -1,
-        notificationMessage: "first2last2 tagged you in channelName: @first2last2 Hi",
-      },
-      {
-        channelId: channelCreated.channelId,
-        dmId: -1,
-        notificationMessage: "firstlast reacted to your message in channelName",
-      }
-      ]});
+      expect(result).toStrictEqual({
+        notifications: [{
+          channelId: channelCreated.channelId,
+          dmId: -1,
+          notificationMessage: 'firstlast added you to channelName',
+        },
+        {
+          channelId: channelCreated.channelId,
+          dmId: -1,
+          notificationMessage: 'first2last2 tagged you in channelName: @first2last2 Hi!',
+        },
+        {
+          channelId: channelCreated.channelId,
+          dmId: -1,
+          notificationMessage: 'firstlast reacted to your message in channelName',
+        }
+        ]
+      });
     });
 
-    test("Valid, Reacted to channel message, Is NOT member ", () => {
+    test('Valid, Reacted to channel message, Is NOT member ', () => {
       expect(callingClear().statusCode).toBe(OK);
 
       const auth1 = callingAuthRegister('email@email.com',
@@ -628,37 +608,33 @@ describe('Testing Notifications', () => {
 
       const join = callingChannelInvite(registered1.token, channelCreated.channelId, registered2.authUserId);
       expect(join.statusCode).toBe(OK);
-      const joinChannel = JSON.parse(String(join.getBody()));
 
       const message = callingMessageSend(registered2.token, channelCreated.channelId, '@first2last2 Hi!');
       expect(message.statusCode).toBe(OK);
       const messageSent = JSON.parse(String(message.getBody()));
 
       const leave = requestChannelLeave(registered2.token, channelCreated.channelId);
-      expect(leave.statusCode).toBe(OK);
-      const leaveChannel = JSON.parse(String(leave.getBody()));
+      console.log(leave);
+      // expect(leave.statusCode).toBe(OK);
+      // const leaveChannel = JSON.parse(String(leave.getBody()));
 
       const react = callingMessageReact(registered1.token, messageSent.messageId, 1);
       expect(react.statusCode).toBe(OK);
-      const reactSent = JSON.parse(String(react.getBody()));
 
       const res = callingNotificationsGet(registered2.token);
       expect(res.statusCode).toBe(OK);
       const result = JSON.parse(String(res.getBody()));
 
-      expect(result).toStrictEqual({notifications: [{
-        channelId: channelCreated.channelId,
-        dmId: -1,
-        notificationMessage: "firstlast added you to channelName",
-      },
-      {
-        channelId: channelCreated.channelId,
-        dmId: -1,
-        notificationMessage: "first2last2 tagged you in channelName: @first2last2 Hi",
-      },
-      ]});
+      expect(result).toStrictEqual({
+        notifications: [{
+          channelId: channelCreated.channelId,
+          dmId: -1,
+          notificationMessage: 'firstlast added you to channelName',
+        },
+        ]
+      });
     });
-    */
+
     test('Valid, added to channel', () => {
       expect(callingClear().statusCode).toBe(OK);
 

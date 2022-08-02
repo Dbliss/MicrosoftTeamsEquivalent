@@ -446,7 +446,7 @@ describe('Testing messageRemove', () => {
     expect(res4.statusCode).toBe(400);
   });
 
-  /* test('the message was not sent by the authorised user making this request or the authorised user does not have owner permissions in the channel', () => {
+  test('the message was not sent by the authorised user making this request or the authorised user does not have owner permissions in the channel', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
 
@@ -467,11 +467,8 @@ describe('Testing messageRemove', () => {
     const message1 = JSON.parse(res3.body as string);
 
     const res4 = callingMessageRemove(user2.token, message1.messageId);
-    const removed = JSON.parse(res4.body as string);
-    expect(res4.statusCode).toBe(OK);
-
-    expect(removed).toEqual({ error: 'error' });
-  }); */
+    expect(res4.statusCode).toBe(403);
+  }); 
 
   test('invalid token test', () => {
     const res = callingClear();

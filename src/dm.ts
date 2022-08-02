@@ -43,12 +43,11 @@ function dmCreate (token: string, uIds: number[]) {
       }
     }
   }
-  console.log("HERE!!!!!!!!!!!!!!!");
+  console.log('HERE!!!!!!!!!!!!!!!');
   if (validUId < uIds.length || uIdRepeat > uIds.length) {
     throw HTTPError(400, 'Invalid uIds');
   }
-  console.log("HERE2!!!!!!!!!!!!!!!");
-
+  console.log('HERE2!!!!!!!!!!!!!!!');
 
   // Creating name bu sorting and joining handles of all users
   let name = '';
@@ -342,7 +341,7 @@ function dmMessages (token: string, dmId: number, start: number) {
   if (flag === -1) {
     throw HTTPError(403, 'Invalid Token');
   }
-  let uId = data.user[flag].authUserId;
+  const uId = data.user[flag].authUserId;
 
   // Validates dmId and if user is part of dm
   let validDmId = 0;
@@ -386,18 +385,17 @@ function dmMessages (token: string, dmId: number, start: number) {
   } else {
     end = start + 50;
   }
-  
+
   // Pushing the messages to a array
   for (let i = start; i < end; i++) {
-    if(data.dm[dmIndex].messages[i].reacts[0] !== undefined) {
-      for(let user of data.dm[dmIndex].messages[i].reacts[0].uIds) {
-        if(user === uId) {
+    if (data.dm[dmIndex].messages[i].reacts[0] !== undefined) {
+      for (const user of data.dm[dmIndex].messages[i].reacts[0].uIds) {
+        if (user === uId) {
           data.dm[dmIndex].messages[i].reacts[0].isThisUserReacted = true;
         }
       }
     }
     returnMessages.push(data.dm[dmIndex].messages[i]);
-
   }
   return { messages: returnMessages, start: start, end: returnEnd };
 }

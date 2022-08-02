@@ -1,6 +1,7 @@
 import validator from 'validator';
 import { dataType, getData, setData } from './dataStore';
 import { getHashOf } from './other';
+import HTTPError from 'http-errors';
 
 // Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.
 // Arguments:
@@ -20,22 +21,22 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   // check for valid email parameter
 
   if (validator.isEmail(email) !== true) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Invalid email');
   }
 
   // check for password parameter - is it less than 6 characters
   if (password.length < 6) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Invalid password');
   }
 
   // check for nameFirst parameter - less than 1 character or more than 50 characters
   if (nameFirst.length < 1 || nameFirst.length > 50) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Invalid first name');
   }
 
   // check for nameLast parameter - less than 1 character or more than 50 characters
   if (nameLast.length < 1 || nameLast.length > 50) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Invalid last name');
   }
 
   // concatenate handle
@@ -46,7 +47,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   let k = 0;
   for (let i = 0; i < data.user.length; i++) {
     if (email === data.user[i].email) {
-      return { error: 'error' };
+      throw HTTPError(400, 'Duplicate email');
     }
     if (handleName === data.user[i].handle) {
       handleName = handleName + k;
@@ -68,7 +69,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     return rand() + rand();
   };
 
-  const token = tokenGenerate();
+  const token = getHashOf(tokenGenerate());
 
   const j = data.user.length;
   data.user[j] = {
@@ -83,7 +84,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     token: [],
     notifications: []
   };
-  data.user[j].token.push(getHashOf(token));
+  data.user[j].token.push(token);
   setData(data);
 
   return { token: token, authUserId: uID };
@@ -100,40 +101,37 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
 // Returns { error: 'error' } on invalid password - The password must match the one in the database under the specific email
 
 function authLoginV1(email: string, password: string) {
-  const data = getData();
+  const data:dataType = getData();
   // counter to keep track of each index that is checked for dupe email
-  let k = 0;
+  let emailCheck = false;
+  let userIndex = -1;
   for (let i = 0; i < data.user.length; i++) {
     // check to see if email is in index
     if (email === data.user[i].email) {
-      k = 1;
+      emailCheck = true;
+      userIndex = i;
     }
   }
   // if the for loop as gone to the end and there is no matches then return error object
-  if (k === 0) {
-    return { error: 'error' };
+  if (emailCheck === false) {
+    throw HTTPError(400, 'Email does not belong to any user');
   }
-  for (let j = 0; j < data.user.length; j++) {
-    if (email === data.user[j].email) {
-      // check to see if password matches email in database
-      if (password === data.user[j].password) {
-        // generate token and store
-        const rand = () => {
-          return Math.random().toString(36).substr(2);
-        };
-        const tokenGenerate = () => {
-          return rand() + rand();
-        };
-        const token = tokenGenerate();
+  if (getHashOf(password) === data.user[userIndex].password) {
+    // generate token and store
+    const rand = () => {
+      return Math.random().toString(36).substr(2);
+    };
+    const tokenGenerate = () => {
+      return rand() + rand();
+    };
+    const token = tokenGenerate();
 
-        data.user[j].token.push(getHashOf(token));
-        setData(data);
+    data.user[userIndex].token.push(getHashOf(token));
+    setData(data);
 
-        return { token: token, authUserId: data.user[j].authUserId };
-      } else {
-        return { error: 'error' };
-      }
-    }
+    return { token: token, authUserId: data.user[userIndex].authUserId };
+  } else {
+    throw HTTPError(400, 'Incorrect password');
   }
 }
 
@@ -146,13 +144,14 @@ function authLoginV1(email: string, password: string) {
 // Returns { error: 'error' } on invalid token - token must be stored under user's data
 
 const authLogoutV1 = (token: string) => {
-  const data = getData();
+  const data:dataType = getData();
+  const hashedToken = getHashOf(token);
   // validate token by searching through all tokens associated with all users
   for (let i = 0; i < data.user.length; i++) {
     for (let j = 0; j < data.user[i].token.length; j++) {
       // if there is a match, invalidate it by splicing the value out
-      if (token === data.user[i].token[j]) {
-        const index = data.user[i].token.indexOf(token);
+      if (hashedToken === data.user[i].token[j]) {
+        const index = data.user[i].token.indexOf(hashedToken);
         if (index > -1) {
           data.user[i].token.splice(index, 1);
           setData(data);
@@ -161,7 +160,7 @@ const authLogoutV1 = (token: string) => {
       }
     }
   }
-  return { error: 'error' };
+  throw HTTPError(403, 'Invalid token');
 };
 
 export { authRegisterV1, authLoginV1, authLogoutV1 };

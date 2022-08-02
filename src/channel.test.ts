@@ -33,7 +33,7 @@ function callingChannelsCreate (token: string, name: string, isPublic: boolean) 
 function callingAuthRegister (email: string, password: string, nameFirst: string, nameLast: string) {
   const res = request(
     'POST',
-        `${url}:${port}/auth/register/v2`,
+        `${url}:${port}/auth/register/v3`,
         {
           body: JSON.stringify({
             email: email,
@@ -55,11 +55,11 @@ function callingChannelInvite (token:string, channelId: number, uId: number) {
         `${url}:${port}/channel/invite/v2`,
         {
           body: JSON.stringify({
-            token: token,
             channelId: channelId,
             uId: uId,
           }),
           headers: {
+            token: token,
             'Content-type': 'application/json',
           },
         }

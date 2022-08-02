@@ -1,48 +1,46 @@
-import { getData, setData, dmType, messageType, dataType } from './dataStore';
+import { getData, setData, dataType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
 
 export function messageReact(token: string, messageId: number, reactId: number) {
-  
-  let data: dataType = getData();
+  const data: dataType = getData();
 
   // Checking token
-  let flag = getTokenIndex(token, data);
-  if(flag === -1) {
+  const flag = getTokenIndex(token, data);
+  if (flag === -1) {
     throw HTTPError(403, 'Invalid Token');
   }
-  let uId = data.user[flag].authUserId;
+  const uId = data.user[flag].authUserId;
 
   // Checking if ReactId is valid
-  if(reactId !== 1) {
+  if (reactId !== 1) {
     throw HTTPError(400, 'Invalid ReactId');
   }
 
   let validMessageId = 0;
   let dmIndex = -1;
   let messageIndex = -1;
-  let reactIndex = 0;
+  const reactIndex = 0;
   let messageSender = -1;
-  for(let dm of data.dm) {
+  for (const dm of data.dm) {
     dmIndex++;
-    let dmId = dm.dmId;
-    let name = dm.name;
-    for(let message of dm.messages) {
+    const dmId = dm.dmId;
+    const name = dm.name;
+    for (const message of dm.messages) {
       messageIndex++;
-      if(message.messageId === messageId) {
+      if (message.messageId === messageId) {
         validMessageId = 1;
         messageSender = message.uId;
-        if(message.reacts[reactIndex] === undefined ) {
+        if (message.reacts[reactIndex] === undefined) {
           data.dm[dmIndex].messages[messageIndex].reacts.push({
             reactId: reactId,
             uIds: [uId],
             isThisUserReacted: false
           });
           notificaitonSender(flag, messageSender, data, -1, dmId, name);
-        }
-        else {
-          for(let user of message.reacts[reactIndex].uIds) {
-            if(user === uId) {
+        } else {
+          for (const user of message.reacts[reactIndex].uIds) {
+            if (user === uId) {
               throw HTTPError(400, 'Already Reacted');
             }
           }
@@ -56,26 +54,25 @@ export function messageReact(token: string, messageId: number, reactId: number) 
 
   let channelIndex = -1;
   messageIndex = -1;
-  for(let channel of data.channel) {
+  for (const channel of data.channel) {
     channelIndex++;
-    let channelId = channel.cId;
-    let name = channel.name;
-    for(let messages of channel.messages) {
+    const channelId = channel.cId;
+    const name = channel.name;
+    for (const messages of channel.messages) {
       messageIndex++;
-      if(messages.messageId === messageId) {
+      if (messages.messageId === messageId) {
         validMessageId = 1;
         messageSender = messages.uId;
-        if(messages.reacts[reactIndex] === undefined ) {
+        if (messages.reacts[reactIndex] === undefined) {
           data.channel[channelIndex].messages[messageIndex].reacts.push({
             reactId: reactId,
             uIds: [uId],
             isThisUserReacted: false
           });
           notificaitonSender(flag, messageSender, data, channelId, -1, name);
-        }
-        else {
-          for(let user of messages.reacts[reactIndex].uIds) {
-            if(user === uId) {
+        } else {
+          for (const user of messages.reacts[reactIndex].uIds) {
+            if (user === uId) {
               throw HTTPError(400, 'Already Reacted');
             }
           }
@@ -87,7 +84,7 @@ export function messageReact(token: string, messageId: number, reactId: number) 
     messageIndex = -1;
   }
 
-  if(validMessageId === 0) {
+  if (validMessageId === 0) {
     throw HTTPError(400, 'Invalid MessageId');
   }
 
@@ -95,17 +92,17 @@ export function messageReact(token: string, messageId: number, reactId: number) 
   return {};
 }
 export function messageUnreact(token: string, messageId: number, reactId: number) {
-  let data: dataType = getData();
+  const data: dataType = getData();
 
   // Checking token
-  let flag = getTokenIndex(token, data);
-  if(flag === -1) {
+  const flag = getTokenIndex(token, data);
+  if (flag === -1) {
     throw HTTPError(403, 'Invalid Token');
   }
-  let uId = data.user[flag].authUserId;
+  const uId = data.user[flag].authUserId;
 
   // Checking if ReactId is valid
-  if(reactId !== 1) {
+  if (reactId !== 1) {
     throw HTTPError(400, 'Invalid ReactId');
   }
 
@@ -113,24 +110,24 @@ export function messageUnreact(token: string, messageId: number, reactId: number
   let dmIndex = -1;
   let messageIndex = -1;
   let reactIndex = 0;
-  for(let dm of data.dm) {
+  for (const dm of data.dm) {
     dmIndex++;
-    for(let message of dm.messages) {
+    for (const message of dm.messages) {
       messageIndex++;
-      if(message.messageId === messageId) {
+      if (message.messageId === messageId) {
         validMessageId = 1;
         let validReact = 0;
         let userIndex = -1;
-        if(message.reacts[reactIndex] !== undefined) {
-          for(let user of message.reacts[reactIndex].uIds) {
+        if (message.reacts[reactIndex] !== undefined) {
+          for (const user of message.reacts[reactIndex].uIds) {
             userIndex++;
-            if(user === uId) {
+            if (user === uId) {
               validReact = 1;
               data.dm[dmIndex].messages[messageIndex].reacts[reactIndex].uIds.splice(userIndex, 1);
             }
           }
         }
-        if(validReact === 0) {
+        if (validReact === 0) {
           throw HTTPError(400, 'Not Reacted');
         }
       }
@@ -140,24 +137,24 @@ export function messageUnreact(token: string, messageId: number, reactId: number
   let channelIndex = -1;
   reactIndex = 0;
   messageIndex = -1;
-  for(let channel of data.channel) {
+  for (const channel of data.channel) {
     channelIndex++;
-    for(let message of channel.messages) {
+    for (const message of channel.messages) {
       messageIndex++;
-      if(message.messageId === messageId) {
+      if (message.messageId === messageId) {
         validMessageId = 1;
         let validReact = 0;
         let userIndex = -1;
-        if(message.reacts[reactIndex] !== undefined) {
-          for(let user of message.reacts[reactIndex].uIds) {
+        if (message.reacts[reactIndex] !== undefined) {
+          for (const user of message.reacts[reactIndex].uIds) {
             userIndex++;
-            if(user === uId) {
+            if (user === uId) {
               validReact = 1;
               data.channel[channelIndex].messages[messageIndex].reacts[reactIndex].uIds.splice(userIndex, 1);
             }
           }
-        } 
-        if(validReact === 0) {
+        }
+        if (validReact === 0) {
           throw HTTPError(400, 'Not Reacted');
         }
       }
@@ -165,7 +162,7 @@ export function messageUnreact(token: string, messageId: number, reactId: number
     messageIndex = -1;
   }
 
-  if(validMessageId === 0) {
+  if (validMessageId === 0) {
     throw HTTPError(400, 'Invalid MessageId');
   }
   setData(data);
@@ -174,16 +171,16 @@ export function messageUnreact(token: string, messageId: number, reactId: number
 
 function notificaitonSender(tagger: number, sender: number, data: dataType, channelId: number, dmId: number, name: string) {
   let userIndex = -1;
-  let taggerName = data.user[tagger].handle;
-  for(let user of data.user) {
+  const taggerName = data.user[tagger].handle;
+  for (const user of data.user) {
     userIndex++;
-    if(user.authUserId === sender) {
+    if (user.authUserId === sender) {
       data.user[userIndex].notifications.push({
         channelId: channelId,
         dmId: dmId,
-        notificationMessage: taggerName + " reacted to your message in " + name,
+        notificationMessage: taggerName + ' reacted to your message in ' + name,
         type: 2,
       });
     }
   }
-} 
+}

@@ -25,7 +25,7 @@ function callingChannelDetails (token: string, channelId: number) {
 function callingChannelJoin (token: string, channelId: number) {
   const res = request(
     'POST',
-        `${url}:${port}/channel/join/v2`,
+        `${url}:${port}/channel/join/v3`,
         {
           body: JSON.stringify({
             token: token,
@@ -57,7 +57,7 @@ function callingClear () {
 function callingAuthRegister (email:string, password:string, nameFirst:string, nameLast:string) {
   const res = request(
     'POST',
-        `${url}:${port}/auth/register/v2`,
+        `${url}:${port}/auth/register/v3`,
         {
           body: JSON.stringify({
             email: email,

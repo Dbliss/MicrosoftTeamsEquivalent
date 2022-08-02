@@ -41,6 +41,8 @@ import {
   messageRemoveV1,
   messageSenddmV2,
 } from './message';
+import { getNotifications } from './notifications';
+import { search } from './search';
 
 // Set up web app, use JSON
 const app = express();
@@ -67,7 +69,7 @@ app.get('/echo', (req, res, next) => {
 // handles errors nicely
 app.use(errorHandler());
 
-app.post('/auth/register/v2', (req, res, next) => {
+app.post('/auth/register/v3', (req, res, next) => {
   try {
     const { email, password, nameFirst, nameLast } = req.body;
     return res.json(authRegisterV1(email, password, nameFirst, nameLast));
@@ -76,7 +78,7 @@ app.post('/auth/register/v2', (req, res, next) => {
   }
 });
 
-app.post('/auth/login/v2', (req, res, next) => {
+app.post('/auth/login/v3', (req, res, next) => {
   try {
     const { email, password } = req.body;
     return res.json(authLoginV1(email, password));
@@ -87,8 +89,8 @@ app.post('/auth/login/v2', (req, res, next) => {
 
 app.post('/channel/invite/v2', (req, res, next) => {
   try {
-    const { token, channelId, uId } = req.body;
-    return res.json(channelInviteV2(token, channelId, uId));
+    const { channelId, uId } = req.body;
+    return res.json(channelInviteV2(req.headers.token as string, channelId, uId));
   } catch (err) {
     next(err);
   }
@@ -130,7 +132,7 @@ app.get('/channels/listall/v3', (req, res) => {
   res.json(channel);
 });
 
-app.post('/auth/logout/v1', (req, res, next) => {
+app.post('/auth/logout/v2', (req, res, next) => {
   try {
     const { token } = req.body;
     return res.json(authLogoutV1(token));
@@ -151,7 +153,7 @@ app.get('/channel/details/v2', (req, res, next) => {
   }
 });
 
-app.post('/channel/join/v2', (req, res, next) => {
+app.post('/channel/join/v3', (req, res, next) => {
   try {
     const { token, channelId } = req.body;
     return res.json(channelJoinV1(token, channelId));
@@ -194,10 +196,10 @@ app.get('/dm/messages/v2', (req, res) => {
   res.json(messages);
 });
 
-app.post('/channel/leave/v1', (req, res, next) => {
+app.post('/channel/leave/v3', (req, res, next) => {
   try {
-    const { token, channelId } = req.body;
-    return res.json(channelLeaveV1(token, channelId));
+    const { channelId } = req.body;
+    return res.json(channelLeaveV1(req.headers.token as string, channelId));
   } catch (err) {
     next(err);
   }
@@ -229,10 +231,10 @@ app.get('/users/all/v1', (req, res, next) => {
     next(err);
   }
 });
-app.post('/channel/addowner/v1', (req, res, next) => {
+app.post('/channel/addowner/v2', (req, res, next) => {
   try {
-    const { token, channelId, uId } = req.body;
-    return res.json(channelAddOwnerV1(token, channelId, uId));
+    const { channelId, uId } = req.body;
+    return res.json(channelAddOwnerV1(req.headers.token as string, channelId, uId));
   } catch (err) {
     next(err);
   }
@@ -265,10 +267,10 @@ app.put('/user/profile/setemail/v1', (req, res, next) => {
     next(err);
   }
 });
-app.post('/channel/removeowner/v1', (req, res, next) => {
+app.post('/channel/removeowner/v2', (req, res, next) => {
   try {
-    const { token, channelId, uId } = req.body;
-    return res.json(channelRemoveOwnerV1(token, channelId, uId));
+    const { channelId, uId } = req.body;
+    return res.json(channelRemoveOwnerV1(req.headers.token as string, channelId, uId));
   } catch (err) {
     next(err);
   }
@@ -295,6 +297,16 @@ app.post('/message/senddm/v2', (req, res) => {
   const token = req.headers.token;
   const leave = messageSenddmV2(token as string, dmId, message);
   res.json(leave);
+});
+
+app.get('/notifications/get/v1', (req, res) => {
+  const notifications = getNotifications(req.headers.token as string);
+  res.json(notifications);
+});
+
+app.get('/search/v1', (req, res) => {
+  const messages = search(req.headers.token as string, req.query.queryStr as string);
+  res.json(messages);
 });
 
 // start server

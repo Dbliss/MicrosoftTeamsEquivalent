@@ -2,26 +2,10 @@ import request from 'sync-request';
 import config from './config.json';
 
 const OK = 200;
+const BADREQ = 400;
+const FORBID = 403;
 const port = config.port;
 const url = config.url;
-
-const post = (path: any, body: any) => {
-  const res = request(
-    'POST',
-        `${url}:${port}/${path}`,
-        {
-          body: JSON.stringify(body),
-          headers: {
-            'Content-type': 'application/json'
-          },
-        }
-  );
-  let bodyObj: any;
-  if (res.statusCode === OK) {
-    bodyObj = JSON.parse(res.body as string);
-  }
-  return bodyObj;
-};
 
 function callingClear () {
   const res = request(
@@ -34,509 +18,598 @@ function callingClear () {
 // wrapper functions
 
 function requestChannelLeave(token: string, channelId: number) {
-  return post('channel/leave/v1', { token, channelId });
+  const res = request(
+    'POST',
+        `${url}:${port}/channel/leave/v3`,
+        {
+          body: JSON.stringify({
+            channelId: channelId
+          }),
+          headers: {
+            token: token,
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
 }
 
 function requestAddOwner(token: string, channelId: number, uId: number) {
-  return post('channel/addowner/v1', { token, channelId, uId });
+  const res = request(
+    'POST',
+        `${url}:${port}/channel/addowner/v2`,
+        {
+          body: JSON.stringify({
+            channelId: channelId,
+            uId: uId
+          }),
+          headers: {
+            token: token,
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
 }
 
 function requestRemoveOwner(token:string, channelId: number, uId: number) {
-  return post('channel/removeowner/v1', { token, channelId, uId });
+  const res = request(
+    'POST',
+        `${url}:${port}/channel/removeowner/v2`,
+        {
+          body: JSON.stringify({
+            channelId: channelId,
+            uId: uId
+          }),
+          headers: {
+            token: token,
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
 }
 
 function requestAuthRegister(email: string, password: string, nameFirst: string, nameLast: string) {
-  return post('auth/register/v2', { email, password, nameFirst, nameLast });
+  const res = request(
+    'POST',
+        `${url}:${port}/auth/register/v3`,
+        {
+          body: JSON.stringify({
+            email: email,
+            password: password,
+            nameFirst: nameFirst,
+            nameLast: nameLast
+          }),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
 }
 
 function requestChannelsCreate(token: string, name: string, isPublic: boolean) {
-  return post('channels/create/v3', { token, name, isPublic });
+  const res = request(
+    'POST',
+        `${url}:${port}/channels/create/v3`,
+        {
+          body: JSON.stringify({
+            name: name,
+            isPublic: isPublic
+          }),
+          headers: {
+            token: token,
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
 }
 
-function requestChannelJoin(token: string, channelId: number) {
-  return post('channel/join/v2', { token, channelId });
+function requestChannelInvite(token: string, channelId: number, uId: number) {
+  const res = request(
+    'POST',
+        `${url}:${port}/channel/invite/v2`,
+        {
+          body: JSON.stringify({
+            channelId: channelId,
+            uId: uId
+          }),
+          headers: {
+            token: token,
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
 }
 
 describe('channel/leave/v1', () => {
   test('Success', () => {
-    callingClear();
-    const owner = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const tokenTest = owner.token;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
+    expect(auth.statusCode).toBe(OK);
+    const owner = JSON.parse(String(auth.getBody()));
+    const res = requestChannelsCreate(
+      owner.token,
       'name',
-      false
+      true
     );
-    const bodyObj = requestChannelLeave(tokenTest, channelIdTest);
-    expect(bodyObj).toMatchObject({});
-  });
-  test('Invalid token', () => {
-    callingClear();
-    const bodyObj = requestChannelLeave('', 1);
-    expect(bodyObj).toMatchObject({ error: 'error' });
-  });
-  test('invalid channelId', () => {
-    callingClear();
-    const bodyObj = requestAuthRegister(
-      'email@email.com',
-      'password123',
-      'first',
-      'last'
-    );
-    const tokenTest = bodyObj.token;
-    const bodyObj1 = requestChannelLeave(tokenTest, -1);
-    expect(bodyObj1).toMatchObject({ error: 'error' });
-  });
-  test('authorised user not a member of the channel', () => {
-    callingClear();
-    const owner = requestAuthRegister(
-      'email@email.com',
-      'password123',
-      'first',
-      'last'
-    );
-    const tokenTest = owner.token;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
-      'name',
-      false
-    );
-    const nonMember = requestAuthRegister(
+    expect(res.statusCode).toBe(OK);
+    const channel = JSON.parse(String(res.getBody()));
+    const auth1 = requestAuthRegister(
       'email1@email.com',
       'password123',
       'first1',
       'last1'
     );
-    const tokenTest1 = nonMember.token;
-    const bodyObj = requestChannelLeave(
-      tokenTest1,
-      channelIdTest
+    expect(auth1.statusCode).toBe(OK);
+    const member = JSON.parse(String(auth1.getBody()));
+    const invite = requestChannelInvite(owner.token, channel.channelId, member.authUserId);
+    expect(invite.statusCode).toBe(OK);
+    const invited = JSON.parse(String(invite.getBody()));
+    expect(invited).toStrictEqual({});
+    const leave = requestChannelLeave(member.token, channel.channelId);
+    expect(leave.statusCode).toBe(OK);
+    const bodyObj = JSON.parse(String(leave.getBody()));
+    expect(bodyObj).toMatchObject({});
+  });
+
+  test('Invalid token', () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const res = requestChannelLeave('', 1);
+    expect(res.statusCode).toBe(FORBID);
+  });
+
+  test('invalid channelId', () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
+      'email@email.com',
+      'password123',
+      'first',
+      'last'
     );
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    const owner = JSON.parse(String(auth.getBody()));
+    const res = requestChannelsCreate(
+      owner.token,
+      'name',
+      false
+    );
+    expect(res.statusCode).toBe(OK);
+    const bodyObj1 = requestChannelLeave(owner.token, 1);
+    expect(bodyObj1.statusCode).toBe(BADREQ);
+  });
+
+  test('authorised user not a member of the channel', () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
+      'email@email.com',
+      'password123',
+      'first',
+      'last'
+    );
+    expect(auth.statusCode).toBe(OK);
+    const owner = JSON.parse(String(auth.getBody()));
+    const channelId = requestChannelsCreate(
+      owner.token,
+      'name',
+      true
+    );
+    expect(channelId.statusCode).toBe(OK);
+    const channel = JSON.parse(String(channelId.getBody()));
+    const auth1 = requestAuthRegister(
+      'email1@email.com',
+      'password123',
+      'first1',
+      'last1'
+    );
+    expect(auth1.statusCode).toBe(OK);
+    const member = JSON.parse(String(auth1.getBody()));
+    const res = requestChannelLeave(
+      member.token,
+      channel.channelId
+    );
+    expect(res.statusCode).toBe(FORBID);
   });
 });
 
 describe('channel/addowner/v1', () => {
   test('success', () => {
-    const user = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const tokenTest = user.token;
-    const uId = user.authUserId;
-    const owner = requestAuthRegister(
+    expect(auth.statusCode).toBe(OK);
+    const owner = JSON.parse(String(auth.getBody()));
+    const auth1 = requestAuthRegister(
       'email1@email.com',
       'password123',
       'first1',
       'last1'
     );
-    const tokenTest1 = owner.token;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest1,
+    expect(auth1.statusCode).toBe(OK);
+    const member = JSON.parse(String(auth1.getBody()));
+    const create = requestChannelsCreate(
+      owner.token,
       'name',
-      false
+      true
     );
-    const bodyObj = requestAddOwner(tokenTest, channelIdTest, uId);
-    expect(bodyObj).toMatchObject({});
+    const channel = JSON.parse(String(create.getBody()));
+    requestChannelInvite(owner.token, channel.channelId, member.authUserId);
+    const bodyObj = requestAddOwner(owner.token, channel.channelId, member.authUserId);
+    expect(bodyObj.statusCode).toBe(OK);
+    const added = JSON.parse(String(bodyObj.getBody()));
+    expect(added).toStrictEqual({});
   });
+
   test('invalid token', () => {
-    callingClear();
-    const user = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const uId = user.authUserId;
-    const owner = requestAuthRegister(
+    const owner = JSON.parse(String(auth.getBody()));
+    const auth1 = requestAuthRegister(
       'email1@email.com',
       'password123',
       'first1',
       'last1'
     );
-    const tokenTest = owner.token;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
+    const member = JSON.parse(String(auth1.getBody()));
+    const create = requestChannelsCreate(
+      owner.token,
       'name',
-      false
+      true
     );
-    const bodyObj = requestAddOwner('', channelIdTest, uId);
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    const channel = JSON.parse(String(create.getBody()));
+    const bodyObj = requestAddOwner('', channel.channelId, member.authUserId);
+    expect(bodyObj.statusCode).toBe(FORBID);
   });
+
   test('channelId invalid', () => {
-    callingClear();
-    const user = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const tokenTest = user.token;
-    const authUserId = user.authUserId;
-    const bodyObj = requestAddOwner(
-      tokenTest,
-      -1,
-      authUserId
+    const owner = JSON.parse(String(auth.getBody()));
+    const auth1 = requestAuthRegister(
+      'email1@email.com',
+      'password123',
+      'first1',
+      'last1'
     );
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    const member = JSON.parse(String(auth1.getBody()));
+    requestChannelsCreate(
+      owner.token,
+      'name',
+      true
+    );
+    const bodyObj = requestAddOwner(owner.token, -1, member.authUserId);
+    expect(bodyObj.statusCode).toBe(BADREQ);
   });
+
   test('invalid uId', () => {
-    callingClear();
-    const owner = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const tokenTest = owner.token;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
+    const owner = JSON.parse(String(auth.getBody()));
+    requestAuthRegister(
+      'email1@email.com',
+      'password123',
+      'first1',
+      'last1'
+    );
+    const create = requestChannelsCreate(
+      owner.token,
       'name',
-      false
+      true
     );
-    const bodyObj = requestAddOwner(
-      tokenTest,
-      channelIdTest,
-      -1
-    );
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    const channel = JSON.parse(String(create.getBody()));
+    const bodyObj = requestAddOwner(owner.token, channel.channelId, -1);
+    expect(bodyObj.statusCode).toBe(BADREQ);
   });
+
   test('uId refers to user who is not a member of the channel', () => {
-    callingClear();
-    const owner = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const tokenTest = owner.token;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
-      'name',
-      false
-    );
-    const user = requestAuthRegister(
+    const owner = JSON.parse(String(auth.getBody()));
+    const auth1 = requestAuthRegister(
       'email1@email.com',
       'password123',
       'first1',
       'last1'
     );
-    const userId = user.authUserId;
-    const tokenTest1 = user.token;
-    const bodyObj = requestAddOwner(
-      tokenTest1,
-      channelIdTest,
-      userId
+    const member = JSON.parse(String(auth1.getBody()));
+    const create = requestChannelsCreate(
+      owner.token,
+      'name',
+      true
     );
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    const channel = JSON.parse(String(create.getBody()));
+    const bodyObj = requestAddOwner(owner.token, channel.channelId, member.authUserId);
+    expect(bodyObj.statusCode).toBe(BADREQ);
   });
+
   test('uId refers to an owner of the channel', () => {
-    callingClear();
-    const owner = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const tokenTest = owner.token;
-    const userId = owner.authUserId;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
+    const owner = JSON.parse(String(auth.getBody()));
+    const create = requestChannelsCreate(
+      owner.token,
       'name',
-      false
+      true
     );
-    const bodyObj = requestAddOwner(
-      tokenTest,
-      channelIdTest,
-      userId
-    );
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    const channel = JSON.parse(String(create.getBody()));
+    const bodyObj = requestAddOwner(owner.token, channel.channelId, owner.authUserId);
+    expect(bodyObj.statusCode).toBe(BADREQ);
   });
+
   test('channelId is valid, authorised user does not have owner permissions in the channel', () => {
-    callingClear();
-    const owner = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const tokenTest = owner.token;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
-      'name',
-      false
-    );
-    const user = requestAuthRegister(
+    const member1 = JSON.parse(String(auth.getBody()));
+    const auth1 = requestAuthRegister(
       'email1@email.com',
       'password123',
       'first1',
       'last1'
     );
-    const tokenTest1 = user.token;
-    const userId = user.authUserId;
-    const bodyObj = requestAddOwner(
-      tokenTest1,
-      channelIdTest,
-      userId
-    );
-    expect(bodyObj).toMatchObject({ error: 'error' });
-  });
-  test('channel owner can add owner when member', () => {
-    callingClear();
-    const owner = requestAuthRegister(
-      'email@email.com',
-      'password123',
-      'first',
-      'last'
-    );
-    const tokenTest = owner.token;
-    const member = requestAuthRegister(
-      'email1@email.com',
-      'password123',
-      'first1',
-      'last1'
-    );
-    const tokenTest1 = member.token;
-    const userId = member.authUserId;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
+    const member2 = JSON.parse(String(auth1.getBody()));
+    const create = requestChannelsCreate(
+      member2.token,
       'name',
-      false
+      true
     );
-    requestChannelJoin(
-      tokenTest1,
-      channelIdTest
-    );
-    const bodyObj = requestAddOwner(
-      tokenTest1,
-      channelIdTest,
-      userId
-    );
-    expect(bodyObj).toMatchObject({});
+    const channel = JSON.parse(String(create.getBody()));
+    requestChannelInvite(member2.token, channel.channelId, member1.authUserId);
+    const bodyObj = requestAddOwner(member1.token, channel.channelId, member1.authUserId);
+    expect(bodyObj.statusCode).toBe(FORBID);
   });
 });
 
 describe('channel/removeowner/v1', () => {
   test('success', () => {
-    callingClear();
-    const user = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const tokenTest = user.token;
-    const userId = user.authUserId;
-    const owner = requestAuthRegister(
+    expect(auth.statusCode).toBe(OK);
+    const owner = JSON.parse(String(auth.getBody()));
+    const auth1 = requestAuthRegister(
       'email1@email.com',
       'password123',
       'first1',
       'last1'
     );
-    const tokenTest1 = owner.token;
-    const userId1 = owner.authUserId;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest1,
+    expect(auth1.statusCode).toBe(OK);
+    const member = JSON.parse(String(auth1.getBody()));
+    const create = requestChannelsCreate(
+      owner.token,
       'name',
-      false
+      true
     );
-    requestAddOwner(
-      tokenTest,
-      channelIdTest,
-      userId
-    );
-    const bodyObj = requestRemoveOwner(
-      tokenTest1,
-      -1,
-      userId1
-    );
-    expect(bodyObj).toMatchObject({});
+    const channel = JSON.parse(String(create.getBody()));
+    requestChannelInvite(owner.token, channel.channelId, member.authUserId);
+    const added = requestAddOwner(owner.token, channel.channelId, member.authUserId);
+    expect(added.statusCode).toBe(OK);
+    const remove = requestRemoveOwner(owner.token, channel.channelId, member.authUserId);
+    expect(remove.statusCode).toBe(OK);
+    const removed = JSON.parse(String(remove.getBody()));
+    expect(removed).toStrictEqual({});
   });
+
   test('invalid token', () => {
-    callingClear();
-    const user = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const uId = user.authUserId;
-    const owner = requestAuthRegister(
+    expect(auth.statusCode).toBe(OK);
+    const owner = JSON.parse(String(auth.getBody()));
+    const auth1 = requestAuthRegister(
       'email1@email.com',
       'password123',
       'first1',
       'last1'
     );
-    const tokenTest = owner.token;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
+    expect(auth1.statusCode).toBe(OK);
+    const member = JSON.parse(String(auth1.getBody()));
+    const create = requestChannelsCreate(
+      owner.token,
       'name',
-      false
+      true
     );
-    const bodyObj = requestRemoveOwner('', channelIdTest, uId);
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    const channel = JSON.parse(String(create.getBody()));
+    requestChannelInvite(owner.token, channel.channelId, member.authUserId);
+    const added = requestAddOwner(owner.token, channel.channelId, member.authUserId);
+    expect(added.statusCode).toBe(OK);
+    const remove = requestRemoveOwner('', channel.channelId, member.authUserId);
+    expect(remove.statusCode).toBe(FORBID);
   });
+
   test('channelId invalid', () => {
-    callingClear();
-    const user = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const tokenTest = user.token;
-    const authUserId = user.authUserId;
-    const bodyObj = requestRemoveOwner(
-      tokenTest,
-      -1,
-      authUserId
+    expect(auth.statusCode).toBe(OK);
+    const owner = JSON.parse(String(auth.getBody()));
+    const auth1 = requestAuthRegister(
+      'email1@email.com',
+      'password123',
+      'first1',
+      'last1'
     );
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    expect(auth1.statusCode).toBe(OK);
+    const member = JSON.parse(String(auth1.getBody()));
+    const create = requestChannelsCreate(
+      owner.token,
+      'name',
+      true
+    );
+    const channel = JSON.parse(String(create.getBody()));
+    requestChannelInvite(owner.token, channel.channelId, member.authUserId);
+    const added = requestAddOwner(owner.token, channel.channelId, member.authUserId);
+    expect(added.statusCode).toBe(OK);
+    const remove = requestRemoveOwner(owner.token, -1, member.authUserId);
+    expect(remove.statusCode).toBe(BADREQ);
   });
   test('invalid uId', () => {
-    callingClear();
-    const owner = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const tokenTest = owner.token;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
+    expect(auth.statusCode).toBe(OK);
+    const owner = JSON.parse(String(auth.getBody()));
+    const auth1 = requestAuthRegister(
+      'email1@email.com',
+      'password123',
+      'first1',
+      'last1'
+    );
+    expect(auth1.statusCode).toBe(OK);
+    const member = JSON.parse(String(auth1.getBody()));
+    const create = requestChannelsCreate(
+      owner.token,
       'name',
-      false
+      true
     );
-    const bodyObj = requestRemoveOwner(
-      tokenTest,
-      channelIdTest,
-      -1
-    );
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    const channel = JSON.parse(String(create.getBody()));
+    requestChannelInvite(owner.token, channel.channelId, member.authUserId);
+    const added = requestAddOwner(owner.token, channel.channelId, member.authUserId);
+    expect(added.statusCode).toBe(OK);
+    const remove = requestRemoveOwner(owner.token, channel.channelId, -1);
+    expect(remove.statusCode).toBe(BADREQ);
   });
+
   test('uId refers to user who is not an owner of the channel', () => {
-    callingClear();
-    const owner = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const tokenTest = owner.token;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
+    const owner = JSON.parse(String(auth.getBody()));
+    const create = requestChannelsCreate(
+      owner.token,
       'name',
-      false
+      true
     );
-    const user = requestAuthRegister(
+    const channel = JSON.parse(String(create.getBody()));
+    const auth1 = requestAuthRegister(
       'email1@email.com',
       'password123',
       'first1',
       'last1'
     );
-    const userId = user.authUserId;
-    const tokenTest1 = user.token;
+    const member = JSON.parse(String(auth1.getBody()));
+    requestChannelInvite(owner.token, channel.channelId, member.authUserId);
     const bodyObj = requestRemoveOwner(
-      tokenTest1,
-      channelIdTest,
-      userId
+      owner.token,
+      channel.channelId,
+      member.authUserId
     );
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    expect(bodyObj.statusCode).toBe(BADREQ);
   });
+
   test('uId refers to the only owner of the channel', () => {
-    callingClear();
-    const owner = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const tokenTest = owner.token;
-    const userId = owner.authUserId;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
+    const owner = JSON.parse(String(auth.getBody()));
+    const create = requestChannelsCreate(
+      owner.token,
       'name',
-      false
+      true
     );
-    const bodyObj = requestRemoveOwner(
-      tokenTest,
-      channelIdTest,
-      userId
+    const channel = JSON.parse(String(create.getBody()));
+    const remove = requestRemoveOwner(
+      owner.token,
+      channel.channelId,
+      owner.authUserId
     );
-    expect(bodyObj).toMatchObject({ error: 'error' });
+    expect(remove.statusCode).toBe(BADREQ);
   });
+
   test('channelId is valid, authorised user does not have owner permissions in the channel', () => {
-    callingClear();
-    const owner = requestAuthRegister(
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = requestAuthRegister(
       'email@email.com',
       'password123',
       'first',
       'last'
     );
-    const tokenTest = owner.token;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
+    const owner = JSON.parse(String(auth.getBody()));
+    const create = requestChannelsCreate(
+      owner.token,
       'name',
-      false
+      true
     );
-    const user = requestAuthRegister(
+    const channel = JSON.parse(String(create.getBody()));
+    const auth1 = requestAuthRegister(
       'email1@email.com',
       'password123',
       'first1',
       'last1'
     );
-    const tokenTest1 = user.token;
-    const userId = user.authUserId;
-    const bodyObj = requestRemoveOwner(
-      tokenTest1,
-      channelIdTest,
-      userId
+    const member = JSON.parse(String(auth1.getBody()));
+    requestChannelInvite(owner.token, channel.channelId, member.authUserId);
+    const add = requestAddOwner(owner.token, channel.channelId, member.authUserId);
+    expect(add.statusCode).toBe(OK);
+    const remove = requestRemoveOwner(
+      member.token,
+      channel.channelId,
+      member.authUserId
     );
-    expect(bodyObj).toMatchObject({ error: 'error' });
-  });
-  test('channel owner can add owner when member', () => {
-    callingClear();
-    const owner = requestAuthRegister(
-      'email@email.com',
-      'password123',
-      'first',
-      'last'
-    );
-    const tokenTest = owner.token;
-    const member = requestAuthRegister(
-      'email1@email.com',
-      'password123',
-      'first1',
-      'last1'
-    );
-    const tokenTest1 = member.token;
-    const userId = member.authUserId;
-    const channelIdTest = requestChannelsCreate(
-      tokenTest,
-      'name',
-      false
-    );
-    requestChannelJoin(
-      tokenTest1,
-      channelIdTest
-    );
-    requestAddOwner(
-      tokenTest1,
-      channelIdTest,
-      userId
-    );
-    const bodyObj = requestRemoveOwner(
-      tokenTest1,
-      channelIdTest,
-      userId
-    );
-    expect(bodyObj).toMatchObject({});
+    expect(remove.statusCode).toBe(FORBID);
   });
 });

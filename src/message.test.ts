@@ -84,7 +84,7 @@ function callingMessageEdit (token: string, messageId: number, message: string) 
           }
   );
   return res;
-} 
+}
 
 function callingMessageRemove (token: string, messageId: number) {
   const res = request(
@@ -468,7 +468,7 @@ describe('Testing messageRemove', () => {
 
     const res4 = callingMessageRemove(user2.token, message1.messageId);
     expect(res4.statusCode).toBe(403);
-  }); 
+  });
 
   test('invalid token test', () => {
     const res = callingClear();

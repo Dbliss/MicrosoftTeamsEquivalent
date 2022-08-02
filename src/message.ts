@@ -1,7 +1,6 @@
 import { getData, setData, channelType, messageType, dataType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
-import { getHashOf } from './other';
 
 function messageSendV1(token: string, channelId: number, message: string) {
   const data:dataType = getData();
@@ -111,6 +110,7 @@ function messageEditV1(token: string, messageId: number, message: string) {
   if (tokenIndex === -1) {
     return { error: 'error' };
   }
+  let uId = 0;
   let isDmMember = false;
   let isDmOwner = false;
   let isOwnerMember = false;
@@ -127,8 +127,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
     }
   }
 
-  // checking if the token user
-
   // checking the length of the message is within parameters
   if (message.length > 1000) {
     return { error: 'error' };
@@ -139,7 +137,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
   if (message.length === 0) {
     deleteCondition = true;
   }
-  let uId = 0;
   let timeSent = 0;
 
   // Need to check if the message is a dm or channel message
@@ -239,30 +236,16 @@ function messageEditV1(token: string, messageId: number, message: string) {
 
   // editing the message for the channel case
   if (isChannelMessage === true) {
-    let key1 = -1;
     for (let i = 0; i < data.channel.length; i++) {
       for (let j = 0; i < data.channel[i].messages.length; j++) {
         if (data.channel[i].messages[j].messageId === messageId) {
-          key1 = i;
           newMessage.uId = data.channel[i].messages[j].uId;
           newMessage.timeSent = data.channel[i].messages[j].timeSent;
+          // checking the channel contains the person calling the function
           deleteCondition === true ? data.channel[i].messages.splice(j, 1) : data.channel[i].messages.splice(j, 1, newMessage);
           break;
         }
       }
-    }
-
-    // checking the user is a member of the channel
-    let flag = 0;
-    for (const member of data.channel[key1].members) {
-      for (const tokenn of member.token) {
-        if (tokenn === getHashOf(token)) {
-          flag = 1;
-        }
-      }
-    }
-    if (flag === 0) {
-      return { error: 'error' };
     }
   }
   // editing the message for the dm case

@@ -48,7 +48,7 @@ type channelsType = {
 
 type reactsType = {
   reactId: number,
-  uIds: number,
+  uIds: number[],
   isThisUserReacted: boolean
 }
 

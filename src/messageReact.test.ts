@@ -135,7 +135,7 @@ describe("Testing Message React", () => {
     const res = callingMessageReact(registered1.token, messageCreated.messageId, 2);
     expect(res.statusCode).toBe(400);
   });
-  test("React already exists", () => {
+  test("React already exists DM", () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -152,7 +152,7 @@ describe("Testing Message React", () => {
     const registered2 = JSON.parse(String(auth2.getBody()));
 
     const dm = callingDmCreate(registered1.token, [registered2.authUserId]);
-    expect(dm.statusCode).toBe(OK);6
+    expect(dm.statusCode).toBe(OK);
     const dmCreated = JSON.parse(String(dm.getBody()));
 
     const message = callingMessageSendDm(registered1.token, dmCreated.dmId, "Message");
@@ -165,6 +165,40 @@ describe("Testing Message React", () => {
     const res2 = callingMessageReact(registered1.token, messageCreated.messageId, 1);
     expect(res2.statusCode).toBe(400);
   });
+
+  test("React already Exists Channel", () =>{
+    expect(callingClear().statusCode).toBe(OK);
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    expect(auth1.statusCode).toBe(OK);
+    const registered1 = JSON.parse(String(auth1.getBody()));
+
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    expect(auth2.statusCode).toBe(OK);
+    const registered2 = JSON.parse(String(auth2.getBody()));
+
+    const channel = callingChannelsCreate(registered1.token, "Name", false);
+    expect(channel.statusCode).toBe(OK);
+    const channelCreated = JSON.parse(String(channel.getBody()));
+
+    const message = callingMessageSend(registered1.token, channelCreated.channelId, "Message");
+    expect(message.statusCode).toBe(OK);
+    const messageCreated = JSON.parse(String(message.getBody()));
+
+    const res = callingMessageReact(registered1.token, messageCreated.messageId, 1);
+    expect(res.statusCode).toBe(OK);
+    const result = JSON.parse(String(res.getBody()));
+    expect(result).toStrictEqual({});
+
+    const res3 = callingMessageReact(registered1.token, messageCreated.messageId, 1);
+    expect(res3.statusCode).toBe(400);
+  });
+
   test("Valid Parameters DM Message", () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth1 = callingAuthRegister('email@email.com',
@@ -194,6 +228,11 @@ describe("Testing Message React", () => {
     const result = JSON.parse(String(res.getBody()));
     expect(result).toStrictEqual({});
 
+    const res3 = callingMessageReact(registered2.token, messageCreated.messageId, 1);
+    expect(res3.statusCode).toBe(OK);
+    const result3 = JSON.parse(String(res3.getBody()));
+    expect(result3).toStrictEqual({});
+
     const res2 = callingDmMessages(registered1.token, dmCreated.dmId, 0);
     expect(res2.statusCode).toBe(OK);
     const result2 = JSON.parse(String(res2.getBody()));
@@ -206,7 +245,7 @@ describe("Testing Message React", () => {
         timeSent: expect.any(Number), 
         reacts: [{
           reactId: 1, 
-          uIds: [registered1.authUserId], 
+          uIds: [registered1.authUserId, registered2.authUserId], 
           isThisUserReacted: true
         }], 
         isPinned: false
@@ -244,6 +283,11 @@ describe("Testing Message React", () => {
     const result = JSON.parse(String(res.getBody()));
     expect(result).toStrictEqual({});
 
+    const res3 = callingMessageReact(registered2.token, messageCreated.messageId, 1);
+    expect(res3.statusCode).toBe(OK);
+    const result3 = JSON.parse(String(res3.getBody()));
+    expect(result3).toStrictEqual({});
+
     const res2 = callingChannelMessages(registered1.token, channelCreated.channelId, 0);
     expect(res2.statusCode).toBe(OK);
     const result2 = JSON.parse(String(res2.getBody()));
@@ -256,7 +300,7 @@ describe("Testing Message React", () => {
         timeSent: expect.any(Number), 
         reacts: [{
           reactId: 1, 
-          uIds: [registered1.authUserId], 
+          uIds: [registered1.authUserId, registered2.authUserId], 
           isThisUserReacted: true
         }], 
         isPinned: false
@@ -358,7 +402,7 @@ describe("Testing Message Unreact", () => {
     const res2 = callingMessageUnreact(registered1.token, messageCreated.messageId, 2);
     expect(res2.statusCode).toBe(400);
   });
-  test("React doesnt exists", () => {
+  test("React doesnt exists DM", () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth1 = callingAuthRegister('email@email.com',
       'password',
@@ -387,6 +431,33 @@ describe("Testing Message Unreact", () => {
 
     const res2 = callingMessageUnreact(registered1.token, messageCreated.messageId, 1);
     expect(res2.statusCode).toBe(400);
+  });
+  test("React doesnt Exists Channel", () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const auth1 = callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last');
+    expect(auth1.statusCode).toBe(OK);
+    const registered1 = JSON.parse(String(auth1.getBody()));
+
+    const auth2 = callingAuthRegister('email2@email.com',
+      'password2',
+      'First2',
+      'Last2');
+    expect(auth2.statusCode).toBe(OK);
+    const registered2 = JSON.parse(String(auth2.getBody()));
+
+    const channel = callingChannelsCreate(registered1.token, "Name", false);
+    expect(channel.statusCode).toBe(OK);
+    const channelCreated = JSON.parse(String(channel.getBody()));
+
+    const message = callingMessageSend(registered1.token, channelCreated.channelId, "Message");
+    expect(message.statusCode).toBe(OK);
+    const messageCreated = JSON.parse(String(message.getBody()));
+
+    const res3 = callingMessageUnreact(registered1.token, messageCreated.messageId, 1);
+    expect(res3.statusCode).toBe(400);
   });
   test("Valid Parameters DM Messages", () => {
     expect(callingClear().statusCode).toBe(OK);
@@ -432,8 +503,8 @@ describe("Testing Message Unreact", () => {
         timeSent: expect.any(Number), 
         reacts: [{
           reactId: 1, 
-          uIds: [registered1.authUserId], 
-          isThisUserReacted: true
+          uIds: [], 
+          isThisUserReacted: false
         }], 
         isPinned: false
       }],
@@ -483,7 +554,11 @@ describe("Testing Message Unreact", () => {
         uId: registered1.authUserId, 
         message: "Message", 
         timeSent: expect.any(Number), 
-        reacts: [], 
+        reacts: [{
+          reactId: 1, 
+          uIds: [], 
+          isThisUserReacted: false
+        }], 
         isPinned: false
       }],
       start: 0,
@@ -491,3 +566,5 @@ describe("Testing Message Unreact", () => {
     })
   });
 });
+
+export {callingMessageReact}

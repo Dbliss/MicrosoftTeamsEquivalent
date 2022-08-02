@@ -81,14 +81,14 @@ function messageSendV1(token: string, channelId: number, message: string) {
   }
 
   const userIndex = getTokenIndex(token, data);
-
+  console.log("HANDELS = " + handles);
   // Cutting message for notification
   const sedingMessage = message.slice(0, 20);
-  console.log(handles);
   // Sending the notification
   for (const handle of handles) {
     for (const user in data.user) {
       if (data.user[user].handle === handle) {
+        console.log("HERE!!!!!!!!!!!!  " + user);
         data.user[user].notifications.push({
           channelId: channelId,
           dmId: -1,
@@ -106,7 +106,6 @@ function messageSendV1(token: string, channelId: number, message: string) {
 
 function messageEditV1(token: string, messageId: number, message: string) {
   const data: dataType = getData();
-  console.log(messageId);
   const tokenIndex = getTokenIndex(token, data);
   // checking the token is valid
   if (tokenIndex === -1) {
@@ -156,8 +155,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
 
   for (let i = 0; i < data.channel.length; i++) {
     for (const message of data.channel[i].messages) {
-      console.log(message.messageId);
-      console.log(messageId);
       if (message.messageId === messageId) {
         validMessageId = true;
         uId = message.uId;
@@ -429,7 +426,7 @@ function messageSenddmV2 (token: string, dmId: number, message: string) {
 
   // Cutting message for notification
   const sedingMessage = message.slice(0, 20);
-  console.log(handles);
+
   // Sending the notification
   for (const handle of handles) {
     for (const user in data.user) {

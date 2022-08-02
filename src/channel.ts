@@ -241,7 +241,7 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
 
   // if no channels have been created return an error
   if (JSON.stringify(data.channel) === JSON.stringify([])) {
-    return { error: 'error' };
+    throw HTTPError(400, 'channelId does not refer to a valid channel');
   }
 
   // checking the channelId is valid and setting currentChannel to the valid channel
@@ -260,15 +260,19 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
   }
 
   // checking valid inputted channelId and uId
-  if (validChannel === false || validUid === false) {
-    return { error: 'error' };
+  if (validChannel === false) {
+    throw HTTPError(400, 'channelId does not refer to a valid channel');
+  }
+
+  if (validUid === false) {
+    throw HTTPError(400, 'uId does not refer to a valid user');
   }
 
   // checking that the uId isnt already in the channel
   let flag = 0;
   for (const member of currentChannel.members) {
     if (member.authUserId === uId) {
-      return { error: 'error' };
+      throw HTTPError(400, 'uId is already a member of the channel');
     }
     for (const tokenn of member.token) {
       if (tokenn === token) {
@@ -279,7 +283,7 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
 
   // checking the user with token is apart of the channel
   if (flag === 0) {
-    return { error: 'error' };
+    throw HTTPError(403, 'authorised user is not a member of the channel');
   }
 
   // need to find which user uId is
@@ -340,7 +344,7 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
 
   // if no channels have been created return an error
   if (data.channel.length === 0) {
-    return { error: 'error' };
+    throw HTTPError(400, 'channelId does not refer to a valid channel');
   }
 
   // checking the channelId is valid and setting currentChannel to the valid channel
@@ -354,12 +358,12 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
 
   // checking valid inputted channelId
   if (validChannel === false) {
-    return { error: 'error' };
+    throw HTTPError(400, 'channelId does not refer to a valid channel');
   }
 
   // checking that start is not greater than the total number of messages in the channel
   if (currentChannel.messages.length < start) {
-    return { error: 'error' };
+    throw HTTPError(400, 'start is greater than the total number of messages in the channel');
   }
 
   // checking the user with token is apart of the channel
@@ -372,7 +376,7 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
     }
   }
   if (flag === 0) {
-    return { error: 'error' };
+    throw HTTPError(403, 'authorised user is not a member of the channel');
   }
 
   const user = getTokenIndex(token, data);

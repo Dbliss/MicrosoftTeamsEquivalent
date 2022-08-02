@@ -15,18 +15,18 @@ function messageSendV1(token: string, channelId: number, message: string) {
     }
   }
   if (validChannel === false) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Invalid channel Id');
   }
 
   const userIndex = getTokenIndex(token, data);
   // checking the token is valid
   if (userIndex === -1) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Token is invalid');
   }
 
   // chekcing the length of the message is within parameters
   if (message.length > 1000 || message.length < 1) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Length of message is too short or too long');
   }
 
   let uId = 0;
@@ -40,7 +40,7 @@ function messageSendV1(token: string, channelId: number, message: string) {
     }
   }
   if (flag === -1) {
-    return { error: 'error' };
+    throw HTTPError(403, 'Authorised user is not a member of the channel');
   }
 
   // generating the messageId
@@ -108,7 +108,7 @@ function messageEditV1(token: string, messageId: number, message: string) {
   const tokenIndex = getTokenIndex(token, data);
   // checking the token is valid
   if (tokenIndex === -1) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Invalid token');
   }
   let uId = 0;
   let isDmMember = false;
@@ -129,7 +129,7 @@ function messageEditV1(token: string, messageId: number, message: string) {
 
   // checking the length of the message is within parameters
   if (message.length > 1000) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Message is too long');
   }
 
   // checking delete condition
@@ -208,21 +208,21 @@ function messageEditV1(token: string, messageId: number, message: string) {
   if (tokenIsSender === false) {
     if (isDmMessage === true) {
       if (isDmMember === false || isDmOwner === false) {
-        return { error: 'error' };
+        throw HTTPError(403, 'User did not send message, and is not a owner of the dm');
       }
     } else if (isChannelMessage === true) {
       if (isMemberOfChannel === false) {
-        return { error: 'error' };
+        throw HTTPError(403, 'User is not a member of the channel');
       } else if (isMemberOfChannel === true) {
         if (isOwnerMember === false) {
-          return { error: 'error' };
+          throw HTTPError(403, 'User did not send message, and is not a owner of the channel');
         }
       }
     }
   }
 
   if (validMessageId === false) {
-    return { error: 'error' };
+    throw HTTPError(400, 'MessageId does not refer to a valid message');
   }
 
   const newMessage: messageType = {
@@ -271,7 +271,7 @@ function messageRemoveV1(token: string, messageId: number) {
   const tokenIndex = getTokenIndex(token, data);
   // checking the token is valid
   if (tokenIndex === -1) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Invalid token');
   }
 
   // need to find the authUserId of the token
@@ -331,21 +331,21 @@ function messageRemoveV1(token: string, messageId: number) {
   if (isMessageSender === false) {
     if (isDmMessage === true) {
       if (isApartOfChannelOrDm === false || isOwnerMember === false) {
-        return { error: 'error' };
+        throw HTTPError(403, 'User did not send message, and is not a owner of the dm');
       }
     } else if (isChannelMessage === true) {
       if (isApartOfChannelOrDm === false) {
-        return { error: 'error' };
+        throw HTTPError(403, 'User is not apart of channel');
       } else if (isApartOfChannelOrDm === true) {
         if (isOwnerMember === false) {
-          return { error: 'error' };
+          throw HTTPError(403, 'User did not send message and is not owner of the channel');
         }
       }
     }
   }
 
   if (validMessageId === false) {
-    return { error: 'error' };
+    throw HTTPError(400, 'messageId does not refer to a valid message');
   }
 
   if (isChannelMessage === true) {

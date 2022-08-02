@@ -340,10 +340,7 @@ describe('Testing channelInvite1', () => {
     expect(res2.statusCode).toBe(OK);
 
     const res3 = callingChannelInvite(bodyObj1.token, -31231451, bodyObj2.authUserId);
-    const bodyObj3 = JSON.parse(res3.body as string);
-    expect(res3.statusCode).toBe(OK);
-
-    expect(bodyObj3).toMatchObject({ error: 'error' });
+    expect(res3.statusCode).toBe(400);
   });
 
   test('Uid refers to a user who is already a member of the channel', () => {
@@ -358,10 +355,7 @@ describe('Testing channelInvite1', () => {
     expect(res2.statusCode).toBe(OK);
 
     const res3 = callingChannelInvite(bodyObj1.token, -31231451, bodyObj1.authUserId);
-    expect(res3.statusCode).toBe(OK);
-    const bodyObj3 = JSON.parse(res3.body as string);
-
-    expect(bodyObj3).toMatchObject({ error: 'error' });
+    expect(res3.statusCode).toBe(400);
   });
 
   test('channelId is valid and the token user is not a member of the channel', () => {
@@ -385,10 +379,7 @@ describe('Testing channelInvite1', () => {
     const channel1 = JSON.parse(res4.body as string);
 
     const res5 = callingChannelInvite(user2.token, channel1.channelId, user3.authUserId);
-    expect(res5.statusCode).toBe(OK);
-    const bodyObj5 = JSON.parse(res5.body as string);
-
-    expect(bodyObj5).toMatchObject({ error: 'error' });
+    expect(res5.statusCode).toBe(403);
   });
 
   test('no errors', () => {
@@ -425,10 +416,7 @@ describe('Testing channelMessages1', () => {
     const user1 = JSON.parse(res1.body as string);
 
     const res5 = callingChannelMessages(user1.token, -53453252, 0);
-    expect(res5.statusCode).toBe(OK);
-    const bodyObj5 = JSON.parse(res5.body as string);
-
-    expect(bodyObj5).toMatchObject({ error: 'error' });
+    expect(res5.statusCode).toBe(400);
   });
 
   test('start is greater than the total number of messages in the channel', () => {
@@ -444,10 +432,7 @@ describe('Testing channelMessages1', () => {
     const channel1 = JSON.parse(res3.body as string);
 
     const res5 = callingChannelMessages(user1.token, channel1.channelId, 99999);
-    expect(res5.statusCode).toBe(OK);
-    const bodyObj5 = JSON.parse(res5.body as string);
-
-    expect(bodyObj5).toMatchObject({ error: 'error' });
+    expect(res5.statusCode).toBe(400);
   });
 
   test('channelId is valid and the authorised user is not a member of the channel', () => {
@@ -467,10 +452,7 @@ describe('Testing channelMessages1', () => {
     const channel1 = JSON.parse(res3.body as string);
 
     const res5 = callingChannelMessages(user2.token, channel1.channelId, 0);
-    expect(res5.statusCode).toBe(OK);
-    const bodyObj5 = JSON.parse(res5.body as string);
-
-    expect(bodyObj5).toMatchObject({ error: 'error' });
+    expect(res5.statusCode).toBe(403);
   });
 
   test('no errors', () => {

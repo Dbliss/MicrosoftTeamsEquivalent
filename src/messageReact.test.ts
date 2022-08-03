@@ -1,57 +1,5 @@
-import request from 'sync-request';
-import { callingChannelMessages } from './channel.test';
-import { callingChannelsCreate } from './channelsServer.test';
-import config from './config.json';
-import { callingAuthRegister, callingDmCreate, callingDmMessages, callingMessageSendDm } from './dm.test';
-import { callingMessageSend } from './message.test';
-
+import { callingClear, callingChannelMessages, callingChannelsCreate, callingAuthRegister, callingDmCreate, callingDmMessages, callingMessageSendDm, callingMessageSend, callingMessageReact, callingMessageUnreact } from './helperFile';
 const OK = 200;
-const url = config.url;
-const port = config.port;
-
-function callingMessageReact(token: string, messageId: number, reactId: number) {
-  const res = request(
-    'POST',
-        `${url}:${port}/message/react/v1`,
-        {
-          body: JSON.stringify({
-            messageId: messageId,
-            reactId: reactId
-          }),
-          headers: {
-            token: token,
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
-
-function callingMessageUnreact(token: string, messageId: number, reactId: number) {
-  const res = request(
-    'POST',
-        `${url}:${port}/message/unreact/v1`,
-        {
-          body: JSON.stringify({
-            messageId: messageId,
-            reactId: reactId
-          }),
-          headers: {
-            token: token,
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
-
-function callingClear () {
-  const res = request(
-    'DELETE',
-        `${url}:${port}/clear/V1`
-  );
-  return res;
-}
 
 describe('Testing Message React', () => {
   test('Invalid Token', () => {
@@ -562,5 +510,3 @@ describe('Testing Message Unreact', () => {
     });
   });
 });
-
-export { callingMessageReact };

@@ -381,7 +381,6 @@ describe('Test auth/passwordreset/request/v1', () => {
       'last'
     );
     expect(auth.statusCode).toBe(OK);
-    const member = JSON.parse(String(auth.getBody()));
     const request = callingPasswordRequest(
       'thevin369@gmail.com'
     );
@@ -407,5 +406,5 @@ describe('Test auth/passwordreset/reset/v1', () => {
       'newPassword'
     );
     expect(reset.statusCode).toBe(BADREQ);
-  })
-})
+  });
+});

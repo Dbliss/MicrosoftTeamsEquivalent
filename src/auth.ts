@@ -2,7 +2,6 @@ import validator from 'validator';
 import { dataType, getData, setData } from './dataStore';
 import { getHashOf } from './other';
 import HTTPError from 'http-errors';
-import { getTokenIndex } from './users';
 const nodemailer = require('nodemailer');
 
 // Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.
@@ -177,20 +176,20 @@ const authPasswordRequestV1 = (email: string) => {
   }
 
   // Set up transporter
-  let transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user:'dreamh17b@gmail.com',
-      pass:'krsyppwtajgwprtb'
+      user: 'dreamh17b@gmail.com',
+      pass: 'krsyppwtajgwprtb'
     }
   });
 
-  // Generate resetCode and store it 
+  // Generate resetCode and store it
   const rand = () => {
     return Math.random().toString(36).substr(2);
   };
   const codeGenerate = () => {
-    return rand() 
+    return rand();
   };
 
   const resetCode = codeGenerate();
@@ -200,18 +199,18 @@ const authPasswordRequestV1 = (email: string) => {
   data.user[userIndex].token = [];
 
   // Set up contents of email sent
-  let mailOptions = {
+  const mailOptions = {
     from: 'dreamh17b@gmail.com',
     to: email,
     subject: 'Password Reset Code for Treats user',
     text: 'Your password reset code is:' + resetCode,
-  }
+  };
 
   // Send email
   transporter.sendMail(mailOptions);
 
   return {};
-}
+};
 
 const authPasswordResetV1 = (resetCode: string, newPassword: string) => {
   const data:dataType = getData();
@@ -230,14 +229,12 @@ const authPasswordResetV1 = (resetCode: string, newPassword: string) => {
       isResetValid = true;
     }
   }
-  
+
   if (isResetValid === false) {
     throw HTTPError(400, 'Invalid reset code');
   }
 
   return {};
-}
-
-
+};
 
 export { authRegisterV1, authLoginV1, authLogoutV1, authPasswordRequestV1, authPasswordResetV1 };

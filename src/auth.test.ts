@@ -1,5 +1,7 @@
 import request from 'sync-request';
 import config from './config.json';
+import { callingClear } from './channelsServer.test';
+import { callingAuthRegister } from './dm.test';
 
 const OK = 200;
 const BADREQ = 400;
@@ -335,3 +337,113 @@ describe('Test auth/logout/v2', () => {
     expect(res.statusCode).toBe(FORBID);
   });
 });
+
+function callingPasswordRequest (token: string, email: string) {
+  const res = request(
+    'POST',
+      `${url}:${port}/auth/passwordreset/request/v1`,
+      {
+        body: JSON.stringify({
+          email: email
+        }),
+        headers: {
+          token: token,
+          'Content-type': 'application/json',
+        },
+      }
+  );
+  return res;
+}
+
+function callingPasswordReset (token: string, resetCode: string, newPassword:string) {
+  const res = request(
+    'POST',
+    `${url}:${port}/auth/passwordreset/reset/v1`,
+    {
+      body: JSON.stringify({
+        resetCode: resetCode,
+        newPassword: newPassword
+      }),
+      headers: {
+        token: token,
+        'Content-type': 'application/json',
+      },
+    }
+  );
+  return res;
+}
+
+describe('Test auth/passwordreset/request/v1', () => {
+  test('Success', () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = callingAuthRegister(
+      'email@email.com',
+      'password',
+      'first',
+      'last'
+    );
+    expect(auth.statusCode).toBe(OK);
+    const member = JSON.parse(String(auth.getBody()));
+    const request = callingPasswordRequest(
+      member.token,
+      'thevin369@gmail.com'
+    );
+    expect(request.statusCode).toBe(OK);
+    const requested = JSON.parse(String(request.getBody()));
+    expect(requested).toStrictEqual({});
+  });
+  test('Invalid token', () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const request = callingPasswordRequest(
+      '',
+      'thevin369@gmail.com'
+    );
+    expect(request.statusCode).toBe(FORBID);
+  });
+});
+
+describe('Test auth/passwordreset/reset/v1', () => {
+  test('Invalid token', () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const reset = callingPasswordReset(
+      '',
+      '123456789',
+      'newPassword'
+    );
+    expect(reset.statusCode).toBe(FORBID);
+  });
+  test('Invalid password', () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = callingAuthRegister(
+      'email@email.com',
+      'password',
+      'first',
+      'last'
+    );
+    expect(auth.statusCode).toBe(OK);
+    const member = JSON.parse(String(auth.getBody()));
+    const reset = callingPasswordReset(
+      member.token,
+      '123456789',
+      ''
+    );
+    expect(reset.statusCode).toBe(BADREQ);
+  });
+  test('Invalid reset code', () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = callingAuthRegister(
+      'email@email.com',
+      'password',
+      'first',
+      'last'
+    );
+    expect(auth.statusCode).toBe(OK);
+    const member = JSON.parse(String(auth.getBody()));
+    const reset = callingPasswordReset(
+      member.token,
+      '',
+      'newPassword'
+    );
+    expect(reset.statusCode).toBe(BADREQ);
+  })
+})

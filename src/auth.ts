@@ -163,4 +163,14 @@ const authLogoutV1 = (token: string) => {
   throw HTTPError(403, 'Invalid token');
 };
 
-export { authRegisterV1, authLoginV1, authLogoutV1 };
+const authPasswordRequestV1 = (token: string, email: string) => {
+  return {};
+}
+
+const authPasswordResetV1 = (token: string, resetCode: string, newPassword: string) => {
+  return {};
+}
+
+
+
+export { authRegisterV1, authLoginV1, authLogoutV1, authPasswordRequestV1, authPasswordResetV1 };

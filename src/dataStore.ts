@@ -30,6 +30,7 @@ type userType = {
   token: string[],
   notifications: notificationType[],
   profileImgUrl: string,
+  resetCode: string
 };
 
 // Used for output in channelDetails

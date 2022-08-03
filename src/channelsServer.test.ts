@@ -407,4 +407,4 @@ describe('Testing channelsListV1', () => {
   });
 });
 
-export { callingChannelsCreate };
+export { callingChannelsCreate, callingClear };

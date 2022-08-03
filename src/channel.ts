@@ -565,6 +565,7 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
     token: [...data.channel[channelIndex].members[memberIndex].token],
     notifications: [...data.channel[channelIndex].members[memberIndex].notifications],
     profileImgUrl: data.channel[channelIndex].members[memberIndex].profileImgUrl,
+    resetCode: data.channel[channelIndex].members[memberIndex].resetCode
   };
 
   data.channel[channelIndex].owners.push(newOwner);

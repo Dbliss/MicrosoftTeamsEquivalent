@@ -6,7 +6,7 @@ import cors from 'cors';
 
 import errorHandler from 'middleware-http-errors';
 
-import { authLoginV1, authRegisterV1, authLogoutV1 } from './auth';
+import { authLoginV1, authRegisterV1, authLogoutV1, authPasswordRequestV1, authPasswordResetV1 } from './auth';
 import { channelInviteV2, channelMessagesV2 } from './channel';
 import { clearV1 } from './other';
 
@@ -356,6 +356,18 @@ app.post('/message/unreact/v1', (req, res) => {
   const token = req.headers.token;
   const leave = messageUnreact(token as string, messageId, reactId);
   res.json(leave);
+});
+
+app.post('/auth/passwordreset/request/v1', (req, res) => {
+  const { email } = req.body;
+  const request = authPasswordRequestV1(email);
+  res.json(request);
+});
+
+app.post('/auth/passwordreset/reset/v1', (req, res) => {
+  const { resetCode, newPassword } = req.body;
+  const reset = authPasswordResetV1(resetCode, newPassword);
+  res.json(reset);
 });
 
 // start server

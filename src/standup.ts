@@ -1,6 +1,7 @@
 import { dataType, getData } from "./dataStore";
 import { getTokenIndex } from "./users";
 import HTTPError from 'http-errors';
+import { messageSendV1 } from "./message";
 
 
 
@@ -12,16 +13,18 @@ const standupStartV1 = (token: string, channelId: number, length: number) => {
     if (userIndex === -1) {
         throw HTTPError(403, 'Invalid Token');
     }
+    let uId = data.user[userIndex].authUserId;
 
-    // check to see if channelId is valid 
+    // check to see if channelId is valid
     let isChannelIdValid = false;
     let channelIndex = -1;
-    for (let i = 0; data.channel.length; i++) {
-        if (channelId === data.channel[i].cId) {
-            channelIndex = i;
+    for (let i = 0; i < data.channel.length; i++) {
+        if (data.channel[i].cId === channelId) {
             isChannelIdValid = true;
+            channelIndex = i;
         }
     }
+
     if (isChannelIdValid === false) {
         throw HTTPError(400, 'Invalid channelId');
     }
@@ -36,16 +39,15 @@ const standupStartV1 = (token: string, channelId: number, length: number) => {
         throw HTTPError(400, 'Another standup is active');
     }
 
-    // channelId valid but member not in channel 
+    // check to see if member is in channel
     let isMemberValid = false;
-    const memberUserId = data.user[userIndex].authUserId
-    for (let i = 0; data.channel[channelIndex].members.length; i++) {
-        if (memberUserId === data.channel[channelIndex].members[i].authUserId) {
+    for (let k = 0; k < data.channel[channelIndex].members.length; k++) {
+        if (data.channel[channelIndex].members[k].authUserId === uId) {
             isMemberValid = true;
         }
     }
     if (isMemberValid === false) {
-        throw HTTPError(403, 'member not in channel')
+        throw HTTPError(403, 'Member not in channel');
     }
 
     // start standup
@@ -55,7 +57,11 @@ const standupStartV1 = (token: string, channelId: number, length: number) => {
 
     // finish standup
     function finishStandup() {
-
+        let messages = data.channel[channelIndex].standup.messages
+        messageSendV1(token, channelId, messages);
+        data.channel[channelIndex].standup.messages = '';
+        data.channel[channelIndex].standup.timeStart = null;
+        data.channel[channelIndex].standup.length = 0;
     }
     
 
@@ -71,39 +77,45 @@ const standupActiveV1 = (token: string, channelId: number) => {
     if (userIndex === -1) {
         throw HTTPError(403, 'Invalid Token');
     }
+    let uId = data.user[userIndex].authUserId;
 
-    // check to see if channelId is valid 
+    // check to see if channelId is valid
     let isChannelIdValid = false;
     let channelIndex = -1;
-    for (let i = 0; data.channel.length; i++) {
-        if (channelId === data.channel[i].cId) {
-            channelIndex = i;
+    for (let i = 0; i < data.channel.length; i++) {
+        if (data.channel[i].cId === channelId) {
             isChannelIdValid = true;
+            channelIndex = i;
         }
     }
+
     if (isChannelIdValid === false) {
         throw HTTPError(400, 'Invalid channelId');
     }
 
-    // channelId valid but member not in channel 
+    // check to see if member is in channel
     let isMemberValid = false;
-    const memberUserId = data.user[userIndex].authUserId
-    for (let i = 0; data.channel[channelIndex].members.length; i++) {
-        if (memberUserId === data.channel[channelIndex].members[i].authUserId) {
+    for (let k = 0; k < data.channel[channelIndex].members.length; k++) {
+        if (data.channel[channelIndex].members[k].authUserId === uId) {
             isMemberValid = true;
         }
     }
     if (isMemberValid === false) {
-        throw HTTPError(403, 'member not in channel')
+        throw HTTPError(403, 'Member not in channel');
     }
 
-    // check to see if standup is active
+    // check to see if standup is active and set time finish and is active accordingly
     let isActive = false;
+    let timeFinish = -1;
     if (data.channel[channelIndex].standup.timeStart !== null) {
         isActive = true;
+        timeFinish = length - (Date.now()/1000 - data.channel[channelIndex].standup.timeStart);
+    } else {
+        timeFinish = null;
     }
+
     
-    return { isActive, timeFinish:  };
+    return { isActive: isActive, timeFinish: timeFinish  };
 }
 
 const standupSendV1 = (token: string, channelId: number, message: string) => {

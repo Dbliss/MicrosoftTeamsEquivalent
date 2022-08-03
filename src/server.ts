@@ -44,6 +44,7 @@ import {
 import { getNotifications } from './notifications';
 import { search } from './search';
 import { messageReact, messageUnreact } from './messageReact';
+import { standupActiveV1, standupSendV1, standupStartV1 } from './standup';
 
 // Set up web app, use JSON
 const app = express();
@@ -334,6 +335,25 @@ app.post('/auth/passwordreset/reset/v1', (req, res) => {
   const { resetCode, newPassword } = req.body;
   const reset = authPasswordResetV1(resetCode, newPassword);
   res.json(reset);
+});
+
+app.post('/standup/start/v1', (req, res) => {
+  const { channelId, length } = req.body;
+  const token = req.headers.token;
+  const start = standupStartV1(token as string, channelId, length);
+  res.json(start);
+});
+
+app.get('/standup/active/v1', (req, res) => {
+  const active = standupActiveV1(req.headers.token as string, parseInt(req.query.channelId as string));
+  res.json(active);
+});
+
+app.post('/standup/send/v1', (req, res) => {
+  const { channelId, message } = req.body;
+  const token = req.headers.token;
+  const send = standupSendV1(token as string, channelId, message);
+  res.json(send);
 });
 
 // start server

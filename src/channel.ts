@@ -1,6 +1,6 @@
 import console from 'console';
-import { getData, setData, channelType, usersType, dataType } from './dataStore';
-import { getHashOf } from './other';
+import { getData, setData, channelType, usersType, dataType, channelsJoinedType } from './dataStore';
+import { getHashOf, getIndexOfStatsUid } from './other';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
 
@@ -19,9 +19,7 @@ type tempMembersType = {
     uId: number,
 };
 
-// type errorType = {
-//   error: string;
-// };
+
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
 
@@ -138,7 +136,7 @@ function channelDetailsV1 (token: string, channelId: number) {
 // Returns {error: error} on the authorised user is already a member of the channel
 
 function channelJoinV1 (token: string, channelId: number) {
-  const data = getData();
+  const data:dataType = getData();
   const returnObject = {};
   // const error = { error: 'error' };
 
@@ -210,6 +208,13 @@ function channelJoinV1 (token: string, channelId: number) {
   data.user[userIndex].channels.push(addingChannel);
   data.channel[channelIndex].members.push(pushObject);
 
+  //Updating the stats object
+  const timeUpdated = Math.floor(Date.now() / 1000);
+  const updateObject: channelsJoinedType = {
+    numChannelsJoined: data.stats[getIndexOfStatsUid(data, token)].channelsJoined[data.stats[getIndexOfStatsUid(data, token)].channelsJoined.length - 1].numChannelsJoined + 1,
+    timeStamp: timeUpdated,
+  }
+  data.stats[getIndexOfStatsUid(data, token)].channelsJoined.push(updateObject); 
   // updating the data in the data storage file
   setData(data);
 

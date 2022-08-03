@@ -14,7 +14,8 @@ function extractUserDetails (user: userType) {
     email: user.email,
     nameFirst: user.nameFirst,
     nameLast: user.nameLast,
-    handleStr: user.handle
+    handleStr: user.handle,
+    profileImgUrl: user.profileImgUrl,
   };
 
   return returnUser;
@@ -127,7 +128,7 @@ function userProfileV1(token: string, uId: number) {
 // Returns <{users}> on <valid input of authUserId and uId>
 // Returns {error: 'error'} on <invalid token>
 function usersAllV1 (token: string) {
-  const data = getData();
+  const data:dataType = getData();
   // Checks if the token exists and returns the index of the user which has that token,
   // if not found then returns -1
   const tokenIndex = getTokenIndex(token, data);
@@ -137,7 +138,9 @@ function usersAllV1 (token: string) {
   }
   const usersArray = [];
   for (const user of data.user) {
-    usersArray.push(extractUserDetails(user));
+    if(user.nameFirst !== 'Removed' && user.nameLast !== 'user') { //checking to see if the user has been removed or not
+      usersArray.push(extractUserDetails(user));
+    }
   }
 
   const returnUserArray = { users: usersArray };
@@ -271,5 +274,40 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   return {};
 }
 
+// Arguments:
+// <imgUrl> (<string>)    - <This is the unique string given to each session for a user>
+// <xStart> (<string>)    - <New email to replace the users current email>
+// <yStart> (<string>)    - <New email to replace the users current email>
+// <xEnd> (<string>)    - <New email to replace the users current email>
+// <yEnd> (<string>)    - <New email to replace the users current email>
 
+// Return Value:
+// Returns <{empty object - {}}> on <valid input of token and handleStr>
+ export function userUploadPhoto (token: string, imgUrl:string, xStart: number, yStart: number, xEnd: number, yEnd: number) {
+
+}
+
+// Arguments:
+// <token> (<string>)    - <This is the unique string given to each session for a user>
+// <handleStr> (<string>)    - <New email to replace the users current email>
+
+// Return Value:
+// Returns <{empty object - {}}> on <valid input of token and handleStr>
+// Returns {error: 'error'} on <invalid token>
+// Returns {error: 'error'} on <invalid handleStr>
+ export function userStats (token: string) {
+
+}
+
+// Arguments:
+// <token> (<string>)    - <This is the unique string given to each session for a user>
+// <handleStr> (<string>)    - <New email to replace the users current email>
+
+// Return Value:
+// Returns <{empty object - {}}> on <valid input of token and handleStr>
+// Returns {error: 'error'} on <invalid token>
+// Returns {error: 'error'} on <invalid handleStr>
+ export function usersStats (token: string) {
+
+}
 export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, getTokenIndex };

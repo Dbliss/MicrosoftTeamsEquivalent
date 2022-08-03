@@ -29,6 +29,7 @@ type userType = {
   permissionId: number,
   token: string[],
   notifications: notificationType[],
+  profileImgUrl: string,
 };
 
 // Used for output in channelDetails
@@ -84,7 +85,30 @@ type dataType = {
   user: userType[],
   channel: channelType[],
   dm: dmType[],
+  stats: statsType[],
 };
+
+export type statsType = {
+  uId: number,
+  channelsJoined: channelsJoinedType[],
+  dmsJoined: dmsJoinedType[],
+  messagesSent: messagesSentType[] ,
+  involvementRate: number,
+}
+export type channelsJoinedType = {
+  numChannelsJoined: number,
+  timeStamp: number,
+}
+
+export type dmsJoinedType = {
+  numDmsJoined: number,
+  timeStamp: number,
+}
+
+ export type messagesSentType = {
+  numMessagesSent: number,
+  timeStamp: number,
+}
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 

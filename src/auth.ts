@@ -81,7 +81,8 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     handle: handleName,
     permissionId: permissionId,
     token: [],
-    notifications: []
+    notifications: [],
+    profileImgUrl: '',
   };
   data.user[j].token.push(getHashOf(token));
   setData(data);

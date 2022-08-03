@@ -11,7 +11,7 @@ import { channelInviteV2, channelMessagesV2 } from './channel';
 import { clearV1 } from './other';
 
 import { channelDetailsV1, channelJoinV1 } from './channel';
-import { usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1 } from './users';
+import { usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1, userStats, usersStats, userUploadPhoto } from './users';
 
 import {
   channelsCreateV3,
@@ -42,6 +42,7 @@ import {
   messageSenddmV2,
 } from './message';
 import { getNotifications } from './notifications';
+import { adminPermissionChange, adminUserRemove } from './admin';
 
 // Set up web app, use JSON
 const app = express();
@@ -144,9 +145,9 @@ app.post('/auth/logout/v1', (req, res, next) => {
 
 app.get('/channel/details/v2', (req, res, next) => {
   try {
-    const token = req.query.token as string;
+
     const channelId = req.query.channelId;
-    return res.json(channelDetailsV1(token, Number(channelId)));
+    return res.json(channelDetailsV1(String(req.headers.token), Number(channelId)));
   } catch (err) {
     next(err);
   }
@@ -154,8 +155,8 @@ app.get('/channel/details/v2', (req, res, next) => {
 
 app.post('/channel/join/v2', (req, res, next) => {
   try {
-    const { token, channelId } = req.body;
-    return res.json(channelJoinV1(token, channelId));
+    const { channelId } = req.body;
+    return res.json(channelJoinV1(String(req.headers.token), channelId));
   } catch (err) {
     next(err);
   }
@@ -197,8 +198,8 @@ app.get('/dm/messages/v2', (req, res) => {
 
 app.post('/channel/leave/v1', (req, res, next) => {
   try {
-    const { token, channelId } = req.body;
-    return res.json(channelLeaveV1(token, channelId));
+    const { channelId } = req.body;
+    return res.json(channelLeaveV1(String(req.headers.token), channelId));
   } catch (err) {
     next(err);
   }
@@ -206,7 +207,7 @@ app.post('/channel/leave/v1', (req, res, next) => {
 
 app.get('/user/profile/v2', (req, res, next) => {
   try {
-    const token = req.query.token;
+    const token = String(req.headers.token);
     const uId = req.query.uId;
     return res.json(userProfileV1(String(token), Number(uId)));
   } catch (err) {
@@ -224,7 +225,7 @@ app.post('/message/send/v1', (req, res, next) => {
 
 app.get('/users/all/v1', (req, res, next) => {
   try {
-    const token = req.query.token;
+    const token = String(req.headers.token);
     return res.json(usersAllV1(String(token)));
   } catch (err) {
     next(err);
@@ -241,9 +242,9 @@ app.post('/channel/addowner/v1', (req, res, next) => {
 
 app.put('/user/profile/setname/v1', (req, res, next) => {
   try {
-    const { token, nameFirst, nameLast } = req.body;
+    const { nameFirst, nameLast } = req.body;
 
-    return res.json(userProfileSetNameV1(token, nameFirst, nameLast));
+    return res.json(userProfileSetNameV1(String(req.headers.token), nameFirst, nameLast));
   } catch (err) {
     next(err);
   }
@@ -260,8 +261,8 @@ app.put('/message/edit/v1', (req, res, next) => {
 
 app.put('/user/profile/setemail/v1', (req, res, next) => {
   try {
-    const { token, email } = req.body;
-    return res.json(userProfileSetEmailV1(token, email));
+    const { email } = req.body;
+    return res.json(userProfileSetEmailV1(String(req.headers.token), email));
   } catch (err) {
     next(err);
   }
@@ -277,8 +278,8 @@ app.post('/channel/removeowner/v1', (req, res, next) => {
 
 app.put('/user/profile/sethandle/v1', (req, res, next) => {
   try {
-    const { token, handleStr } = req.body;
-    return res.json(userProfileSetHandleV1(token, handleStr));
+    const { handleStr } = req.body;
+    return res.json(userProfileSetHandleV1(String(req.headers.token), handleStr));
   } catch (err) {
     next(err);
   }
@@ -302,6 +303,39 @@ app.get('/notifications/get/v1', (req, res) => {
   const notifications = getNotifications(req.headers.token as string);
   res.json(notifications);
 });
+
+app.delete('/admin/user/remove/v1', (req, res) => {
+  const remove = adminUserRemove(req.headers.token as string, Number(req.query.uId));
+  
+  res.json(remove);
+});
+
+app.post('/admin/userpermission/change/v1', (req, res) => {
+  const { uId, permissionId } = req.body;
+  const token = req.headers.token;
+  const permChange = adminPermissionChange(String(token), uId, permissionId);
+
+  res.json(permChange);
+});// from shiv
+
+app.get('/user/stats/v1', (req, res) => {
+  const notifications = userStats(req.headers.token as string);
+  res.json(notifications);
+});
+
+app.get('/users/stats/v1', (req, res) => {
+  const notifications = usersStats(req.headers.token as string);
+  res.json(notifications);
+});
+
+app.post('/user/profile/uploadphoto/v1', (req, res) => {
+  const { imgUrl, xStart, yStart, xEnd, yEnd } = req.body;
+  const token = req.headers.token;
+  const photoUpload = userUploadPhoto(String(token),imgUrl, xStart, yStart, xEnd, yEnd);
+
+  res.json(photoUpload);
+});
+
 
 // start server
 const server = app.listen(PORT, HOST, () => {

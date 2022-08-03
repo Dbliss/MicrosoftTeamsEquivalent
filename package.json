@@ -1,10 +1,6 @@
 {
     "scripts": {
-<<<<<<< HEAD
         "test": "jest src/channelWeb.test",
-=======
-        "test": "jest src",
->>>>>>> e25b06681509769e5586e62035561065e4369aee
         "tsc": "tsc --noImplicitAny",
         "lint": "eslint src/**.ts",
         "lint-fix": "eslint --fix src/**.ts",

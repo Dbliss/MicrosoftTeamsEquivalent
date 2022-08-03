@@ -1,4 +1,4 @@
-import { callingDmCreate, callingMessageSendDm, callingDmMessages, callingClear, callingChannelsCreate, callingAuthRegister, callingMessageSend, , callingMessageShare, callingChannelMessages, callingMessagePin, callingMessageUnpin, callingMessageSendLater, callingMessageSendLaterDm} from './helperFile';
+import { callingDmCreate, callingMessageSendDm, callingDmMessages, callingClear, callingChannelsCreate, callingAuthRegister, callingMessageSend, callingMessageShare, callingChannelMessages} from './helperFile';
 
 const OK = 200;
 
@@ -202,7 +202,7 @@ describe('Testing message Share', () => {
     const message1 = JSON.parse(String(res3.getBody()));
 
     const res4 = callingMessageShare(user2.token, message1.messageId, 'yes sir', channel1.channelId, -1);
-    expect(res4.statusCode).toBe(OK;
+    expect(res4.statusCode).toBe(OK);
     const result = JSON.parse(String(res4.getBody()));
 
     expect(result).toMatchObject({ sharedMessageId: expect.any(Number) });

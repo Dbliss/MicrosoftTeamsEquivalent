@@ -2,6 +2,7 @@ import validator from 'validator';
 import { dataType, getData, setData } from './dataStore';
 import { getHashOf } from './other';
 import HTTPError from 'http-errors';
+const nodemailer = require('nodemailer');
 
 // Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.
 // Arguments:
@@ -82,7 +83,8 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     handle: handleName,
     permissionId: permissionId,
     token: [],
-    notifications: []
+    notifications: [],
+    resetCode: ''
   };
   data.user[j].token.push(token);
   setData(data);
@@ -163,4 +165,76 @@ const authLogoutV1 = (token: string) => {
   throw HTTPError(403, 'Invalid token');
 };
 
-export { authRegisterV1, authLoginV1, authLogoutV1 };
+const authPasswordRequestV1 = (email: string) => {
+  const data:dataType = getData();
+  // See if email is in database
+  let userIndex = -1;
+  for (let i = 0; i < data.user.length; i++) {
+    if (data.user[i].email === email) {
+      userIndex = i;
+    }
+  }
+
+  // Set up transporter
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'dreamh17b@gmail.com',
+      pass: 'krsyppwtajgwprtb'
+    }
+  });
+
+  // Generate resetCode and store it
+  const rand = () => {
+    return Math.random().toString(36).substr(2);
+  };
+  const codeGenerate = () => {
+    return rand();
+  };
+
+  const resetCode = codeGenerate();
+
+  data.user[userIndex].resetCode = resetCode;
+  // Log out of all sessions
+  data.user[userIndex].token = [];
+
+  // Set up contents of email sent
+  const mailOptions = {
+    from: 'dreamh17b@gmail.com',
+    to: email,
+    subject: 'Password Reset Code for Treats user',
+    text: 'Your password reset code is:' + resetCode,
+  };
+
+  // Send email
+  transporter.sendMail(mailOptions);
+
+  return {};
+};
+
+const authPasswordResetV1 = (resetCode: string, newPassword: string) => {
+  const data:dataType = getData();
+
+  // check if valid password
+  if (newPassword.length < 6) {
+    throw HTTPError(400, 'Invalid password');
+  }
+
+  // loop through and find reset code
+  let isResetValid = false;
+  for (let i = 0; i < data.user.length; i++) {
+    if (data.user[i].resetCode === resetCode) {
+      data.user[i].password = getHashOf(newPassword);
+      data.user[i].resetCode = '';
+      isResetValid = true;
+    }
+  }
+
+  if (isResetValid === false) {
+    throw HTTPError(400, 'Invalid reset code');
+  }
+
+  return {};
+};
+
+export { authRegisterV1, authLoginV1, authLogoutV1, authPasswordRequestV1, authPasswordResetV1 };

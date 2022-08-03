@@ -326,15 +326,13 @@ app.post('/message/unreact/v1', (req, res) => {
 
 app.post('/auth/passwordreset/request/v1', (req, res) => {
   const { email } = req.body;
-  const token = req.headers.token;
-  const request = authPasswordRequestV1(token as string, email);
+  const request = authPasswordRequestV1(email);
   res.json(request);
 });
 
 app.post('/auth/passwordreset/reset/v1', (req, res) => {
   const { resetCode, newPassword } = req.body;
-  const token = req.headers.token;
-  const reset = authPasswordResetV1(token as string, resetCode, newPassword);
+  const reset = authPasswordResetV1(resetCode, newPassword);
   res.json(reset);
 });
 

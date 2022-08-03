@@ -338,7 +338,7 @@ describe('Test auth/logout/v2', () => {
   });
 });
 
-function callingPasswordRequest (token: string, email: string) {
+function callingPasswordRequest (email: string) {
   const res = request(
     'POST',
       `${url}:${port}/auth/passwordreset/request/v1`,
@@ -347,7 +347,6 @@ function callingPasswordRequest (token: string, email: string) {
           email: email
         }),
         headers: {
-          token: token,
           'Content-type': 'application/json',
         },
       }
@@ -355,7 +354,7 @@ function callingPasswordRequest (token: string, email: string) {
   return res;
 }
 
-function callingPasswordReset (token: string, resetCode: string, newPassword:string) {
+function callingPasswordReset (resetCode: string, newPassword:string) {
   const res = request(
     'POST',
     `${url}:${port}/auth/passwordreset/reset/v1`,
@@ -365,7 +364,6 @@ function callingPasswordReset (token: string, resetCode: string, newPassword:str
         newPassword: newPassword
       }),
       headers: {
-        token: token,
         'Content-type': 'application/json',
       },
     }
@@ -377,7 +375,7 @@ describe('Test auth/passwordreset/request/v1', () => {
   test('Success', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
-      'email@email.com',
+      'thevin369@gmail.com',
       'password',
       'first',
       'last'
@@ -385,45 +383,18 @@ describe('Test auth/passwordreset/request/v1', () => {
     expect(auth.statusCode).toBe(OK);
     const member = JSON.parse(String(auth.getBody()));
     const request = callingPasswordRequest(
-      member.token,
       'thevin369@gmail.com'
     );
     expect(request.statusCode).toBe(OK);
     const requested = JSON.parse(String(request.getBody()));
     expect(requested).toStrictEqual({});
   });
-  test('Invalid token', () => {
-    expect(callingClear().statusCode).toBe(OK);
-    const request = callingPasswordRequest(
-      '',
-      'thevin369@gmail.com'
-    );
-    expect(request.statusCode).toBe(FORBID);
-  });
 });
 
 describe('Test auth/passwordreset/reset/v1', () => {
-  test('Invalid token', () => {
-    expect(callingClear().statusCode).toBe(OK);
-    const reset = callingPasswordReset(
-      '',
-      '123456789',
-      'newPassword'
-    );
-    expect(reset.statusCode).toBe(FORBID);
-  });
   test('Invalid password', () => {
     expect(callingClear().statusCode).toBe(OK);
-    const auth = callingAuthRegister(
-      'email@email.com',
-      'password',
-      'first',
-      'last'
-    );
-    expect(auth.statusCode).toBe(OK);
-    const member = JSON.parse(String(auth.getBody()));
     const reset = callingPasswordReset(
-      member.token,
       '123456789',
       ''
     );
@@ -431,16 +402,7 @@ describe('Test auth/passwordreset/reset/v1', () => {
   });
   test('Invalid reset code', () => {
     expect(callingClear().statusCode).toBe(OK);
-    const auth = callingAuthRegister(
-      'email@email.com',
-      'password',
-      'first',
-      'last'
-    );
-    expect(auth.statusCode).toBe(OK);
-    const member = JSON.parse(String(auth.getBody()));
     const reset = callingPasswordReset(
-      member.token,
       '',
       'newPassword'
     );

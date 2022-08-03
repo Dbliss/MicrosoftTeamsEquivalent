@@ -1,37 +1,6 @@
-import request from 'sync-request';
-import { callingChannelInvite } from './channel.test';
-import { callingChannelsCreate } from './channelsServer.test';
-import config from './config.json';
-import { callingAuthRegister, callingDmCreate, callingMessageSendDm } from './dm.test';
-import { callingMessageSend } from './message.test';
+import { callingClear, callingAuthRegister, callingDmCreate, callingMessageSendDm, callingChannelInvite, callingChannelsCreate, callingMessageSend, callingSearch } from './helperFile';
 
 const OK = 200;
-const url = config.url;
-const port = config.port;
-
-function callingSearch(token: string, queryStr: string) {
-  const res = request(
-    'GET',
-        `${url}:${port}/search/v1`,
-        {
-          qs: {
-            queryStr: queryStr,
-          },
-          headers: {
-            token: token,
-          }
-        }
-  );
-  return res;
-}
-
-function callingClear () {
-  const res = request(
-    'DELETE',
-        `${url}:${port}/clear/V1`
-  );
-  return res;
-}
 
 describe('Testing Search', () => {
   test('Invalid Token', () => {

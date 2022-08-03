@@ -29,6 +29,7 @@ type userType = {
   permissionId: number,
   token: string[],
   notifications: notificationType[],
+  resetCode: string
 };
 
 // Used for output in channelDetails

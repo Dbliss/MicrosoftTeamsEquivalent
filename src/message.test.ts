@@ -177,7 +177,7 @@ describe('Testing messageSend', () => {
     const channel1 = JSON.parse(res2.body as string);
 
     const res3 = callingMessageSend('-99999', channel1.channelId, 'heaqaewqeuhq');
-    expect(res3.statusCode).toBe(400);
+    expect(res3.statusCode).toBe(403);
   });
 
   test('no errors, succesful message sent', () => {

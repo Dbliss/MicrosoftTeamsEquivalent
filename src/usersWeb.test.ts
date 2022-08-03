@@ -596,7 +596,7 @@ describe('Testing user/stats/v1', () => {
     const dmres = callingDmCreate(authUserId.token, uIds);
     const dm = JSON.parse(String(dmres.getBody()));
 
-    const messageres = callingMessageSend(authUserId.token, channelres.cId, 'random message');
+    const messageres = callingMessageSend(authUserId.token, channelres.channelId, 'random message');
     const message = JSON.parse(String(messageres.getBody()));
 
     const res = callingUserStats(authUserId.token);
@@ -643,6 +643,10 @@ describe('Testing user/stats/v1', () => {
   });
 });
 
+
+
+
+
 describe('users/stats/v1', () => {
   test('Testing successful return', () => {
     callingClear();
@@ -662,7 +666,7 @@ describe('users/stats/v1', () => {
     const dmres = callingDmCreate(authUserId.token, uIds);
     const dm = JSON.parse(String(dmres.getBody()));
 
-    const messageres = callingMessageSend(authUserId.token, channelres.cId, 'random message');
+    const messageres = callingMessageSend(authUserId.token, channelres.channelId, 'random message');
     const message = JSON.parse(String(messageres.getBody()));
 
     const res = callingUsersStats(authUserId.token);

@@ -1,7 +1,6 @@
 import { getData, setData, channelType, messageType, dataType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
-import { getHashOf } from './other';
 
 function messageSendV1(token: string, channelId: number, message: string) {
   const data:dataType = getData();
@@ -16,32 +15,32 @@ function messageSendV1(token: string, channelId: number, message: string) {
     }
   }
   if (validChannel === false) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Invalid channel Id');
   }
 
+  const userIndex = getTokenIndex(token, data);
   // checking the token is valid
-  if (getTokenIndex(token, data) === -1) {
-    return { error: 'error' };
+  if (userIndex === -1) {
+    throw HTTPError(400, 'Token is invalid');
   }
 
   // chekcing the length of the message is within parameters
   if (message.length > 1000 || message.length < 1) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Length of message is too short or too long');
   }
 
-  // checking the user is a member of the channel
-  let flag = 0;
   let uId = 0;
+  let flag = -1;
   for (const member of currentChannel.members) {
     for (const tokenn of member.token) {
-      if (tokenn === getHashOf(token)) {
+      if (tokenn === token) {
         flag = 1;
         uId = member.authUserId;
       }
     }
   }
-  if (flag === 0) {
-    return { error: 'error' };
+  if (flag === -1) {
+    throw HTTPError(403, 'Authorised user is not a member of the channel');
   }
 
   // generating the messageId
@@ -55,7 +54,9 @@ function messageSendV1(token: string, channelId: number, message: string) {
     messageId: messageId,
     uId: uId,
     message: message,
-    timeSent: timeSent
+    timeSent: timeSent,
+    reacts: [],
+    isPinned: false
   };
 
   for (let i = 0; i < data.channel.length; i++) {
@@ -78,19 +79,19 @@ function messageSendV1(token: string, channelId: number, message: string) {
     }
   }
 
-  const userIndex = getTokenIndex(token, data);
-
+  const userIndex2 = getTokenIndex(token, data);
+  console.log('HANDELS = ' + handles);
   // Cutting message for notification
   const sedingMessage = message.slice(0, 20);
-  console.log(handles);
   // Sending the notification
   for (const handle of handles) {
     for (const user in data.user) {
       if (data.user[user].handle === handle) {
+        console.log('HERE!!!!!!!!!!!!  ' + user);
         data.user[user].notifications.push({
           channelId: channelId,
           dmId: -1,
-          notificationMessage: data.user[userIndex].handle + ' tagged you in ' + currentChannel.name + ': ' + sedingMessage,
+          notificationMessage: data.user[userIndex2].handle + ' tagged you in ' + currentChannel.name + ': ' + sedingMessage,
           type: 1
         });
       }
@@ -104,16 +105,15 @@ function messageSendV1(token: string, channelId: number, message: string) {
 
 function messageEditV1(token: string, messageId: number, message: string) {
   const data: dataType = getData();
-  console.log(messageId);
   const tokenIndex = getTokenIndex(token, data);
   // checking the token is valid
   if (tokenIndex === -1) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Invalid token');
   }
+  let uId = 0;
   let isDmMember = false;
   let isDmOwner = false;
   let isOwnerMember = false;
-  let hasGlobalPermission = false;
   let userIndex = 0;
   let userId = 0;
   let isMemberOfChannel = false;
@@ -121,20 +121,15 @@ function messageEditV1(token: string, messageId: number, message: string) {
 
   // finding the checking if the token user has global permissions
   for (let i = 0; i < data.user.length; i++) {
-    if (data.user[i].token[tokenIndex] === getHashOf(token)) {
+    if (data.user[i].token[tokenIndex] === token) {
       userIndex = i;
-      if (data.user[i].permissionId === 1) {
-        hasGlobalPermission = true;
-      }
       userId = data.user[i].authUserId;
     }
   }
 
-  // checking if the token user
-
   // checking the length of the message is within parameters
   if (message.length > 1000) {
-    return { error: 'error' };
+    throw HTTPError(400, 'Message is too long');
   }
 
   // checking delete condition
@@ -142,7 +137,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
   if (message.length === 0) {
     deleteCondition = true;
   }
-  let uId = 0;
   let timeSent = 0;
 
   // Need to check if the message is a dm or channel message
@@ -154,8 +148,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
 
   for (let i = 0; i < data.channel.length; i++) {
     for (const message of data.channel[i].messages) {
-      console.log(message.messageId);
-      console.log(messageId);
       if (message.messageId === messageId) {
         validMessageId = true;
         uId = message.uId;
@@ -216,23 +208,21 @@ function messageEditV1(token: string, messageId: number, message: string) {
   if (tokenIsSender === false) {
     if (isDmMessage === true) {
       if (isDmMember === false || isDmOwner === false) {
-        return { error: 'error' };
+        throw HTTPError(403, 'User did not send message, and is not a owner of the dm');
       }
     } else if (isChannelMessage === true) {
       if (isMemberOfChannel === false) {
-        return { error: 'error' };
+        throw HTTPError(403, 'User is not a member of the channel');
       } else if (isMemberOfChannel === true) {
         if (isOwnerMember === false) {
-          if (hasGlobalPermission === false) {
-            return { error: 'error' };
-          }
+          throw HTTPError(403, 'User did not send message, and is not a owner of the channel');
         }
       }
     }
   }
 
   if (validMessageId === false) {
-    return { error: 'error' };
+    throw HTTPError(400, 'MessageId does not refer to a valid message');
   }
 
   const newMessage: messageType = {
@@ -240,35 +230,22 @@ function messageEditV1(token: string, messageId: number, message: string) {
     uId: uId,
     message: message,
     timeSent: timeSent,
+    reacts: [],
+    isPinned: false
   };
 
   // editing the message for the channel case
   if (isChannelMessage === true) {
-    let key1 = -1;
     for (let i = 0; i < data.channel.length; i++) {
       for (let j = 0; i < data.channel[i].messages.length; j++) {
         if (data.channel[i].messages[j].messageId === messageId) {
-          key1 = i;
           newMessage.uId = data.channel[i].messages[j].uId;
           newMessage.timeSent = data.channel[i].messages[j].timeSent;
-          validMessageId = true;
+          // checking the channel contains the person calling the function
           deleteCondition === true ? data.channel[i].messages.splice(j, 1) : data.channel[i].messages.splice(j, 1, newMessage);
           break;
         }
       }
-    }
-
-    // checking the user is a member of the channel
-    let flag = 0;
-    for (const member of data.channel[key1].members) {
-      for (const tokenn of member.token) {
-        if (tokenn === getHashOf(token)) {
-          flag = 1;
-        }
-      }
-    }
-    if (flag === 0) {
-      return { error: 'error' };
     }
   }
   // editing the message for the dm case
@@ -278,7 +255,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
         if (data.dm[i].messages[j].messageId === messageId) {
           newMessage.uId = data.dm[i].messages[j].uId;
           newMessage.timeSent = data.dm[i].messages[j].timeSent;
-          validMessageId = true;
           deleteCondition === true ? data.dm[i].messages.splice(j, 1) : data.dm[i].messages.splice(j, 1, newMessage);
           break;
         }
@@ -291,56 +267,98 @@ function messageEditV1(token: string, messageId: number, message: string) {
 
 function messageRemoveV1(token: string, messageId: number) {
   const data = getData();
-
+  let uId = 0;
+  const tokenIndex = getTokenIndex(token, data);
   // checking the token is valid
-  if (getTokenIndex(token, data) === -1) {
-    return { error: 'error' };
+  if (tokenIndex === -1) {
+    throw HTTPError(400, 'Invalid token');
   }
+
+  // need to find the authUserId of the token
+  uId = data.user[tokenIndex].authUserId;
 
   // Need to check if the message is a dm or channel message
   let isDmMessage = false;
   let isChannelMessage = false;
+  let isOwnerMember = false;
+  let isMessageSender = false;
+  let isApartOfChannelOrDm = false;
 
-  // checking the messageId refers to a real message
+  // checking the messageId refers to a real message in a channel
   let validMessageId = false;
   for (let i = 0; i < data.channel.length; i++) {
     for (const message of data.channel[i].messages) {
       if (message.messageId === messageId) {
         validMessageId = true;
         isChannelMessage = true;
+        // checking the channel contains the person calling the function
+        if (data.channel[i].members.includes(uId) === true) {
+          isApartOfChannelOrDm = true;
+        }
+        // checking the person calling the function is a owner of the channel
+        if (data.channel[i].owners.includes(uId) === true) {
+          isOwnerMember = true;
+        }
+        // checking the if the person calling the function sent the original message
+        if (uId === message.uId) {
+          isMessageSender = true;
+        }
       }
     }
   }
-
-  // checking the messageId refers to a real message
+  // checking the messageId refers to a real message in a dm
   for (let i = 0; i < data.dm.length; i++) {
     for (const message of data.dm[i].messages) {
       if (message.messageId === messageId) {
         validMessageId = true;
         isDmMessage = true;
+        // checking the if the person calling the function sent the original message
+        if (uId === message.uId) {
+          isMessageSender = true;
+        }
+        // checking the dm contains the person calling the function
+        if (data.dm[i].members.includes(uId) === true) {
+          isApartOfChannelOrDm = true;
+        }
+        // checking the person calling the function is a owner of the channel
+        if (data.dm[i].owners.includes(uId) === true) {
+          isOwnerMember = true;
+        }
+      }
+    }
+  }
+
+  if (isMessageSender === false) {
+    if (isDmMessage === true) {
+      if (isApartOfChannelOrDm === false || isOwnerMember === false) {
+        throw HTTPError(403, 'User did not send message, and is not a owner of the dm');
+      }
+    } else if (isChannelMessage === true) {
+      if (isApartOfChannelOrDm === false) {
+        throw HTTPError(403, 'User is not apart of channel');
+      } else if (isApartOfChannelOrDm === true) {
+        if (isOwnerMember === false) {
+          throw HTTPError(403, 'User did not send message and is not owner of the channel');
+        }
       }
     }
   }
 
   if (validMessageId === false) {
-    return { error: 'error' };
+    throw HTTPError(400, 'messageId does not refer to a valid message');
   }
 
   if (isChannelMessage === true) {
     for (let i = 0; i < data.channel.length; i++) {
       for (let j = 0; i < data.channel[i].messages.length; j++) {
         if (data.channel[i].messages[j].messageId === messageId) {
+          if (data.channel[i].owners.includes(uId) === true) {
+            isOwnerMember = true;
+          }
           data.channel[i].messages.splice(j, 1);
           break;
         }
       }
-    }
-
-    // checking the user is a member of the channel
-    const flag = getTokenIndex(token, data);
-
-    if (flag === -1) {
-      return { error: 'error' };
     }
   }
 
@@ -399,11 +417,13 @@ function messageSenddmV2 (token: string, dmId: number, message: string) {
     throw HTTPError(403, 'Not a Member');
   }
 
-  const tempMessage = {
+  const tempMessage:messageType = {
     messageId: Math.floor(Math.random() * Date.now()),
     uId: uId,
     message: message,
     timeSent: Math.floor(Date.now() / 1000),
+    reacts: [],
+    isPinned: false
   };
 
   data.dm[dmIndex].messages.push(tempMessage);
@@ -423,7 +443,7 @@ function messageSenddmV2 (token: string, dmId: number, message: string) {
 
   // Cutting message for notification
   const sedingMessage = message.slice(0, 20);
-  console.log(handles);
+
   // Sending the notification
   for (const handle of handles) {
     for (const user in data.user) {

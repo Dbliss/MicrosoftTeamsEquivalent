@@ -34,7 +34,7 @@ function callingChannelsCreate (token: string, name: string, isPublic: boolean) 
 function callingAuthRegister (email: string, password: string, nameFirst: string, nameLast: string) {
   const res = request(
     'POST',
-        `${url}:${port}/auth/register/v2`,
+        `${url}:${port}/auth/register/v3`,
         {
           body: JSON.stringify({
             email: email,
@@ -125,10 +125,7 @@ describe('Testing messageSend', () => {
     expect(res1.statusCode).toBe(OK);
 
     const res3 = callingMessageSend(user1.token, -31231451, 'yeayeysayea');
-    const message1 = JSON.parse(res3.body as string);
-    expect(res3.statusCode).toBe(OK);
-
-    expect(message1).toEqual({ error: 'error' });
+    expect(res3.statusCode).toBe(400);
   });
 
   test('length of message is less than 1 or over 1000 characters', () => {
@@ -144,10 +141,7 @@ describe('Testing messageSend', () => {
     const channel1 = JSON.parse(res2.body as string);
 
     const res3 = callingMessageSend(user1.token, channel1.channelId, '');
-    expect(res3.statusCode).toBe(OK);
-    const message1 = JSON.parse(res3.body as string);
-
-    expect(message1).toEqual({ error: 'error' });
+    expect(res3.statusCode).toBe(400);
   });
 
   test('channelId is valid and the authorised user is not a member of the channel', () => {
@@ -167,10 +161,7 @@ describe('Testing messageSend', () => {
     const channel1 = JSON.parse(res3.body as string);
 
     const res4 = callingMessageSend(user2.token, channel1.channelId, 'qeqweqdq');
-    expect(res4.statusCode).toBe(OK);
-    const message1 = JSON.parse(res4.body as string);
-
-    expect(message1).toEqual({ error: 'error' });
+    expect(res4.statusCode).toBe(403);
   });
 
   test('invalid token test', () => {
@@ -186,10 +177,7 @@ describe('Testing messageSend', () => {
     const channel1 = JSON.parse(res2.body as string);
 
     const res3 = callingMessageSend('-99999', channel1.channelId, 'heaqaewqeuhq');
-    expect(res3.statusCode).toBe(OK);
-    const message1 = JSON.parse(res3.body as string);
-
-    expect(message1).toEqual({ error: 'error' });
+    expect(res3.statusCode).toBe(400);
   });
 
   test('no errors, succesful message sent', () => {
@@ -206,7 +194,7 @@ describe('Testing messageSend', () => {
 
     const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
     expect(res3.statusCode).toBe(OK);
-    const message1 = JSON.parse(res3.body as string);
+    const message1 = JSON.parse(String(res3.getBody()));
 
     expect(message1).toEqual({ messageId: expect.any(Number) });
   });
@@ -225,10 +213,7 @@ describe('Testing messageEdit', () => {
     expect(res2.statusCode).toBe(OK);
 
     const res4 = callingMessageEdit(user1.token, -321312321, 'qweqewqqd');
-    expect(res4.statusCode).toBe(OK);
-    const edit1 = JSON.parse(res4.body as string);
-
-    expect(edit1).toEqual({ error: 'error' });
+    expect(res4.statusCode).toBe(400);
   });
 
   test('length of message is over 1000 characters', () => {
@@ -248,10 +233,7 @@ describe('Testing messageEdit', () => {
     const message1 = JSON.parse(res3.body as string);
 
     const res4 = callingMessageEdit(user1.token, message1.messageId, '141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844609550582231725359408128268066130032342448111745028410270193852110555964462294895493038196442881097566593344612847564823378678316527120190914564856692268066130034603486104543266482133936072602491412737245870066063155881748815209209628292540917153643678925903601133053052680661300488204665213841469519415116094330572703657595919530921861173819326117931051185480744623799627495673518857527248912279381 83011949129833673362440656643086021394946395224737190702179860943702770539217176293176752384674818467669405130005681271 452635608277857713427577896091736371787214684409022495343014654958537050792279689258923542019956112129021960864034418159813629774771309960518707211349999998372978049951059731732816096318595024459455346908302642522308253344685035261931188171010003137838752886587533208381420617177669147303598253490428755468731159562863882353787593751957781857780532171226806613001927876611195909216420198dsfwefwef268066130026806613002680661300268066130026806613002680661300268066130026806613002680661300');
-    expect(res4.statusCode).toBe(OK);
-    const edit1 = JSON.parse(res4.body as string);
-
-    expect(edit1).toEqual({ error: 'error' });
+    expect(res4.statusCode).toBe(400);
   });
 
   test('the message was not sent by the authorised user making this request or the authorised user does not have owner permissions', () => {
@@ -275,10 +257,7 @@ describe('Testing messageEdit', () => {
     const message1 = JSON.parse(res3.body as string);
 
     const res4 = callingMessageEdit(user2.token, message1.messageId, 'd321312efwef');
-    const edit1 = JSON.parse(res4.body as string);
-    expect(res4.statusCode).toBe(OK);
-
-    expect(edit1).toEqual({ error: 'error' });
+    expect(res4.statusCode).toBe(403);
   });
 
   test('succesful edit of message', () => {
@@ -307,7 +286,7 @@ describe('Testing messageEdit', () => {
     const messages = JSON.parse(res5.body as string);
     expect(res5.statusCode).toBe(OK);
 
-    expect(messages).toEqual({ messages: [{ message: 'dsfwe2131wef', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'dsfwe2131wef', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 
   test('succesful deletion via edit for a message', () => {
@@ -340,7 +319,7 @@ describe('Testing messageEdit', () => {
 
     expect(edit1).toEqual({});
 
-    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 
   test('succesful edit for a message 2', () => {
@@ -373,7 +352,7 @@ describe('Testing messageEdit', () => {
 
     expect(edit1).toEqual({});
 
-    expect(messages).toEqual({ messages: [{ message: 'cba', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }, { message: 'abc', messageId: message.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'cba', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }, { message: 'abc', messageId: message.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 
   test('succesful edit for a message in a dm', () => {
@@ -410,10 +389,10 @@ describe('Testing messageEdit', () => {
 
     expect(edit1).toEqual({});
 
-    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }, { message: 'cba', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }, { message: 'cba', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 
-  test('succesful edit for a message in a dm', () => {
+  test('succesful edit for a message in a dm 2', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
 
@@ -447,7 +426,7 @@ describe('Testing messageEdit', () => {
 
     expect(edit1).toEqual({});
 
-    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 });
 
@@ -464,17 +443,14 @@ describe('Testing messageRemove', () => {
     expect(res2.statusCode).toBe(OK);
 
     const res4 = callingMessageRemove(user1.token, -32141421);
-    const bodyObj4 = JSON.parse(res4.body as string);
-    expect(res4.statusCode).toBe(OK);
-
-    expect(bodyObj4).toEqual({ error: 'error' });
+    expect(res4.statusCode).toBe(400);
   });
 
   test('the message was not sent by the authorised user making this request or the authorised user does not have owner permissions in the channel', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
 
-    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const res1 = callingAuthRegister('email@gmail.com', 'password1', 'first1', 'last1');
     const user1 = JSON.parse(res1.body as string);
     expect(res1.statusCode).toBe(OK);
 
@@ -491,10 +467,7 @@ describe('Testing messageRemove', () => {
     const message1 = JSON.parse(res3.body as string);
 
     const res4 = callingMessageRemove(user2.token, message1.messageId);
-    const removed = JSON.parse(res4.body as string);
-    expect(res4.statusCode).toBe(OK);
-
-    expect(removed).toEqual({ error: 'error' });
+    expect(res4.statusCode).toBe(403);
   });
 
   test('invalid token test', () => {
@@ -514,10 +487,7 @@ describe('Testing messageRemove', () => {
     const message1 = JSON.parse(res3.body as string);
 
     const res4 = callingMessageRemove('-99999', message1.messageId);
-    const removed = JSON.parse(res4.body as string);
-    expect(res4.statusCode).toBe(OK);
-
-    expect(removed).toEqual({ error: 'error' });
+    expect(res4.statusCode).toBe(400);
   });
 
   test('succesful deletion of message', () => {
@@ -550,7 +520,7 @@ describe('Testing messageRemove', () => {
     const messages = JSON.parse(res5.body as string);
     expect(res5.statusCode).toBe(OK);
 
-    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 
   test('succesful deletion of a message in a dm', () => {
@@ -582,12 +552,12 @@ describe('Testing messageRemove', () => {
     expect(res4.statusCode).toBe(OK);
 
     const res5 = callingDmMessages(user1.token, dm1.dmId, 0);
-    const messages = JSON.parse(res5.body as string);
     expect(res5.statusCode).toBe(OK);
+    const messages = JSON.parse(res5.body as string);
 
     expect(edit1).toEqual({});
 
-    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number) }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 });
 

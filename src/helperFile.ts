@@ -1,4 +1,3 @@
-import { time } from 'console';
 import request from 'sync-request';
 import config from './config.json';
 
@@ -606,7 +605,7 @@ function callingMessageUnpin (token: string, messageId: number) {
         `${url}:${port}/message/unpin/v1`,
         {
           body: JSON.stringify({
-            token: token, 
+            token: token,
             messageId: messageId,
           }),
           headers: {
@@ -695,6 +694,7 @@ export {
   callingMessagePin,
   callingMessageUnpin,
   callingMessageSendLater,
+  callingMessageSendLaterDm,
   // callingStandupStart,
   // callingStandupActive,
   // callingStandUpSend,

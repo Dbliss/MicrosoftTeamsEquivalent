@@ -336,14 +336,14 @@ app.post('/message/share/v1', (req, res) => {
 app.post('/message/pin/v1', (req, res) => {
   const { messageId } = req.body;
   const token = req.headers.token;
-  const leave = messagePinV1(token as string,  messageId);
+  const leave = messagePinV1(token as string, messageId);
   res.json(leave);
 });
 
 app.post('/message/unpin/v1', (req, res) => {
   const { messageId } = req.body;
   const token = req.headers.token;
-  const leave = messageUnpinV1(token as string,  messageId);
+  const leave = messageUnpinV1(token as string, messageId);
   res.json(leave);
 });
 

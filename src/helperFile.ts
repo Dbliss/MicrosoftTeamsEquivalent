@@ -1,3 +1,4 @@
+import { time } from 'console';
 import request from 'sync-request';
 import config from './config.json';
 
@@ -562,6 +563,98 @@ function callingAuthRegister (email: string, password: string, nameFirst: string
   return res;
 }
 
+function callingMessageShare (token: string, ogMessageId: number, message: string, channelId: number, dmId: number) {
+  const res = request(
+    'POST',
+        `${url}:${port}/message/share/v1`,
+        {
+          body: JSON.stringify({
+            token: token,
+            ogMessageId: ogMessageId,
+            message: message,
+            channelId: channelId,
+            dmId: dmId
+          }),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
+}
+
+function callingMessagePin (token: string, messageId: number) {
+  const res = request(
+    'POST',
+        `${url}:${port}/message/pin/v1`,
+        {
+          body: JSON.stringify({
+            toke: token,
+            messageId: messageId,
+          }),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
+}
+
+function callingMessageUnpin (token: string, messageId: number) {
+  const res = request(
+    'POST',
+        `${url}:${port}/message/unpin/v1`,
+        {
+          body: JSON.stringify({
+            token: token, 
+            messageId: messageId,
+          }),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
+}
+
+function callingMessageSendLater (token: string, channelId: number, message: string, timeSent: number) {
+  const res = request(
+    'POST',
+        `${url}:${port}/message/sendlater/v1`,
+        {
+          body: JSON.stringify({
+            token: token,
+            channelId: channelId,
+            message: message,
+            timeSent: timeSent,
+          }),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
+}
+
+function callingMessageSendLaterDm (token: string, dmId: number, message: string, timeSent: number) {
+  const res = request(
+    'POST',
+        `${url}:${port}/message/sendlaterdm/v1`,
+        {
+          body: JSON.stringify({
+            token: token,
+            dmId: dmId,
+            message: message,
+            timeSent: timeSent,
+          }),
+          headers: {
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
+}
+
 export {
   callingAuthRegister,
   callingChannelsCreate,
@@ -596,12 +689,12 @@ export {
   callingUserProfileSetHandle,
   callingNotificationsGet,
   callingSearch,
-  // callingMessageShare,
+  callingMessageShare,
   callingMessageReact,
   callingMessageUnreact,
-  // callingMessagePin,
-  // callingMessageUnpin,
-  // callingMessageSendLater,
+  callingMessagePin,
+  callingMessageUnpin,
+  callingMessageSendLater,
   // callingStandupStart,
   // callingStandupActive,
   // callingStandUpSend,

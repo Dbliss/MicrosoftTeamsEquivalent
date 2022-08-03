@@ -148,8 +148,8 @@ app.post('/auth/logout/v2', (req, res, next) => {
 app.get('/channel/details/v2', (req, res, next) => {
   try {
 
-    const channelId = req.query.channelId;
-    return res.json(channelDetailsV1(String(req.headers.token), Number(channelId)));
+    const channelId = req.query.channelId as string;
+    return res.json(channelDetailsV1((req.headers.token as string), parseInt(channelId)));
   } catch (err) {
     next(err);
   }

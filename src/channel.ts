@@ -461,6 +461,13 @@ const channelLeaveV1 = (token: string, channelId: number) => {
         data.user[userIndex].channels.splice(i, 1);
       }
     }
+
+    const timeUpdated = Math.floor(Date.now() / 1000);
+    const updateObject: channelsJoinedType = {
+      numChannelsJoined: data.stats[getIndexOfStatsUid(data, token)].channelsJoined[data.stats[getIndexOfStatsUid(data, token)].channelsJoined.length - 1].numChannelsJoined - 1,
+      timeStamp: timeUpdated,
+    }
+    data.stats[getIndexOfStatsUid(data, token)].channelsJoined.push(updateObject);
     setData(data);
   }
   return {};

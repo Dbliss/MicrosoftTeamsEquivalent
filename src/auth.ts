@@ -1,6 +1,6 @@
 import validator from 'validator';
-import { dataType, getData, setData } from './dataStore';
-import { getHashOf } from './other';
+import { channelsJoinedType, dataType, dmsJoinedType, getData, messagesSentType, setData, statsType } from './dataStore';
+import { getHashOf, getIndexOfStatsUid, involvementRateCalc } from './other';
 import HTTPError from 'http-errors';
 
 // Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.
@@ -86,6 +86,37 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     profileImgUrl: '',
   };
   data.user[j].token.push(token);
+
+  // Intitialising new user and pushing into stats
+  const statsPushObject: statsType = {
+    uId: uID,
+    channelsJoined: [],
+    dmsJoined: [],
+    messagesSent: [] ,
+    involvementRate: -1,
+  }
+  data.stats.push(statsPushObject);
+  
+  //Updating the stats object
+  const timeUpdated = Math.floor(Date.now() / 1000);
+  const updateChannelObject: channelsJoinedType = {
+    numChannelsJoined: 0,
+    timeStamp: timeUpdated,
+  }
+  data.stats[getIndexOfStatsUid(data, token)].channelsJoined.push(updateChannelObject); 
+
+  const updateDmObject: dmsJoinedType = {
+    numDmsJoined: 0,
+    timeStamp: timeUpdated,
+  }
+  data.stats[getIndexOfStatsUid(data, token)].dmsJoined.push(updateDmObject);
+
+  const updateMsgObject: messagesSentType = {
+    numMessagesSent: 0,
+    timeStamp: timeUpdated,
+  }
+  data.stats[getIndexOfStatsUid(data, token)].messagesSent.push(updateMsgObject);
+
   setData(data);
 
   return { token: token, authUserId: uID };

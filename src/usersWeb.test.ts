@@ -53,8 +53,10 @@ function callingUserProfile (token: string, uId: number) {
         `${url}:${port}/user/profile/v2`,
         {
           qs: {
-            token: token,
             uId: uId,
+          },
+          headers: {
+            token: token,
           }
         }
   );
@@ -68,6 +70,8 @@ function callingUsersAll (token: string) {
         `${url}:${port}/users/all/v1`,
         {
           qs: {
+          },
+          headers: {
             token: token,
           }
         }
@@ -82,11 +86,11 @@ function callingUserProfileSetName (token: string, nameFirst:string, nameLast:st
         `${url}:${port}/user/profile/setname/v1`,
         {
           body: JSON.stringify({
-            token: token,
             nameFirst: nameFirst,
             nameLast: nameLast,
           }),
           headers: {
+            token: token,
             'Content-type': 'application/json',
           },
         }
@@ -101,10 +105,10 @@ function callingUserProfileSetEmail (token: string, email: string) {
         `${url}:${port}/user/profile/setemail/v1`,
         {
           body: JSON.stringify({
-            token: token,
             email: email,
           }),
           headers: {
+            token: token,
             'Content-type': 'application/json',
           },
         }
@@ -119,10 +123,10 @@ function callingUserProfileSetHandle (token: string, handleStr: string) {
         `${url}:${port}/user/profile/sethandle/v1`,
         {
           body: JSON.stringify({
-            token: token,
             handleStr: handleStr,
           }),
           headers: {
+            token: token,
             'Content-type': 'application/json',
           },
         }

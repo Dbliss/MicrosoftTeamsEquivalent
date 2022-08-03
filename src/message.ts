@@ -1,6 +1,7 @@
-import { getData, setData, channelType, messageType, dataType } from './dataStore';
+import { getData, setData, channelType, messageType, dataType, channelsJoinedType, messagesSentType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
+import { getIndexOfStatsUid } from './other';
 
 function messageSendV1(token: string, channelId: number, message: string) {
   const data:dataType = getData();
@@ -21,7 +22,7 @@ function messageSendV1(token: string, channelId: number, message: string) {
   const userIndex = getTokenIndex(token, data);
   // checking the token is valid
   if (userIndex === -1) {
-    throw HTTPError(400, 'Token is invalid');
+    throw HTTPError(403, 'Token is invalid');
   }
 
   // chekcing the length of the message is within parameters
@@ -97,6 +98,13 @@ function messageSendV1(token: string, channelId: number, message: string) {
       }
     }
   }
+
+  const timeUpdated = Math.floor(Date.now() / 1000);
+  const updateObject: messagesSentType = {
+    numMessagesSent: data.stats[getIndexOfStatsUid(data, token)].messagesSent[data.stats[getIndexOfStatsUid(data, token)].messagesSent.length - 1].numMessagesSent + 1,
+    timeStamp: timeUpdated,
+  }
+  data.stats[getIndexOfStatsUid(data, token)].messagesSent.push(updateObject);
 
   setData(data);
 
@@ -372,7 +380,16 @@ function messageRemoveV1(token: string, messageId: number) {
       }
     }
   }
+
+  const timeUpdated = Math.floor(Date.now() / 1000);
+  const updateObject: messagesSentType = {
+    numMessagesSent: data.stats[getIndexOfStatsUid(data, token)].messagesSent[data.stats[getIndexOfStatsUid(data, token)].messagesSent.length - 1].numMessagesSent - 1,
+    timeStamp: timeUpdated,
+  }
+  data.stats[getIndexOfStatsUid(data, token)].messagesSent.push(updateObject);
+
   setData(data);
+  
   return {};
 }
 

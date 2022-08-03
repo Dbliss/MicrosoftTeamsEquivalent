@@ -13,8 +13,10 @@ function callingChannelDetails (token: string, channelId: number) {
         `${url}:${port}/channel/details/v2`,
         {
           qs: {
-            token: token,
             channelId: channelId,
+          },
+          headers: {
+            token: token,
           }
         }
   );
@@ -100,9 +102,9 @@ describe('HTTP tests for channelDetailsV2', () => {
       'password',
       'First',
       'Last');
-
+expect(auth.statusCode).toBe(OK);
     const registered = JSON.parse(String(auth.getBody()));
-
+      console.log(`This is the token: ${registered.token}`);
     const chanId = callingChannelsCreate(registered.token, 'name', true);
     const channelId = JSON.parse(String(chanId.getBody()));
 
@@ -145,7 +147,8 @@ describe('HTTP tests for channelDetailsV2', () => {
     const chanId = callingChannelsCreate(authorised.token, 'name', true);
     const channelId = JSON.parse(String(chanId.getBody()));
 
-    callingChannelJoin(authorised1.token, channelId.channelId);
+    const channelJoin = callingChannelJoin(authorised1.token, channelId.channelId);
+    expect(channelJoin.statusCode).toBe(OK);
 
     const res = callingChannelDetails(authorised.token, channelId.channelId);
     expect(res.statusCode).toBe(OK);

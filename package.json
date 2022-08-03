@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "test": "jest src/channelWeb.test",
+        "test": "jest src/",
         "tsc": "tsc --noImplicitAny",
         "lint": "eslint src/**.ts",
         "lint-fix": "eslint --fix src/**.ts",

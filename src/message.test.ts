@@ -1,4 +1,4 @@
-import { callingDmCreate, callingMessageSendDm, callingDmMessages, requestRemoveOwner ,callingClear, callingChannelInvite, callingChannelsCreate, callingAuthRegister, callingMessageSend, callingMessageRemove, callingMessageEdit, callingChannelMessages } from './helperFile';
+import { callingDmCreate, callingMessageSendDm, callingDmMessages, callingClear, callingChannelInvite, callingChannelsCreate, callingAuthRegister, callingMessageSend, callingMessageRemove, callingMessageEdit, callingChannelMessages } from './helperFile';
 
 const OK = 200;
 

@@ -5,6 +5,7 @@ import {
 import crypto from 'crypto';
 import { rawListeners } from 'process';
 import { getTokenIndex } from './users';
+import { statSync } from 'fs';
 const SECRET = 'SecretSAUCE';
 
 // <Resets the internal data of the application to its initial state>
@@ -22,48 +23,51 @@ function clearV1() {
     channel: [],
     dm: [],
     stats: [],
+    workSpaceStats: {
+      channelsExist: [] ,
+      dmsExist: [],
+      messagesExist: [],
+      utilizationRate: -1
+    }
   };
   // setting the cleared data as the original
   setData(emptyData);
   return {};
 }
 
+function getIndexOfStatsUid (data: dataType, token: string) {
+  const tokenIndex = getTokenIndex(token, data);
+  const uId = data.user[tokenIndex].authUserId;
+  const userIndex = data.stats.findIndex((object: any) => {
+    return object.uId === uId;
+  });
+  return userIndex;
+}
+
+
 function getHashOf(plaintext: string) {
   return crypto.createHash('sha256').update(plaintext + SECRET).digest('hex');
 }
 
-function involvementRateCalc(token: string, data: dataType, numChannelsJoined: number, numDmsJoined: number, numMessagesSent: number ) {
-  const index = getTokenIndex(token, data);
-  const uId = data.user[index].authUserId;
-  let dmNum = 0;
-  for (const dms of data.dm) {
-    for (const uIds of dms.members) {
-      if (uIds === uId) {
-        dmNum++;
-      }
-    }
-  }
+function involvementRateCalc(token: string, data: dataType ) {
+  const statsIndex = getIndexOfStatsUid(data, token);
+  const numChannelsJoined = data.stats[statsIndex].channelsJoined[data.stats[statsIndex].channelsJoined.length - 1].numChannelsJoined;
+  const numDmsJoined = data.stats[statsIndex].dmsJoined[data.stats[statsIndex].dmsJoined.length - 1].numDmsJoined;
+  const numMessagesSent = data.stats[statsIndex].messagesSent[data.stats[statsIndex].messagesSent.length - 1].numMessagesSent;
   
-  // finding number of messages in dm
-  let msgNum = 0;
-  for (const dms of data.dm) {
-    for (const messages of dms.messages) {
-      if (messages.uId === uId) {
-        msgNum++;
-      }
-    }
-  }
+  const numDms = data.dm.length;
   
-  // finding number of messages in channel
-  for (const channels of data.channel) {
-    for (const messages of channels.messages) {
-      if (messages.uId === uId) {
-        msgNum++;
-      }
-    }
+  let numMessages = 0;
+  for (const channel of data.channel) {
+    numMessages += channel.messages.length
   }
+  for (const dm of data.dm) {
+    numMessages += dm.messages.length
+  }
+  const numChannels = data.channel.length
   
-  const denominator = data.user[index].channels.length + dmNum + msgNum;
+  
+  const denominator = numChannels + numDms + numMessages;
 
   const sum = numChannelsJoined + numDmsJoined + numMessagesSent;
 
@@ -90,14 +94,6 @@ function utilizationRateCalc (data: dataType) {
   return joined/numUsers;
 }
 
-function getIndexOfStatsUid (data: dataType, token: string) {
-  const tokenIndex = getTokenIndex(token, data);
-  const uId = data.user[tokenIndex].authUserId;
-  const userIndex = data.stats.findIndex((object: any) => {
-    return object.uId === uId;
-  });
-  return userIndex;
-}
 
 
 export { clearV1, getHashOf, involvementRateCalc, utilizationRateCalc, getIndexOfStatsUid };

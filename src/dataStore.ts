@@ -88,7 +88,31 @@ type dataType = {
   channel: channelType[],
   dm: dmType[],
   stats: statsType[],
+  workSpaceStats: workSpaceStatsType,
 };
+
+export type workSpaceStatsType = {
+  channelsExist: channelsExistType[] ,
+  dmsExist: dmsExistType[],
+  messagesExist: messagesExistType[],
+  utilizationRate: number
+}
+
+export type channelsExistType = {
+  numChannelsExist: number,
+  timeStamp: number,
+}
+
+export type dmsExistType = {
+  numdmsExist: number,
+  timeStamp: number,
+}
+
+export type messagesExistType = {
+  numMessagesExist: number,
+  timeStamp: number,
+}
+
 
 export type statsType = {
   uId: number,

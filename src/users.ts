@@ -1,6 +1,8 @@
 import validator from 'validator';
 import { dataType, getData, setData, userType, channelsInUserType } from './dataStore';
 import HTTPError from 'http-errors';
+import { getIndexOfStatsUid, involvementRateCalc, utilizationRateCalc } from './other';
+import { stat } from 'fs';
 
 // const error = { error: 'error' };
 
@@ -294,6 +296,25 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
 // Returns {error: 'error'} on <invalid token>
 // Returns {error: 'error'} on <invalid handleStr>
  export function userStats (token: string) {
+  const data: dataType = getData();
+  const tokenIndex = getTokenIndex(token, data);
+  if (tokenIndex === -1) {
+    if ((tokenIndex === -1)) {
+      throw HTTPError(403, 'Invalid token entered');
+    };
+  }
+  
+  const statsIndex = getIndexOfStatsUid(data, token);
+  
+
+  const returnObject = {
+    channelsJoined: [...data.stats[statsIndex].channelsJoined],
+    dmsJoined: [...data.stats[statsIndex].dmsJoined], 
+    messagesSent: [...data.stats[statsIndex].messagesSent], 
+    involvementRate: involvementRateCalc(token, data),
+  }
+  return({userStats: returnObject});
+
 
 }
 
@@ -306,6 +327,24 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
 // Returns {error: 'error'} on <invalid token>
 // Returns {error: 'error'} on <invalid handleStr>
  export function usersStats (token: string) {
-
+  const data: dataType = getData();
+  const tokenIndex = getTokenIndex(token, data);
+  if (tokenIndex === -1) {
+    if ((tokenIndex === -1)) {
+      throw HTTPError(403, 'Invalid token entered');
+    };
+  }
+  const returnObject = {
+    channelsExist:[...data.workSpaceStats.channelsExist] ,
+    dmsExist: [...data.workSpaceStats.dmsExist], 
+    messagesExist: [...data.workSpaceStats.messagesExist],
+    utilizationRate: utilizationRateCalc(data),
+  }
+  
+  
+  return {workspaceStats: returnObject}
 }
+
+
+
 export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, getTokenIndex };

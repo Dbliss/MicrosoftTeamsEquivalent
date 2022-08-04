@@ -1,6 +1,7 @@
-import { getData, setData, dmType, messageType, dataType } from './dataStore';
+import { getData, setData, dmType, messageType, dataType, channelsJoinedType, dmsJoinedType, dmsExistType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
+import { getIndexOfStatsUid } from './other';
 
 // Funtion to create a dm
 
@@ -88,6 +89,22 @@ function dmCreate (token: string, uIds: number[]) {
       }
     }
   }
+
+  const timeUpdated = Math.floor(Date.now() / 1000);
+  const updateUserObject: dmsJoinedType = {
+    numDmsJoined: data.stats[getIndexOfStatsUid(data, token)].dmsJoined[data.stats[getIndexOfStatsUid(data, token)].dmsJoined.length - 1].numDmsJoined + 1,
+    timeStamp: timeUpdated,
+  }
+  data.stats[getIndexOfStatsUid(data, token)].dmsJoined.push(updateUserObject);
+
+
+  const updateWorkObject: dmsExistType = {
+    numdmsExist: data.workSpaceStats.dmsExist[data.workSpaceStats.dmsExist.length - 1].numdmsExist + 1 ,
+    timeStamp: timeUpdated,
+  }
+  data.workSpaceStats.dmsExist.push(updateWorkObject);
+
+
 
   setData(data);
   return { dmId: tempDm.dmId };
@@ -192,6 +209,20 @@ function dmRemove (token: string, dmId: number) {
     throw HTTPError(403, 'Not original creator');
   }
 
+
+  const timeUpdated = Math.floor(Date.now() / 1000);
+  const updateUserObject: dmsJoinedType = {
+    numDmsJoined: data.stats[getIndexOfStatsUid(data, token)].dmsJoined[data.stats[getIndexOfStatsUid(data, token)].dmsJoined.length - 1].numDmsJoined - 1,
+    timeStamp: timeUpdated,
+  }
+  data.stats[getIndexOfStatsUid(data, token)].dmsJoined.push(updateUserObject);
+
+
+  const updateWorkObject: dmsExistType = {
+    numdmsExist: data.workSpaceStats.dmsExist[data.workSpaceStats.dmsExist.length - 1].numdmsExist - 1 ,
+    timeStamp: timeUpdated,
+  }
+  data.workSpaceStats.dmsExist.push(updateWorkObject);
   setData(data);
   return {};
 }

@@ -60,6 +60,12 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   const uID = Math.floor(Math.random() * Date.now());
   let permissionId = 2;
   if (data.user[0] === undefined) {
+    data.workSpaceStats = {
+      channelsExist: [] ,
+      dmsExist: [],
+      messagesExist: [],
+      utilizationRate: -1
+    };
     permissionId = 1;
   }
   // generate token and store

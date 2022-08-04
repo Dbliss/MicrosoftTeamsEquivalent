@@ -371,7 +371,6 @@ app.post('/auth/passwordreset/reset/v1', (req, res) => {
   const { resetCode, newPassword } = req.body;
   const reset = authPasswordResetV1(resetCode, newPassword);
   res.json(reset);
-
 });
 
 // start server

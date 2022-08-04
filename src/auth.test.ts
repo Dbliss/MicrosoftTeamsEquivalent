@@ -1,6 +1,6 @@
 import request from 'sync-request';
 import config from './config.json';
-import { callingClear } from './channelsServer.test';
+import { callingClear } from './helperFile';
 import { callingAuthRegister } from './dm.test';
 
 const OK = 200;

@@ -690,7 +690,6 @@ describe('Testing message unpin', () => {
 
     const res4 = callingMessageUnpin('-9999', message1.messageId);
     expect(res4.statusCode).toBe(400);
-
   });
 });
 

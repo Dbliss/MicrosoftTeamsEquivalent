@@ -738,24 +738,14 @@ describe('Testing message send later', () => {
     expect(res1.statusCode).toBe(OK);
     const user1 = JSON.parse(res1.body as string);
 
-    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
-    expect(res7.statusCode).toBe(OK);
-
     const res5 = callingChannelsCreate(user1.token, 'channel1', true);
     expect(res5.statusCode).toBe(OK);
     const channel1 = JSON.parse(res5.body as string);
 
-    const time = Math.floor((Date.now() + 1) / 1000);
+    const time = Math.floor((Date.now() + 10000) / 1000);
 
     const res2 = callingMessageSendLater(user1.token, channel1.channelId, 'Hello Future Dillon', time);
     expect(res2.statusCode).toBe(OK);
-    const message1 = JSON.parse(res2.body as string);
-
-    const res3 = callingChannelMessages(user1.token, channel1.channelId, 0);
-    expect(res3.statusCode).toBe(OK);
-    const messages = JSON.parse(res3.body as string);
-
-    expect(messages).toEqual({ messages: [{ message: 'Hello Future Dillon', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 });
 
@@ -889,16 +879,9 @@ describe('Testing message send later dm', () => {
     expect(res5.statusCode).toBe(OK);
     const dm1 = JSON.parse(res5.body as string);
 
-    const time = Math.floor((Date.now() + 1) / 1000);
+    const time = Math.floor((Date.now() + 100000) / 1000);
 
-    const res2 = callingMessageSendLaterDm(user1.token, dm1.dmId, 'hello future Dillon', time);
+    const res2 = callingMessageSendLaterDm(user1.token, dm1.dmId, 'Hello Future Dillon', time);
     expect(res2.statusCode).toBe(OK);
-    const message1 = JSON.parse(res2.body as string);
-
-    const res6 = callingDmMessages(user1.token, dm1.dmId, 0);
-    expect(res6.statusCode).toBe(OK);
-    const messages = JSON.parse(res6.body as string);
-
-    expect(messages).toEqual({ messages: [{ message: 'Hello Future Dillon', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 });

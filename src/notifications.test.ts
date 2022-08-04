@@ -583,8 +583,7 @@ describe('Testing Notifications', () => {
       const messageSent = JSON.parse(String(message.getBody()));
 
       const leave = requestChannelLeave(registered2.token, channelCreated.channelId);
-      // expect(leave.statusCode).toBe(OK);
-      // const leaveChannel = JSON.parse(String(leave.getBody()));
+      expect(leave.statusCode).toBe(OK);
 
       const react = callingMessageReact(registered1.token, messageSent.messageId, 1);
       expect(react.statusCode).toBe(OK);

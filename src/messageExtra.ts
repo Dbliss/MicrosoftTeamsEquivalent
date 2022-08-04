@@ -1,4 +1,4 @@
-import { getData, setData, messageType, dataType } from './dataStore';
+import { getData, setData, messageType, dataType, channelType, dmType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
 
@@ -152,8 +152,6 @@ export function messagePinV1(token: string, messageId: number) {
   let isAMember = false;
   let isAOwner = false;
 
-
-
   // finding the exact message relating to the ogMessageId
   for (const channel of data.channel) {
     for (const imessage of channel.messages) {
@@ -179,7 +177,7 @@ export function messagePinV1(token: string, messageId: number) {
         }
 
         // check if the message is already pinned
-        if (imessage.isPinned === true){
+        if (imessage.isPinned === true) {
           throw HTTPError(400, 'message is already pinned');
         }
         imessage.isPinned = true;
@@ -199,7 +197,7 @@ export function messagePinV1(token: string, messageId: number) {
           throw HTTPError(403, 'user does not have permission to pin a message');
         }
         // check if the message is already pinned
-        if (imessage.isPinned === true){
+        if (imessage.isPinned === true) {
           throw HTTPError(400, 'message is already pinned');
         }
         imessage.isPinned = true;
@@ -208,7 +206,7 @@ export function messagePinV1(token: string, messageId: number) {
     }
   }
 
-  if (foundMessage === false){
+  if (foundMessage === false) {
     throw HTTPError(400, 'ogMessage does not refer to a valid message within a channel/DM that the authorised user has joined');
   }
 
@@ -231,8 +229,6 @@ export function messageUnpinV1(token: string, messageId: number) {
   let isAMember = false;
   let isAOwner = false;
 
-
-
   // finding the exact message relating to the ogMessageId
   for (const channel of data.channel) {
     for (const imessage of channel.messages) {
@@ -258,7 +254,7 @@ export function messageUnpinV1(token: string, messageId: number) {
         }
 
         // check if the message is pinned
-        if (imessage.isPinned === false){
+        if (imessage.isPinned === false) {
           throw HTTPError(400, 'message is already unpinned');
         }
         imessage.isPinned = false;
@@ -278,7 +274,7 @@ export function messageUnpinV1(token: string, messageId: number) {
           throw HTTPError(403, 'user does not have permission to pin a message');
         }
         // check if the message is pinned
-        if (imessage.isPinned === false){
+        if (imessage.isPinned === false) {
           throw HTTPError(400, 'message is already unpinned');
         }
         imessage.isPinned = false;
@@ -287,22 +283,139 @@ export function messageUnpinV1(token: string, messageId: number) {
     }
   }
 
-  if (foundMessage === false){
+  if (foundMessage === false) {
     throw HTTPError(400, 'ogMessage does not refer to a valid message within a channel/DM that the authorised user has joined');
   }
 
   setData(data);
-  return {}
+  return {};
 }
 
 export function messageSendLaterV1(token: string, channelId: number, message: string, timeSent: number) {
-  const data: dataType = getData();
-  const messageId = 0;
+  const data:dataType = getData();
+  let currentChannel: channelType;
+
+  // checking the channelId is valid and setting currentChannel to the valid channel
+  let validChannel = false;
+  for (const channel of data.channel) {
+    if (channel.cId === channelId) {
+      validChannel = true;
+      currentChannel = channel;
+    }
+  }
+  if (validChannel === false) {
+    throw HTTPError(400, 'channelId does not refer to a valid channel');
+  }
+
+  const userIndex = getTokenIndex(token, data);
+  // checking the token is valid
+  if (userIndex === -1) {
+    throw HTTPError(400, 'Token is invalid');
+  }
+
+  // chekcing the length of the message is within parameters
+  if (message.length > 1000 || message.length < 1) {
+    throw HTTPError(400, 'Length of message is too short or too long');
+  }
+
+  // checking the timesent is not in the past
+  if (timeSent < (Date.now() / 1000)) {
+    throw HTTPError(400, 'timeSent is a time in the past');
+  }
+
+  const uId = data.user[userIndex].authUserId;
+  let isAMember = false;
+
+  // need to make sure the user is apart of this channel
+  for (const member of currentChannel.members) {
+    if (member.authUserId === uId) {
+      isAMember = true;
+    }
+  }
+  if (isAMember === false) {
+    throw HTTPError(403, 'Authorised user is not a member of the channel');
+  }
+
+  // generating the messageId
+  const messageId = Math.floor(Math.random() * Date.now());
+
+  // creating a new object for the message
+  const newMessage: messageType = {
+    messageId: messageId,
+    uId: uId,
+    message: message,
+    timeSent: timeSent,
+    reacts: [],
+    isPinned: false
+  };
+
+  for (let i = 0; i < data.channel.length; i++) {
+    if (data.channel[i].cId === channelId) {
+      data.channel[i].messages.push(newMessage);
+    }
+  }
+
+  setData(data);
   return { messageId };
 }
 
 export function messageSendLaterDmV1(token: string, dmId: number, message: string, timeSent: number) {
-  const data: dataType = getData();
-  const messageId = 0;
+  const data:dataType = getData();
+  let currentDm: dmType;
+  let validDm = false;
+
+  // checking the channelId is valid and setting currentChannel to the valid channel
+  for (const dm of data.dm) {
+    if (dm.dmId === dmId) {
+      validDm = true;
+      currentDm = dm;
+    }
+  }
+  if (validDm === false) {
+    throw HTTPError(400, 'dmId does not refer to a valid dm');
+  }
+
+  const userIndex = getTokenIndex(token, data);
+  // checking the token is valid
+  if (userIndex === -1) {
+    throw HTTPError(400, 'Token is invalid');
+  }
+
+  // chekcing the length of the message is within parameters
+  if (message.length > 1000 || message.length < 1) {
+    throw HTTPError(400, 'Length of message is too short or too long');
+  }
+
+  // checking the timesent is not in the past
+  if (timeSent < (Date.now() / 1000)) {
+    throw HTTPError(400, 'timeSent is a time in the past');
+  }
+
+  const uId = data.user[userIndex].authUserId;
+
+  if (currentDm.members.includes(uId) === false) {
+    throw HTTPError(403, 'Authorised user is not a member of the dm');
+  }
+
+  // generating the messageId
+  const messageId = Math.floor(Math.random() * Date.now());
+
+  // creating a new object for the message
+  const newMessage: messageType = {
+    messageId: messageId,
+    uId: uId,
+    message: message,
+    timeSent: timeSent,
+    reacts: [],
+    isPinned: false
+  };
+
+  for (let i = 0; i < data.dm.length; i++) {
+    if (data.dm[i].dmId === dmId) {
+      data.dm[i].messages.push(newMessage);
+    }
+  }
+
+  setData(data);
   return { messageId };
 }

@@ -391,7 +391,10 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
         }
       }
     }
-    messages[j] = currentChannel.messages[i];
+    // only print messages that are meant to be sent (e.g send later messages will not be sent)
+    if (currentChannel.messages[i].timeSent < (Date.now() / 1000)) {
+      messages[j] = currentChannel.messages[i];
+    }
     j++;
   }
 

@@ -348,16 +348,16 @@ app.post('/message/unpin/v1', (req, res) => {
 });
 
 app.post('/message/sendlater/v1', (req, res) => {
-  const { channelId, messageId, timeSent } = req.body;
+  const { channelId, message, timeSent } = req.body;
   const token = req.headers.token;
-  const leave = messageSendLaterV1(token as string, channelId, messageId, timeSent);
+  const leave = messageSendLaterV1(token as string, channelId, message, timeSent);
   res.json(leave);
 });
 
 app.post('/message/sendlaterdm/v1', (req, res) => {
-  const { channelId, dmId, timeSent } = req.body;
+  const { message, dmId, timeSent } = req.body;
   const token = req.headers.token;
-  const leave = messageSendLaterDmV1(token as string, channelId, dmId, timeSent);
+  const leave = messageSendLaterDmV1(token as string, dmId, message, timeSent);
   res.json(leave);
 });
 

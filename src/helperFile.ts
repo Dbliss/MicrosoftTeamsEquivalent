@@ -568,7 +568,6 @@ function callingMessageShare (token: string, ogMessageId: number, message: strin
         `${url}:${port}/message/share/v1`,
         {
           body: JSON.stringify({
-            token: token,
             ogMessageId: ogMessageId,
             message: message,
             channelId: channelId,
@@ -576,6 +575,7 @@ function callingMessageShare (token: string, ogMessageId: number, message: strin
           }),
           headers: {
             'Content-type': 'application/json',
+            token: token,
           },
         }
   );

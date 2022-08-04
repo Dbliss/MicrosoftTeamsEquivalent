@@ -3,6 +3,26 @@ import { callingDmCreate, callingMessageSendDm, callingDmMessages, callingClear,
 const OK = 200;
 
 describe('Testing message Share', () => {
+  test('Invalid token', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res2 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res2.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res2.body as string);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessageShare('88888', message1.messageId, 'yes sir', channel1.channelId, -1);
+    expect(res4.statusCode).toBe(400);
+  });
+
   test('both channelId and dmId are invalid', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
@@ -159,41 +179,7 @@ describe('Testing message Share', () => {
     expect(res4.statusCode).toBe(403);
   });
 
-  test('succesful message share to a channel', () => {
-    const res = callingClear();
-    expect(res.statusCode).toBe(OK);
-
-    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
-    expect(res1.statusCode).toBe(OK);
-    const user1 = JSON.parse(res1.body as string);
-
-    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
-    expect(res7.statusCode).toBe(OK);
-    const user2 = JSON.parse(res7.body as string);
-
-    const res2 = callingAuthRegister('email13@gmail.com', 'password13', 'first13', 'last13');
-    expect(res2.statusCode).toBe(OK);
-
-    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
-    expect(res5.statusCode).toBe(OK);
-    const dm1 = JSON.parse(res5.body as string);
-
-    const res6 = callingChannelsCreate(user2.token, 'channel1', true);
-    expect(res6.statusCode).toBe(OK);
-    const channel1 = JSON.parse(res6.body as string);
-
-    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'heaqaewqeuhq');
-    expect(res3.statusCode).toBe(OK);
-    const message1 = JSON.parse(String(res3.getBody()));
-
-    const res4 = callingMessageShare(user2.token, message1.messageId, 'yes sir', channel1.channelId, -1);
-    expect(res4.statusCode).toBe(OK);
-    const result = JSON.parse(String(res4.getBody()));
-
-    expect(result).toMatchObject({ sharedMessageId: expect.any(Number) });
-  });
-
-  test('succesful message share to a dm', () => {
+  test('succesful message share to a dm from a channel', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
 
@@ -217,7 +203,7 @@ describe('Testing message Share', () => {
     expect(res3.statusCode).toBe(OK);
     const message1 = JSON.parse(String(res3.getBody()));
 
-    const res4 = callingMessageShare(user2.token, message1.messageId, 'yes sir', -1, dm1.dmId);
+    const res4 = callingMessageShare(user1.token, message1.messageId, 'yes sir', -1, dm1.dmId);
     expect(res4.statusCode).toBe(OK);
     const result = JSON.parse(String(res4.getBody()));
 
@@ -225,12 +211,43 @@ describe('Testing message Share', () => {
 
     const res8 = callingDmMessages(user1.token, dm1.dmId, 0);
     expect(res8.statusCode).toBe(OK);
-    const messages = JSON.parse(res4.body as string);
+    const messages = JSON.parse(res8.body as string);
 
-    expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq|---|yes sir', messageId: result.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq//yes sir', messageId: result.sharedMessageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 
-  test('succesful message share to a channel', () => {
+  test('Success sharing a message to a channel from a channel', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res5.body as string);
+
+    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessageShare(user2.token, message1.messageId, 'yes sir', -1, dm1.dmId);
+    expect(res4.statusCode).toBe(OK);
+    const result = JSON.parse(res4.body as string);
+
+    const res8 = callingDmMessages(user1.token, dm1.dmId, 0);
+    expect(res8.statusCode).toBe(OK);
+    const messages = JSON.parse(res8.body as string);
+
+    expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq//yes sir', messageId: result.sharedMessageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }, { message: 'heaqaewqeuhq', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
+  });
+
+  test('succesful message share to a channel from a dm', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
 
@@ -260,11 +277,11 @@ describe('Testing message Share', () => {
 
     expect(result).toMatchObject({ sharedMessageId: expect.any(Number) });
 
-    const res8 = callingChannelMessages(user1.token, channel1.channelId, 0);
+    const res8 = callingChannelMessages(user2.token, channel1.channelId, 0);
     expect(res8.statusCode).toBe(OK);
-    const messages = JSON.parse(res4.body as string);
+    const messages = JSON.parse(res8.body as string);
 
-    expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq|---|yes sir', messageId: result.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq//yes sir', messageId: result.sharedMessageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 });
 

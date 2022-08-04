@@ -1,7 +1,7 @@
 // Importing functions from channels.js file
 import request from 'sync-request';
 import config from './config.json';
-import { callingChannelsCreate, callingClear } from './channelsServer.test';
+import { callingChannelsCreate, callingClear } from './helperFile';
 import { callingAuthRegister } from './dm.test';
 import { callingChannelMessages } from './helperFile';
 
@@ -374,7 +374,7 @@ describe('testing standup/active/v1', () => {
 });
 
 describe('testing standup/send/v1', () => {
-  test('success', async() => {
+  test('success', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -413,7 +413,6 @@ describe('testing standup/send/v1', () => {
     expect(send1.statusCode).toBe(OK);
     const sent2 = JSON.parse(String(send1.getBody()));
     expect(sent2).toStrictEqual({});
-    await new Promise((r) => setTimeout(r, 2000));
     const chmsgs = callingChannelMessages(
       member.token,
       created.channelId,

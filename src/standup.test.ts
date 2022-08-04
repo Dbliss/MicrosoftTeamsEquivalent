@@ -81,7 +81,7 @@ describe('Testing standup/active/v1', () => {
     const start = callingStandupStart(
       '',
       created.channelId,
-      6
+      1
     );
     expect(start.statusCode).toBe(FORBID);
   });
@@ -98,7 +98,7 @@ describe('Testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       -1,
-      6
+      1
     );
     expect(start.statusCode).toBe(BADREQ);
   });
@@ -146,13 +146,13 @@ describe('Testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      10
+      1
     );
     expect(start.statusCode).toBe(OK);
     const start1 = callingStandupStart(
       member.token,
       created.channelId,
-      10
+      1
     );
     expect(start1.statusCode).toBe(BADREQ);
   });
@@ -184,7 +184,7 @@ describe('Testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      10
+      1
     );
     expect(start.statusCode).toBe(FORBID);
   });
@@ -238,7 +238,7 @@ describe('testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      10
+      1
     );
     expect(start.statusCode).toBe(OK);
     const active = callingStandupActive(
@@ -294,7 +294,7 @@ describe('testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      10
+      1
     );
     expect(start.statusCode).toBe(OK);
     const active = callingStandupActive(
@@ -323,7 +323,7 @@ describe('testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      10
+      1
     );
     expect(start.statusCode).toBe(OK);
     const active = callingStandupActive(
@@ -352,7 +352,7 @@ describe('testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      10
+      1
     );
     expect(start.statusCode).toBe(OK);
     const auth1 = callingAuthRegister(
@@ -371,7 +371,7 @@ describe('testing standup/active/v1', () => {
 });
 
 describe('testing standup/send/v1', () => {
-  test('success', async() => {
+  test('success', () => {
     callingClear();
     const auth = callingAuthRegister(
       'email@email.com',
@@ -410,7 +410,6 @@ describe('testing standup/send/v1', () => {
     expect(send1.statusCode).toBe(OK);
     const sent1 = JSON.parse(String(send1.getBody()));
     expect(sent1).toStrictEqual({});
-    await new Promise((r) => setTimeout(r, 2000));
     const chmsgs = callingChannelMessages(
       member.token,
       created.channelId,
@@ -440,7 +439,7 @@ describe('testing standup/send/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      50
+      1
     );
     expect(start.statusCode).toBe(OK);
     const send = callingStandupSend(
@@ -470,7 +469,7 @@ describe('testing standup/send/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      10
+      1
     );
     expect(start.statusCode).toBe(OK);
     const send = callingStandupSend(
@@ -500,7 +499,7 @@ describe('testing standup/send/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      10
+      1
     );
     expect(start.statusCode).toBe(OK);
     const send = callingStandupSend(
@@ -554,7 +553,7 @@ describe('testing standup/send/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      10
+      1
     );
     expect(start.statusCode).toBe(OK);
     const auth1 = callingAuthRegister(
@@ -571,4 +570,4 @@ describe('testing standup/send/v1', () => {
     );
     expect(send.statusCode).toBe(FORBID);
   });
-});
+}); 

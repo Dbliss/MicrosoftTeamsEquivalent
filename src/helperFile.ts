@@ -7,9 +7,11 @@ const url = config.url;
 function callingClear () {
   const res = request(
     'DELETE',
-      `${url}:${port}/clear/v1`);
+      `${url}:${port}/clear/v1`
+  );
   return res;
 }
+  
 
 function callingChannelDetails (token: string, channelId: number) {
   const res = request(

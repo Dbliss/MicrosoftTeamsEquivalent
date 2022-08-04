@@ -249,13 +249,11 @@ describe('Testing message Share', () => {
 
     const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
     expect(res3.statusCode).toBe(OK);
-    const message1 = JSON.parse(String(res3.getBody()));
 
     const res4 = callingMessageShare(user1.token, -99999, 'yes sir', -1, dm1.dmId);
     expect(res4.statusCode).toBe(400);
   });
 
-  
   test('invalid ogMessageId for dm case', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
@@ -302,7 +300,6 @@ describe('Testing message Share', () => {
 
     const res5 = callingDmCreate(user1.token, [user2.authUserId]);
     expect(res5.statusCode).toBe(OK);
-    const dm1 = JSON.parse(res5.body as string);
 
     const res6 = callingChannelsCreate(user1.token, 'channel1', true);
     expect(res6.statusCode).toBe(OK);
@@ -310,7 +307,6 @@ describe('Testing message Share', () => {
 
     const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
     expect(res3.statusCode).toBe(OK);
-    const message1 = JSON.parse(String(res3.getBody()));
 
     const res4 = callingMessageShare(user1.token, -99999, 'yes sir', channel1.channelId, -1);
     expect(res4.statusCode).toBe(400);
@@ -451,7 +447,7 @@ describe('Testing message Share', () => {
     expect(res8.statusCode).toBe(OK);
     const messages = JSON.parse(res8.body as string);
 
-    expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq//yes sir', messageId: result.sharedMessageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false },  { message: 'heaqaewqeuhq', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
+    expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq//yes sir', messageId: result.sharedMessageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }, { message: 'heaqaewqeuhq', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 });
 
@@ -526,12 +522,10 @@ describe('Testing message pin', () => {
 
     const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'heaqaewqeuhq');
     expect(res3.statusCode).toBe(OK);
-    const message1 = JSON.parse(String(res3.getBody()));
 
     const res4 = callingMessagePin(user1.token, -99999);
     expect(res4.statusCode).toBe(400);
   });
-
 
   test('the message is already pinned', () => {
     const res = callingClear();
@@ -810,7 +804,7 @@ describe('Testing message unpin', () => {
     const message1 = JSON.parse(String(res3.getBody()));
 
     const res7 = callingMessagePin(user1.token, message1.messageId);
-    expect(res7.statusCode).toBe(OK)
+    expect(res7.statusCode).toBe(OK);
 
     const res4 = callingMessageUnpin(user3.token, message1.messageId);
     expect(res4.statusCode).toBe(400);
@@ -892,7 +886,6 @@ describe('Testing message unpin', () => {
 
     const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'heaqaewqeuhq');
     expect(res3.statusCode).toBe(OK);
-    const message1 = JSON.parse(String(res3.getBody()));
 
     const res2 = callingMessageUnpin(user1.token, -999);
     expect(res2.statusCode).toBe(400);

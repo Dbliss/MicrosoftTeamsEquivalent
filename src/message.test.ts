@@ -1,4 +1,4 @@
-import { callingDmCreate, callingMessageSendDm, callingDmMessages, callingClear, callingChannelInvite, callingChannelsCreate, callingAuthRegister, callingMessageSend, callingMessageRemove, callingMessageEdit, callingChannelMessages } from './helperFile';
+import { callingDmCreate, callingMessageSendDm, callingDmMessages, requestRemoveOwner ,callingClear, callingChannelInvite, callingChannelsCreate, callingAuthRegister, callingMessageSend, callingMessageRemove, callingMessageEdit, callingChannelMessages } from './helperFile';
 
 const OK = 200;
 
@@ -193,12 +193,10 @@ describe('Testing messageEdit', () => {
     const message1 = JSON.parse(res3.body as string);
 
     const res7 = callingMessageSend(user1.token, channel1.channelId, 'abc');
-    const message2 = JSON.parse(res7.body as string);
     expect(res7.statusCode).toBe(OK);
 
     const res4 = callingMessageEdit('-99999', message1.messageId, '');
     expect(res4.statusCode).toBe(400);
-
   });
 
   test('not a owner of dm', () => {
@@ -453,7 +451,7 @@ describe('Testing messageRemove', () => {
     expect(res4.statusCode).toBe(400);
   });
 
-  test('aapart of channel but not owner in it', () => {
+  test('apart of channel but not owner in it', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
 
@@ -469,12 +467,12 @@ describe('Testing messageRemove', () => {
     expect(res2.statusCode).toBe(OK);
     const channel1 = JSON.parse(res2.body as string);
 
+    const res6 = callingChannelInvite(user1.token, channel1.channelId, user2.authUserId);
+    expect(res6.statusCode).toBe(OK);
+
     const res3 = callingMessageSend(user1.token, channel1.channelId, 'dsfwefwef');
     expect(res3.statusCode).toBe(OK);
     const message1 = JSON.parse(res3.body as string);
-
-    const res6 = callingChannelInvite(user1.token, channel1.channelId, user2.authUserId);
-    expect(res6.statusCode).toBe(OK);
 
     const res4 = callingMessageRemove(user2.token, message1.messageId);
     expect(res4.statusCode).toBe(403);
@@ -576,7 +574,6 @@ describe('Testing messageRemove', () => {
 
     const res7 = callingMessageSendDm(user1.token, dm1.dmId, 'abc');
     expect(res7.statusCode).toBe(OK);
-    const message2 = JSON.parse(res7.body as string);
 
     const res4 = callingMessageRemove(user3.token, message1.messageId);
     expect(res4.statusCode).toBe(403);

@@ -114,7 +114,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
   let isDmMember = false;
   let isDmOwner = false;
   let isOwnerMember = false;
-  let userIndex = 0;
   let userId = 0;
   let isMemberOfChannel = false;
   let tokenIsSender = false;
@@ -122,7 +121,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
   // finding the checking if the token user has global permissions
   for (let i = 0; i < data.user.length; i++) {
     if (data.user[i].token[tokenIndex] === token) {
-      userIndex = i;
       userId = data.user[i].authUserId;
     }
   }
@@ -212,7 +210,7 @@ function messageEditV1(token: string, messageId: number, message: string) {
     if (isChannelMessage === true) {
       if (isMemberOfChannel === false) {
         throw HTTPError(403, 'User is not a member of the channel');
-      } 
+      }
       if (isMemberOfChannel === true) {
         if (isOwnerMember === false) {
           throw HTTPError(403, 'User did not send message, and is not a owner of the channel');

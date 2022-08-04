@@ -117,7 +117,7 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
   if (isDm === true) {
     for (const dm of data.dm) {
       if (dm.dmId === dmId) {
-        // need to make sure he authorised user is apart of this channel
+        // need to make sure he authorised user is apart of the dm
         if (dm.members.includes(uId) === false) {
           throw HTTPError(403, 'authorised user is not a member of the specified dmId');
         }

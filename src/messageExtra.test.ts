@@ -43,6 +43,26 @@ describe('Testing message Share', () => {
     expect(res4.statusCode).toBe(400);
   });
 
+  test('both channelId and dmId are invalid', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res2 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res2.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res2.body as string);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessageShare(user1.token, message1.messageId, 'yes sir', -1, -1);
+    expect(res4.statusCode).toBe(400);
+  });
+
   test('neither channelId nor dmId are -1', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
@@ -179,6 +199,123 @@ describe('Testing message Share', () => {
     expect(res4.statusCode).toBe(403);
   });
 
+  test('both a valid channelId and dmId are inputted', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res5.body as string);
+
+    const res6 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res6.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res6.body as string);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessageShare(user1.token, message1.messageId, 'yes sir', channel1.channelId, dm1.dmId);
+    expect(res4.statusCode).toBe(400);
+  });
+
+  test('invalid ogMessageId for dm case', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res5.body as string);
+
+    const res6 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res6.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res6.body as string);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessageShare(user1.token, -99999, 'yes sir', -1, dm1.dmId);
+    expect(res4.statusCode).toBe(400);
+  });
+
+  
+  test('invalid ogMessageId for dm case', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res8 = callingAuthRegister('email122@gmail.com', 'password122', 'first112', 'last1432');
+    expect(res7.statusCode).toBe(OK);
+    const user3 = JSON.parse(res8.body as string);
+
+    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res5.body as string);
+
+    const res6 = callingChannelsCreate(user3.token, 'channel1', true);
+    expect(res6.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res6.body as string);
+
+    const res3 = callingMessageSend(user3.token, channel1.channelId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessageShare(user3.token, message1.messageId, 'yes sir', -1, dm1.dmId);
+    expect(res4.statusCode).toBe(403);
+  });
+
+  test('invalid ogMessageId for channel case', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res5.body as string);
+
+    const res6 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res6.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res6.body as string);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessageShare(user1.token, -99999, 'yes sir', channel1.channelId, -1);
+    expect(res4.statusCode).toBe(400);
+  });
+
   test('succesful message share to a dm from a channel', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
@@ -283,10 +420,43 @@ describe('Testing message Share', () => {
 
     expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq//yes sir', messageId: result.sharedMessageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
+
+  test('succesful message share to a dm from a dm', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res5.body as string);
+
+    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessageShare(user2.token, message1.messageId, 'yes sir', -1, dm1.dmId);
+    expect(res4.statusCode).toBe(OK);
+    const result = JSON.parse(String(res4.getBody()));
+
+    expect(result).toMatchObject({ sharedMessageId: expect.any(Number) });
+
+    const res8 = callingDmMessages(user2.token, dm1.dmId, 0);
+    expect(res8.statusCode).toBe(OK);
+    const messages = JSON.parse(res8.body as string);
+
+    expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq//yes sir', messageId: result.sharedMessageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false },  { message: 'heaqaewqeuhq', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
+  });
 });
 
 describe('Testing message pin', () => {
-  test('messageId is not a valid message within a channel or DM that the authorised user has joined', () => {
+  test('messageId is not a valid message within a DM that the authorised user has joined', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
 
@@ -313,6 +483,55 @@ describe('Testing message pin', () => {
     const res4 = callingMessagePin(user3.token, message1.messageId);
     expect(res4.statusCode).toBe(400);
   });
+
+  test('messageId is not a valid message within a channel that the authorised user has joined', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res2 = callingAuthRegister('email13@gmail.com', 'password13', 'first13', 'last13');
+    expect(res2.statusCode).toBe(OK);
+    const user3 = JSON.parse(res2.body as string);
+
+    const res5 = callingChannelsCreate(user1.token, 'yeye', true);
+    expect(res5.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res5.body as string);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessagePin(user3.token, message1.messageId);
+    expect(res4.statusCode).toBe(400);
+  });
+
+  test('messageId does not refer to a valid message', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res5.body as string);
+
+    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessagePin(user1.token, -99999);
+    expect(res4.statusCode).toBe(400);
+  });
+
 
   test('the message is already pinned', () => {
     const res = callingClear();
@@ -392,6 +611,34 @@ describe('Testing message pin', () => {
     expect(res4.statusCode).toBe(403);
   });
 
+  test('message was not sent in a channel user can view', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res8 = callingAuthRegister('email132@gmail.com', 'password13', 'first123', 'last132');
+    expect(res8.statusCode).toBe(OK);
+    const user3 = JSON.parse(res8.body as string);
+
+    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res5.body as string);
+
+    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessagePin(user3.token, message1.messageId);
+    expect(res4.statusCode).toBe(400);
+  });
+
   test('successful pin of message in dm', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
@@ -455,6 +702,36 @@ describe('Testing message pin', () => {
     expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: true }], start: 0, end: -1 });
   });
 
+  test('message in channel already pinned', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingChannelsCreate(user1.token, 'cahnel', true);
+    expect(res5.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res5.body as string);
+
+    const res9 = callingChannelInvite(user1.token, channel1.channelId, user2.authUserId);
+    expect(res9.statusCode).toBe(OK);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res2 = callingMessagePin(user1.token, message1.messageId);
+    expect(res2.statusCode).toBe(OK);
+
+    const res8 = callingMessagePin(user1.token, message1.messageId);
+    expect(res8.statusCode).toBe(400);
+  });
+
   test('invalid token test', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
@@ -484,7 +761,7 @@ describe('Testing message pin', () => {
 });
 
 describe('Testing message unpin', () => {
-  test('messageId is not a valid message within a channel or DM that the authorised user has joined', () => {
+  test('messageId is not a valid message within a DM that the authorised user has joined', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
 
@@ -512,7 +789,34 @@ describe('Testing message unpin', () => {
     expect(res4.statusCode).toBe(400);
   });
 
-  test('the message is not already pinned', () => {
+  test('messageId is not a valid message within a channel that the authorised user has joined', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res2 = callingAuthRegister('email13@gmail.com', 'password13', 'first13', 'last13');
+    expect(res2.statusCode).toBe(OK);
+    const user3 = JSON.parse(res2.body as string);
+
+    const res5 = callingChannelsCreate(user1.token, 'yeye', true);
+    expect(res5.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res5.body as string);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res7 = callingMessagePin(user1.token, message1.messageId);
+    expect(res7.statusCode).toBe(OK)
+
+    const res4 = callingMessageUnpin(user3.token, message1.messageId);
+    expect(res4.statusCode).toBe(400);
+  });
+
+  test('messageId does not refer to a valid message', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
 
@@ -532,7 +836,65 @@ describe('Testing message unpin', () => {
     expect(res3.statusCode).toBe(OK);
     const message1 = JSON.parse(String(res3.getBody()));
 
-    const res2 = callingMessageUnpin(user1.token, message1.messageId);
+    const res4 = callingMessagePin(user1.token, message1.messageId);
+    expect(res4.statusCode).toBe(OK);
+
+    const res2 = callingMessageUnpin(user1.token, -999);
+    expect(res2.statusCode).toBe(400);
+  });
+
+  test('message was not sent in a channel user can view', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res8 = callingAuthRegister('email132@gmail.com', 'password13', 'first123', 'last132');
+    expect(res8.statusCode).toBe(OK);
+    const user3 = JSON.parse(res8.body as string);
+
+    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res5.body as string);
+
+    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessagePin(user1.token, message1.messageId);
+    expect(res4.statusCode).toBe(OK);
+
+    const res6 = callingMessagePin(user3.token, message1.messageId);
+    expect(res6.statusCode).toBe(400);
+  });
+
+  test('messageId refer to a valid message that is not pinned', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res5.body as string);
+
+    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res2 = callingMessageUnpin(user1.token, -999);
     expect(res2.statusCode).toBe(400);
   });
 
@@ -660,6 +1022,57 @@ describe('Testing message unpin', () => {
     const messages = JSON.parse(res8.body as string);
 
     expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
+  });
+
+  test('message is already unpinned in channel', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingChannelsCreate(user1.token, 'cahnel', true);
+    expect(res5.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res5.body as string);
+
+    const res9 = callingChannelInvite(user1.token, channel1.channelId, user2.authUserId);
+    expect(res9.statusCode).toBe(OK);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessageUnpin(user1.token, message1.messageId);
+    expect(res4.statusCode).toBe(400);
+  });
+
+  test('message is already unpinned in dm', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res5.body as string);
+
+    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessageUnpin(user1.token, message1.messageId);
+    expect(res4.statusCode).toBe(400);
   });
 
   test('invalid token test', () => {

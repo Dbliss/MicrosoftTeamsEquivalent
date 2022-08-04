@@ -11,7 +11,6 @@ function callingClear () {
   );
   return res;
 }
-  
 
 function callingChannelDetails (token: string, channelId: number) {
   const res = request(
@@ -141,7 +140,7 @@ function callingUserProfile (token: string, uId: number) {
           {
             qs: {
               uId: uId,
-            }, 
+            },
             headers: {
               token: token,
             }
@@ -157,7 +156,7 @@ function callingUsersAll (token: string) {
         {
           qs: {
 
-          }, 
+          },
           headers: {
             token: token,
           }

@@ -108,12 +108,9 @@ app.get('/channel/messages/v2', (req, res, next) => {
   }
 });
 
-app.delete('/clear/v1', (req, res, next) => {
-  try {
-    return res.json(clearV1());
-  } catch (err) {
-    next(err);
-  }
+app.delete('/clear/v1', (req, res) => {
+  const clear = clearV1();
+  res.json(clear);
 });
 
 app.post('/channels/create/v3', (req, res) => {

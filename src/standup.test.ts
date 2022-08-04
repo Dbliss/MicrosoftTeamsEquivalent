@@ -1,9 +1,6 @@
-// Importing functions from channels.js file
 import request from 'sync-request';
 import config from './config.json';
-import { callingChannelsCreate, callingClear } from './helperFile';
-import { callingAuthRegister } from './dm.test';
-import { callingChannelMessages } from './helperFile';
+import { callingChannelsCreate, callingClear, callingAuthRegister, callingChannelMessages } from './helperFile';
 
 const OK = 200;
 const url = config.url;
@@ -149,7 +146,7 @@ describe('Testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      1000
+      10
     );
     expect(start.statusCode).toBe(OK);
     const start1 = callingStandupStart(
@@ -297,7 +294,7 @@ describe('testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      50
+      10
     );
     expect(start.statusCode).toBe(OK);
     const active = callingStandupActive(
@@ -326,7 +323,7 @@ describe('testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      50
+      10
     );
     expect(start.statusCode).toBe(OK);
     const active = callingStandupActive(
@@ -355,7 +352,7 @@ describe('testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      50
+      10
     );
     expect(start.statusCode).toBe(OK);
     const auth1 = callingAuthRegister(
@@ -374,8 +371,8 @@ describe('testing standup/active/v1', () => {
 });
 
 describe('testing standup/send/v1', () => {
-  test('success', () => {
-    expect(callingClear().statusCode).toBe(OK);
+  test('success', async() => {
+    callingClear();
     const auth = callingAuthRegister(
       'email@email.com',
       'password',
@@ -411,8 +408,9 @@ describe('testing standup/send/v1', () => {
       'Can you see this?'
     );
     expect(send1.statusCode).toBe(OK);
-    const sent2 = JSON.parse(String(send1.getBody()));
-    expect(sent2).toStrictEqual({});
+    const sent1 = JSON.parse(String(send1.getBody()));
+    expect(sent1).toStrictEqual({});
+    await new Promise((r) => setTimeout(r, 2000));
     const chmsgs = callingChannelMessages(
       member.token,
       created.channelId,
@@ -472,7 +470,7 @@ describe('testing standup/send/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      50
+      10
     );
     expect(start.statusCode).toBe(OK);
     const send = callingStandupSend(
@@ -502,7 +500,7 @@ describe('testing standup/send/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      50
+      10
     );
     expect(start.statusCode).toBe(OK);
     const send = callingStandupSend(
@@ -556,7 +554,7 @@ describe('testing standup/send/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      50
+      10
     );
     expect(start.statusCode).toBe(OK);
     const auth1 = callingAuthRegister(

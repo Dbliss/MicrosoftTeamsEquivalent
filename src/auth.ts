@@ -61,9 +61,18 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   let permissionId = 2;
   if (data.user[0] === undefined) {
     data.workSpaceStats = {
-      channelsExist: [] ,
-      dmsExist: [],
-      messagesExist: [],
+      channelsExist: [{
+        numChannelsExist: 0,
+        timeStamp: Math.floor(Date.now() / 1000)
+      }] ,
+      dmsExist: [{
+        numdmsExist: 0,
+        timeStamp: Math.floor(Date.now() / 1000)
+      }],
+      messagesExist: [{
+        numMessagesExist: 0,
+        timeStamp: Math.floor(Date.now() / 1000)
+      }],
       utilizationRate: -1
     };
     permissionId = 1;
@@ -106,6 +115,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   data.stats.push(statsPushObject);
   
   //Updating the stats object
+
   const timeUpdated = Math.floor(Date.now() / 1000);
   const updateChannelObject: channelsJoinedType = {
     numChannelsJoined: 0,

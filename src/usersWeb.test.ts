@@ -603,30 +603,30 @@ describe('Testing user/stats/v1', () => {
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
 
-    expect(result).toStrictEqual({
+    expect(result).toStrictEqual({userStats: {
       channelsJoined: [{
         numChannelsJoined: 0, 
-        timeStamp: Number //time when the account was created
+        timeStamp: expect.any(Number) //time when the account was created
       },{
         numChannelsJoined: 1,
-        timeStamp: Number
+        timeStamp: expect.any(Number)
       }],
       dmsJoined: [{
         numDmsJoined: 0,
-        timeStamp: Number
+        timeStamp: expect.any(Number)
       },{
         numDmsJoined: 1,
-        timeStamp: Number
+        timeStamp: expect.any(Number)
       }],
       messagesSent: [{
         numMessagesSent: 0,
-        timeStamp: Number,
+        timeStamp: expect.any(Number),
       },{
         numMessagesSent: 1,
-        timeStamp: Number,
+        timeStamp: expect.any(Number),
       }],
-      involvementRate: Number //NEED TO DO THIS
-    });
+      involvementRate: expect.any(Number) //NEED TO DO THIS
+    }});
     
   });
 
@@ -673,30 +673,30 @@ describe('users/stats/v1', () => {
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
 
-    expect(result).toStrictEqual({
+    expect(result).toStrictEqual({usersStats:{
       channelsExist: [{
         numChannelsExist: 0, 
-        timeStamp: Number //time when the account was created
+        timeStamp: expect.any(Number) //time when the account was created
       },{
         numChannelsExist: 1,
-        timeStamp: Number
+        timeStamp: expect.any(Number)
       }],
       dmsExist: [{
         numDmsExist: 0,
-        timeStamp: Number
+        timeStamp: expect.any(Number)
       },{
         numDmsExist: 1,
-        timeStamp: Number
+        timeStamp: expect.any(Number)
       }],
       messagesExist: [{
         numMessagesExist: 0,
-        timeStamp: Number,
+        timeStamp: expect.any(Number),
       },{
         numMessagesExist: 1,
-        timeStamp: Number,
+        timeStamp: expect.any(Number),
       }],
-      involvementRate: Number //NEED TO DO THIS
-    });
+      involvementRate: expect.any(Number) //NEED TO DO THIS
+    }});
     
   });
 

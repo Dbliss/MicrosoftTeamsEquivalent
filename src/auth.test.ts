@@ -1,5 +1,7 @@
 import request from 'sync-request';
 import config from './config.json';
+import { callingClear } from './channelsServer.test';
+import { callingAuthRegister } from './dm.test';
 
 const OK = 200;
 const BADREQ = 400;
@@ -333,5 +335,76 @@ describe('Test auth/logout/v2', () => {
       }
     );
     expect(res.statusCode).toBe(FORBID);
+  });
+});
+
+function callingPasswordRequest (email: string) {
+  const res = request(
+    'POST',
+      `${url}:${port}/auth/passwordreset/request/v1`,
+      {
+        body: JSON.stringify({
+          email: email
+        }),
+        headers: {
+          'Content-type': 'application/json',
+        },
+      }
+  );
+  return res;
+}
+
+function callingPasswordReset (resetCode: string, newPassword:string) {
+  const res = request(
+    'POST',
+    `${url}:${port}/auth/passwordreset/reset/v1`,
+    {
+      body: JSON.stringify({
+        resetCode: resetCode,
+        newPassword: newPassword
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      },
+    }
+  );
+  return res;
+}
+
+describe('Test auth/passwordreset/request/v1', () => {
+  test('Success', () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = callingAuthRegister(
+      'thevin369@gmail.com',
+      'password',
+      'first',
+      'last'
+    );
+    expect(auth.statusCode).toBe(OK);
+    const request = callingPasswordRequest(
+      'thevin369@gmail.com'
+    );
+    expect(request.statusCode).toBe(OK);
+    const requested = JSON.parse(String(request.getBody()));
+    expect(requested).toStrictEqual({});
+  });
+});
+
+describe('Test auth/passwordreset/reset/v1', () => {
+  test('Invalid password', () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const reset = callingPasswordReset(
+      '123456789',
+      ''
+    );
+    expect(reset.statusCode).toBe(BADREQ);
+  });
+  test('Invalid reset code', () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const reset = callingPasswordReset(
+      '',
+      'newPassword'
+    );
+    expect(reset.statusCode).toBe(BADREQ);
   });
 });

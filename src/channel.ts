@@ -553,7 +553,8 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
     channels: [...data.channel[channelIndex].members[memberIndex].channels],
     permissionId: data.channel[channelIndex].members[memberIndex].permissionId,
     token: [...data.channel[channelIndex].members[memberIndex].token],
-    notifications: [...data.channel[channelIndex].members[memberIndex].notifications]
+    notifications: [...data.channel[channelIndex].members[memberIndex].notifications],
+    resetCode: data.channel[channelIndex].members[memberIndex].resetCode
   };
 
   data.channel[channelIndex].owners.push(newOwner);

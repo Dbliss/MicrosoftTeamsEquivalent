@@ -380,7 +380,8 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
   const user = getTokenIndex(token, data);
   const uId = data.user[user].authUserId;
 
-  for (let i = start; i < currentChannel.messages.length && messages.length < 50; i++) {
+  let j = 0;
+  for (let i = start; i < currentChannel.messages.length && j < 50; i++) {
     if (currentChannel.messages[i].reacts[0] !== undefined) {
       for (const user of currentChannel.messages[i].reacts[0].uIds) {
         if (user === uId) {
@@ -389,11 +390,16 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
       }
     }
     messages.push(currentChannel.messages[i]);
+    // only print messages that are meant to be sent (e.g send later messages will not be sent)
+    if (currentChannel.messages[i].timeSent < (Date.now() / 1000)) {
+      messages[j] = currentChannel.messages[i];
+    }
+    j++;
   }
 
   let end = start + 50;
 
-  if (messages.length !== 50) {
+  if (j !== 50) {
     end = -1;
   }
   return { messages, start, end };

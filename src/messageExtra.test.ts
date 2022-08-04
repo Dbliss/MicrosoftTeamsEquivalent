@@ -454,6 +454,33 @@ describe('Testing message pin', () => {
 
     expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: true }], start: 0, end: -1 });
   });
+
+  test('invalid token test', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingChannelsCreate(user1.token, 'cahnel', true);
+    expect(res5.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res5.body as string);
+
+    const res9 = callingChannelInvite(user1.token, channel1.channelId, user2.authUserId);
+    expect(res9.statusCode).toBe(OK);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res2 = callingMessagePin('-9999', message1.messageId);
+    expect(res2.statusCode).toBe(400);
+  });
 });
 
 describe('Testing message unpin', () => {
@@ -634,6 +661,37 @@ describe('Testing message unpin', () => {
 
     expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
+
+  test('invalid token test', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingChannelsCreate(user1.token, 'cahnel', true);
+    expect(res5.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res5.body as string);
+
+    const res9 = callingChannelInvite(user1.token, channel1.channelId, user2.authUserId);
+    expect(res9.statusCode).toBe(OK);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res2 = callingMessagePin(user1.token, message1.messageId);
+    expect(res2.statusCode).toBe(OK);
+
+    const res4 = callingMessageUnpin('-9999', message1.messageId);
+    expect(res4.statusCode).toBe(400);
+
+  });
 });
 
 describe('Testing message send later', () => {
@@ -746,6 +804,24 @@ describe('Testing message send later', () => {
 
     const res2 = callingMessageSendLater(user1.token, channel1.channelId, 'Hello Future Dillon', time);
     expect(res2.statusCode).toBe(OK);
+  });
+
+  test('invalid token test', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res5 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res5.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res5.body as string);
+
+    const time = Math.floor((Date.now() + 10000) / 1000);
+
+    const res2 = callingMessageSendLater('-9999', channel1.channelId, 'Hello Future Dillon', time);
+    expect(res2.statusCode).toBe(400);
   });
 });
 
@@ -883,5 +959,27 @@ describe('Testing message send later dm', () => {
 
     const res2 = callingMessageSendLaterDm(user1.token, dm1.dmId, 'Hello Future Dillon', time);
     expect(res2.statusCode).toBe(OK);
+  });
+
+  test('invalid token test', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res5.body as string);
+
+    const time = Math.floor((Date.now() + 100000) / 1000);
+
+    const res2 = callingMessageSendLaterDm('-999999', dm1.dmId, 'Hello Future Dillon', time);
+    expect(res2.statusCode).toBe(400);
   });
 });

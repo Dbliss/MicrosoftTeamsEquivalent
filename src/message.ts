@@ -80,14 +80,12 @@ function messageSendV1(token: string, channelId: number, message: string) {
   }
 
   const userIndex2 = getTokenIndex(token, data);
-  console.log('HANDELS = ' + handles);
   // Cutting message for notification
   const sedingMessage = message.slice(0, 20);
   // Sending the notification
   for (const handle of handles) {
     for (const user in data.user) {
       if (data.user[user].handle === handle) {
-        console.log('HERE!!!!!!!!!!!!  ' + user);
         data.user[user].notifications.push({
           channelId: channelId,
           dmId: -1,

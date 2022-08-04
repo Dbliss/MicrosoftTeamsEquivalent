@@ -3,6 +3,7 @@ import request from 'sync-request';
 import config from './config.json';
 import { callingChannelsCreate, callingClear } from './channelsServer.test'
 import { callingAuthRegister } from './dm.test';
+import { callingChannelMessages } from './helperFile';
 
 const OK = 200;
 const url = config.url;
@@ -214,6 +215,7 @@ describe('Testing standup/active/v1', () => {
         )
         expect(start.statusCode).toBe(OK);
         const started = JSON.parse(String(start.getBody()));
+        console.log(started);
         expect(started).toMatchObject({ timeFinish: expect.any(Number) })
     });
 });
@@ -372,7 +374,7 @@ describe('testing standup/active/v1', () => {
 });
 
 describe('testing standup/send/v1', () => {
-    test('success', () => {
+    test('success', async() => {
         expect(callingClear().statusCode).toBe(OK);
         const auth = callingAuthRegister(
             'email@email.com',
@@ -392,7 +394,7 @@ describe('testing standup/send/v1', () => {
         const start = callingStandupStart(
             member.token,
             created.channelId,
-            50
+            1
         )
         expect(start.statusCode).toBe(OK);
         const send = callingStandupSend(
@@ -403,6 +405,23 @@ describe('testing standup/send/v1', () => {
         expect(send.statusCode).toBe(OK);
         const sent = JSON.parse(String(send.getBody()));
         expect(sent).toStrictEqual({});
+        const send1 = callingStandupSend(
+            member.token,
+            created.channelId,
+            'Can you see this?'
+        )
+        expect(send1.statusCode).toBe(OK);
+        const sent2 = JSON.parse(String(send1.getBody()));
+        expect(sent).toStrictEqual({});
+        await new Promise((r) => setTimeout(r, 2000));
+        const chmsgs = callingChannelMessages(
+            member.token,
+            created.channelId,
+            0
+        );
+        expect(chmsgs.statusCode).toBe(OK);
+        const reveal = JSON.parse(String(chmsgs.getBody()));
+        console.log(reveal);
     });
     test('Invalid token', () => {
         expect(callingClear().statusCode).toBe(OK);

@@ -1,5 +1,5 @@
 import console from 'console';
-import { getData, setData, channelType, usersType, dataType } from './dataStore';
+import { getData, setData, channelType, usersType, dataType, messageType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
 
@@ -188,7 +188,6 @@ function channelJoinV1 (token: string, channelId: number) {
   // checking if the channel is public or not if not true then error is returned
   const isPublic = data.channel[channelIndex].isPublic;
   // if member is not a global owner and channel is private then return error
-  console.log(data);
   if (isPublic === false && isGlobalMember === 0) {
     throw HTTPError(403, 'Not a global owner joining private channel');
   }
@@ -338,9 +337,9 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
 function channelMessagesV2 (token: string, channelId: number, start: number) {
   // getting the dataset
   const data:dataType = getData();
-
+  
   let currentChannel: channelType;
-  const messages = [];
+  const messages: messageType[] = [];
 
   // if no channels have been created return an error
   if (data.channel.length === 0) {
@@ -382,8 +381,7 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
   const user = getTokenIndex(token, data);
   const uId = data.user[user].authUserId;
 
-  let j = 0;
-  for (let i = start; i < currentChannel.messages.length && j < 50; i++) {
+  for (let i = start; i < currentChannel.messages.length && messages.length < 50; i++) {
     if (currentChannel.messages[i].reacts[0] !== undefined) {
       for (const user of currentChannel.messages[i].reacts[0].uIds) {
         if (user === uId) {
@@ -391,16 +389,14 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
         }
       }
     }
-    messages[j] = currentChannel.messages[i];
-    j++;
+    messages.push(currentChannel.messages[i]);
   }
 
   let end = start + 50;
 
-  if (j !== 50) {
+  if (messages.length !== 50) {
     end = -1;
   }
-
   return { messages, start, end };
 }
 

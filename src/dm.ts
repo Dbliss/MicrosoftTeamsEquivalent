@@ -395,7 +395,9 @@ function dmMessages (token: string, dmId: number, start: number) {
         }
       }
     }
-    returnMessages.push(data.dm[dmIndex].messages[i]);
+    if (data.dm[dmIndex].messages[i].timeSent < (Date.now() / 1000)) {
+      returnMessages.push(data.dm[dmIndex].messages[i]);
+    }
   }
   return { messages: returnMessages, start: start, end: returnEnd };
 }

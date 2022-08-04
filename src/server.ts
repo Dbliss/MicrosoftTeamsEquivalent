@@ -13,6 +13,8 @@ import { clearV1 } from './other';
 import { channelDetailsV1, channelJoinV1 } from './channel';
 import { usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, userProfileV1 } from './users';
 
+import { messageShareV1, messagePinV1, messageUnpinV1, messageSendLaterV1, messageSendLaterDmV1 } from './messageExtra';
+
 import {
   channelsCreateV3,
   channelsListV3,
@@ -321,6 +323,41 @@ app.post('/message/unreact/v1', (req, res) => {
   const { messageId, reactId } = req.body;
   const token = req.headers.token;
   const leave = messageUnreact(token as string, messageId, reactId);
+  res.json(leave);
+});
+
+app.post('/message/share/v1', (req, res) => {
+  const { ogMessageId, message, channelId, dmId } = req.body;
+  const token = req.headers.token;
+  const leave = messageShareV1(token as string, ogMessageId, message, channelId, dmId);
+  res.json(leave);
+});
+
+app.post('/message/pin/v1', (req, res) => {
+  const { messageId } = req.body;
+  const token = req.headers.token;
+  const leave = messagePinV1(token as string, messageId);
+  res.json(leave);
+});
+
+app.post('/message/unpin/v1', (req, res) => {
+  const { messageId } = req.body;
+  const token = req.headers.token;
+  const leave = messageUnpinV1(token as string, messageId);
+  res.json(leave);
+});
+
+app.post('/message/sendlater/v1', (req, res) => {
+  const { channelId, message, timeSent } = req.body;
+  const token = req.headers.token;
+  const leave = messageSendLaterV1(token as string, channelId, message, timeSent);
+  res.json(leave);
+});
+
+app.post('/message/sendlaterdm/v1', (req, res) => {
+  const { message, dmId, timeSent } = req.body;
+  const token = req.headers.token;
+  const leave = messageSendLaterDmV1(token as string, dmId, message, timeSent);
   res.json(leave);
 });
 

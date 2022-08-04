@@ -64,9 +64,9 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
       channelsExist: [{
         numChannelsExist: 0,
         timeStamp: Math.floor(Date.now() / 1000)
-      }] ,
+      }],
       dmsExist: [{
-        numdmsExist: 0,
+        numDmsExist: 0,
         timeStamp: Math.floor(Date.now() / 1000)
       }],
       messagesExist: [{
@@ -109,30 +109,30 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     uId: uID,
     channelsJoined: [],
     dmsJoined: [],
-    messagesSent: [] ,
+    messagesSent: [],
     involvementRate: -1,
-  }
+  };
   data.stats.push(statsPushObject);
-  
-  //Updating the stats object
+
+  // Updating the stats object
 
   const timeUpdated = Math.floor(Date.now() / 1000);
   const updateChannelObject: channelsJoinedType = {
     numChannelsJoined: 0,
     timeStamp: timeUpdated,
-  }
-  data.stats[getIndexOfStatsUid(data, token)].channelsJoined.push(updateChannelObject); 
+  };
+  data.stats[getIndexOfStatsUid(data, token)].channelsJoined.push(updateChannelObject);
 
   const updateDmObject: dmsJoinedType = {
     numDmsJoined: 0,
     timeStamp: timeUpdated,
-  }
+  };
   data.stats[getIndexOfStatsUid(data, token)].dmsJoined.push(updateDmObject);
 
   const updateMsgObject: messagesSentType = {
     numMessagesSent: 0,
     timeStamp: timeUpdated,
-  }
+  };
   data.stats[getIndexOfStatsUid(data, token)].messagesSent.push(updateMsgObject);
 
   setData(data);

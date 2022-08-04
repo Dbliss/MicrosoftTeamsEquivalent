@@ -50,19 +50,17 @@ function channelsCreateV3(token: string, name: string, isPublic: boolean) {
   };
   data.user[flag].channels.push(pushObject);
 
-
   const timeUpdated = Math.floor(Date.now() / 1000);
   const updateUserObject: channelsJoinedType = {
     numChannelsJoined: data.stats[getIndexOfStatsUid(data, token)].channelsJoined[data.stats[getIndexOfStatsUid(data, token)].channelsJoined.length - 1].numChannelsJoined + 1,
     timeStamp: timeUpdated,
-  }
+  };
   data.stats[getIndexOfStatsUid(data, token)].channelsJoined.push(updateUserObject);
 
-
   const updateWorkObject = {
-    numChannelsExist: data.workSpaceStats.channelsExist[data.workSpaceStats.channelsExist.length - 1].numChannelsExist + 1 ,
+    numChannelsExist: data.workSpaceStats.channelsExist[data.workSpaceStats.channelsExist.length - 1].numChannelsExist + 1,
     timeStamp: timeUpdated,
-  }
+  };
   data.workSpaceStats.channelsExist.push(updateWorkObject);
 
   setData(data);

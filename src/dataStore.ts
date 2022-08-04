@@ -92,7 +92,7 @@ type dataType = {
 };
 
 export type workSpaceStatsType = {
-  channelsExist: channelsExistType[] ,
+  channelsExist: channelsExistType[],
   dmsExist: dmsExistType[],
   messagesExist: messagesExistType[],
   utilizationRate: number
@@ -104,7 +104,7 @@ export type channelsExistType = {
 }
 
 export type dmsExistType = {
-  numdmsExist: number,
+  numDmsExist: number,
   timeStamp: number,
 }
 
@@ -113,12 +113,11 @@ export type messagesExistType = {
   timeStamp: number,
 }
 
-
 export type statsType = {
   uId: number,
   channelsJoined: channelsJoinedType[],
   dmsJoined: dmsJoinedType[],
-  messagesSent: messagesSentType[] ,
+  messagesSent: messagesSentType[],
   involvementRate: number,
 }
 export type channelsJoinedType = {
@@ -131,7 +130,7 @@ export type dmsJoinedType = {
   timeStamp: number,
 }
 
- export type messagesSentType = {
+export type messagesSentType = {
   numMessagesSent: number,
   timeStamp: number,
 }

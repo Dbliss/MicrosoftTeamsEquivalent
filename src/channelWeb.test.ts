@@ -102,9 +102,9 @@ describe('HTTP tests for channelDetailsV2', () => {
       'password',
       'First',
       'Last');
-expect(auth.statusCode).toBe(OK);
+    expect(auth.statusCode).toBe(OK);
     const registered = JSON.parse(String(auth.getBody()));
-      console.log(`This is the token: ${registered.token}`);
+    console.log(`This is the token: ${registered.token}`);
     const chanId = callingChannelsCreate(registered.token, 'name', true);
     const channelId = JSON.parse(String(chanId.getBody()));
 

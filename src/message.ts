@@ -103,14 +103,13 @@ function messageSendV1(token: string, channelId: number, message: string) {
   const updateObject: messagesSentType = {
     numMessagesSent: data.stats[getIndexOfStatsUid(data, token)].messagesSent[data.stats[getIndexOfStatsUid(data, token)].messagesSent.length - 1].numMessagesSent + 1,
     timeStamp: timeUpdated,
-  }
+  };
   data.stats[getIndexOfStatsUid(data, token)].messagesSent.push(updateObject);
 
-
   const updateWorkObject: messagesExistType = {
-    numMessagesExist: data.workSpaceStats.messagesExist[data.workSpaceStats.messagesExist.length - 1].numMessagesExist + 1 ,
+    numMessagesExist: data.workSpaceStats.messagesExist[data.workSpaceStats.messagesExist.length - 1].numMessagesExist + 1,
     timeStamp: timeUpdated,
-  }
+  };
   data.workSpaceStats.messagesExist.push(updateWorkObject);
   setData(data);
 
@@ -391,17 +390,16 @@ function messageRemoveV1(token: string, messageId: number) {
   const updateObject: messagesSentType = {
     numMessagesSent: data.stats[getIndexOfStatsUid(data, token)].messagesSent[data.stats[getIndexOfStatsUid(data, token)].messagesSent.length - 1].numMessagesSent - 1,
     timeStamp: timeUpdated,
-  }
+  };
   data.stats[getIndexOfStatsUid(data, token)].messagesSent.push(updateObject);
 
-
   const updateWorkObject: messagesExistType = {
-    numMessagesExist: data.workSpaceStats.messagesExist[data.workSpaceStats.messagesExist.length - 1].numMessagesExist - 1 ,
+    numMessagesExist: data.workSpaceStats.messagesExist[data.workSpaceStats.messagesExist.length - 1].numMessagesExist - 1,
     timeStamp: timeUpdated,
-  }
+  };
   data.workSpaceStats.messagesExist.push(updateWorkObject);
   setData(data);
-  
+
   return {};
 }
 
@@ -487,22 +485,19 @@ function messageSenddmV2 (token: string, dmId: number, message: string) {
     }
   }
 
-
   const timeUpdated = Math.floor(Date.now() / 1000);
   const updateObject: messagesSentType = {
     numMessagesSent: data.stats[getIndexOfStatsUid(data, token)].messagesSent[data.stats[getIndexOfStatsUid(data, token)].messagesSent.length - 1].numMessagesSent + 1,
     timeStamp: timeUpdated,
-  }
+  };
   data.stats[getIndexOfStatsUid(data, token)].messagesSent.push(updateObject);
 
-
   const updateWorkObject: messagesExistType = {
-    numMessagesExist: data.workSpaceStats.messagesExist[data.workSpaceStats.messagesExist.length - 1].numMessagesExist + 1 ,
+    numMessagesExist: data.workSpaceStats.messagesExist[data.workSpaceStats.messagesExist.length - 1].numMessagesExist + 1,
     timeStamp: timeUpdated,
-  }
+  };
   data.workSpaceStats.messagesExist.push(updateWorkObject);
 
-  
   setData(data);
   return { messageId: tempMessage.messageId };
 }

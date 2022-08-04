@@ -1,7 +1,7 @@
 import request from 'sync-request';
 import { callingChannelsCreate } from './channelsServer.test';
 import config from './config.json';
-import { callingDmCreate,  } from './dm.test';
+import { callingDmCreate } from './dm.test';
 import { callingMessageSend } from './message.test';
 import { involvementRateCalc, utilizationRateCalc } from './other';
 const OK = 200;
@@ -47,8 +47,6 @@ function callingClear () {
   expect(res.statusCode).toBe(OK);
 }
 
-
-
 function callingAuthRegister (email:string, password:string, nameFirst:string, nameLast:string) {
   const res = request(
     'POST',
@@ -68,7 +66,6 @@ function callingAuthRegister (email:string, password:string, nameFirst:string, n
   // expect(res.statusCode).toBe(OK);
   return res;
 }
-
 
 function callingUserRemove(token: string, uId: number) {
   const res = request(
@@ -103,8 +100,7 @@ function callingUserPermissionChange (token: string, uId: number, permissionId: 
   );
   // expect(res.statusCode).toBe(OK);
   return res;
-} 
-
+}
 
 describe('Testing admin/user/remove/v1', () => {
   test('Testing successful return of users object from users/all/v1', () => {
@@ -148,7 +144,6 @@ describe('Testing admin/user/remove/v1', () => {
     expect(result.statusCode).toBe(400); // assuming that an invlaid token is given that it produces an error this
     // condition is not given in the spec
   });
-
 });
 
 describe('Testing admin/userpermission/change/v1', () => {
@@ -168,12 +163,10 @@ describe('Testing admin/userpermission/change/v1', () => {
     const res = callingUserPermissionChange(globalOwner.token, globalMember.authUserId, 1);
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
-    
 
     expect(result).toStrictEqual({});
-    
-    });
-    
+  });
+
   test('Testing error when uId is not valid', () => {
     callingClear();
     const globalOwner = JSON.parse(String(callingAuthRegister('email@email.com',
@@ -214,14 +207,14 @@ describe('Testing admin/userpermission/change/v1', () => {
       'password',
       'First',
       'Last').getBody()));
-  
-      const globalOwner2 = JSON.parse(String(callingAuthRegister('email23@email.com',
+
+    const globalOwner2 = JSON.parse(String(callingAuthRegister('email23@email.com',
       'password23',
       'First23',
       'Last23').getBody()));
 
-      const res2 = callingUserPermissionChange(globalOwner.token, globalOwner2.authUserId, 1);
-      expect(res2.statusCode).toBe(OK);
+    const res2 = callingUserPermissionChange(globalOwner.token, globalOwner2.authUserId, 1);
+    expect(res2.statusCode).toBe(OK);
 
     const globalMember = JSON.parse(String(callingAuthRegister(
       'email1@email.com',
@@ -239,7 +232,6 @@ describe('Testing admin/userpermission/change/v1', () => {
       'password',
       'First',
       'Last').getBody()));
-  
 
     const res = callingUserPermissionChange(globalOwner.token, globalOwner.authUserId, 2);
     expect(res.statusCode).toBe(400);
@@ -251,15 +243,14 @@ describe('Testing admin/userpermission/change/v1', () => {
       'password',
       'First',
       'Last').getBody()));
-  
-      const globalOwner2 = JSON.parse(String(callingAuthRegister('email23@email.com',
+
+    const globalOwner2 = JSON.parse(String(callingAuthRegister('email23@email.com',
       'password23',
       'First23',
       'Last23').getBody()));
 
-      const res2 = callingUserPermissionChange(globalOwner.token, globalOwner2.authUserId, 1);
-      expect(res2.statusCode).toBe(OK);
-
+    const res2 = callingUserPermissionChange(globalOwner.token, globalOwner2.authUserId, 1);
+    expect(res2.statusCode).toBe(OK);
 
     const res = callingUserPermissionChange(globalOwner.token, globalOwner2.authUserId, 1);
     expect(res.statusCode).toBe(400);
@@ -272,7 +263,6 @@ describe('Testing admin/userpermission/change/v1', () => {
       'password',
       'First',
       'Last').getBody()));
-  
 
     const globalMember = JSON.parse(String(callingAuthRegister(
       'email1@email.com',
@@ -287,10 +277,3 @@ describe('Testing admin/userpermission/change/v1', () => {
     // condition is not given in the spec
   });
 });
-
-
-
-
-
-
-

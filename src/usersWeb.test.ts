@@ -1,7 +1,7 @@
 import request from 'sync-request';
 import { callingChannelsCreate } from './channelsServer.test';
 import config from './config.json';
-import { callingDmCreate,  } from './dm.test';
+import { callingDmCreate } from './dm.test';
 import { callingMessageSend } from './message.test';
 import { involvementRateCalc, utilizationRateCalc } from './other';
 const OK = 200;
@@ -155,7 +155,7 @@ function callingAuthRegister (email:string, password:string, nameFirst:string, n
   return res;
 }
 
-//POST REQUEST
+// POST REQUEST
 function callingUserUploadPhoto (token: string, imgUrl: string, xStart: number, yStart: number, xEnd: number, yEnd: number) {
   const res = request(
     'POST',
@@ -176,9 +176,9 @@ function callingUserUploadPhoto (token: string, imgUrl: string, xStart: number, 
   );
   // expect(res.statusCode).toBe(OK);
   return res;
-} 
+}
 
-//GET REQUEST
+// GET REQUEST
 function callingUserStats (token: string) {
   const res = request(
     'GET',
@@ -190,13 +190,13 @@ function callingUserStats (token: string) {
         }
   );
   return res;
-} 
+}
 
 // GET REQUEST
 function callingUsersStats (token: string) {
   const res = request(
     'GET',
-        `${url}:${port}/user/stats/v1`,
+        `${url}:${port}/users/stats/v1`,
         {
           headers: {
             token: token,
@@ -204,8 +204,7 @@ function callingUsersStats (token: string) {
         }
   );
   return res;
-} 
-
+}
 
 describe('Testing users/all/v1', () => {
   test('Testing successful return of users object from users/all/v1', () => {
@@ -573,10 +572,6 @@ describe('Testing user/profile/sethandle/v1', () => {
   });
 });
 
-
-
-
-
 describe('Testing user/stats/v1', () => {
   test('Testing successful return', () => {
     callingClear();
@@ -585,12 +580,12 @@ describe('Testing user/stats/v1', () => {
       'First',
       'Last').getBody()));
 
-      const authUserId2 = JSON.parse(String(callingAuthRegister('email3@email.com',
+    const authUserId2 = JSON.parse(String(callingAuthRegister('email3@email.com',
       'password',
       'First2',
       'Last2').getBody()));
 
-      const uIds = [authUserId.authUserId, authUserId2.authUserId]
+    const uIds = [authUserId.authUserId, authUserId2.authUserId];
     const channel = callingChannelsCreate(authUserId.token, 'channelname', true);
     const channelres = JSON.parse(String(channel.getBody()));
     const dmres = callingDmCreate(authUserId.token, uIds);
@@ -603,33 +598,33 @@ describe('Testing user/stats/v1', () => {
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
 
-    expect(result).toStrictEqual({userStats: {
-      channelsJoined: [{
-        numChannelsJoined: 0, 
-        timeStamp: expect.any(Number) //time when the account was created
-      },{
-        numChannelsJoined: 1,
-        timeStamp: expect.any(Number)
-      }],
-      dmsJoined: [{
-        numDmsJoined: 0,
-        timeStamp: expect.any(Number)
-      },{
-        numDmsJoined: 1,
-        timeStamp: expect.any(Number)
-      }],
-      messagesSent: [{
-        numMessagesSent: 0,
-        timeStamp: expect.any(Number),
-      },{
-        numMessagesSent: 1,
-        timeStamp: expect.any(Number),
-      }],
-      involvementRate: expect.any(Number) //NEED TO DO THIS
-    }});
-    
+    expect(result).toStrictEqual({
+      userStats: {
+        channelsJoined: [{
+          numChannelsJoined: 0,
+          timeStamp: expect.any(Number) // time when the account was created
+        }, {
+          numChannelsJoined: 1,
+          timeStamp: expect.any(Number)
+        }],
+        dmsJoined: [{
+          numDmsJoined: 0,
+          timeStamp: expect.any(Number)
+        }, {
+          numDmsJoined: 1,
+          timeStamp: expect.any(Number)
+        }],
+        messagesSent: [{
+          numMessagesSent: 0,
+          timeStamp: expect.any(Number),
+        }, {
+          numMessagesSent: 1,
+          timeStamp: expect.any(Number),
+        }],
+        involvementRate: expect.any(Number) // NEED TO DO THIS
+      }
+    });
   });
-
 
   test('Testing error when token is invalid', () => {
     callingClear();
@@ -643,10 +638,6 @@ describe('Testing user/stats/v1', () => {
   });
 });
 
-
-
-
-
 describe('users/stats/v1', () => {
   test('Testing successful return', () => {
     callingClear();
@@ -655,12 +646,12 @@ describe('users/stats/v1', () => {
       'First',
       'Last').getBody()));
 
-      const authUserId2 = JSON.parse(String(callingAuthRegister('email3@email.com',
+    const authUserId2 = JSON.parse(String(callingAuthRegister('email3@email.com',
       'password',
       'First2',
       'Last2').getBody()));
 
-      const uIds = [authUserId.authUserId, authUserId2.authUserId]
+    const uIds = [authUserId.authUserId, authUserId2.authUserId];
     const channel = callingChannelsCreate(authUserId.token, 'channelname', true);
     const channelres = JSON.parse(String(channel.getBody()));
     const dmres = callingDmCreate(authUserId.token, uIds);
@@ -673,33 +664,33 @@ describe('users/stats/v1', () => {
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
 
-    expect(result).toStrictEqual({usersStats:{
-      channelsExist: [{
-        numChannelsExist: 0, 
-        timeStamp: expect.any(Number) //time when the account was created
-      },{
-        numChannelsExist: 1,
-        timeStamp: expect.any(Number)
-      }],
-      dmsExist: [{
-        numDmsExist: 0,
-        timeStamp: expect.any(Number)
-      },{
-        numDmsExist: 1,
-        timeStamp: expect.any(Number)
-      }],
-      messagesExist: [{
-        numMessagesExist: 0,
-        timeStamp: expect.any(Number),
-      },{
-        numMessagesExist: 1,
-        timeStamp: expect.any(Number),
-      }],
-      involvementRate: expect.any(Number) //NEED TO DO THIS
-    }});
-    
+    expect(result).toStrictEqual({
+      workspaceStats: {
+        channelsExist: [{
+          numChannelsExist: 0,
+          timeStamp: expect.any(Number) // time when the account was created
+        }, {
+          numChannelsExist: 1,
+          timeStamp: expect.any(Number)
+        }],
+        dmsExist: [{
+          numDmsExist: 0,
+          timeStamp: expect.any(Number)
+        }, {
+          numDmsExist: 1,
+          timeStamp: expect.any(Number)
+        }],
+        messagesExist: [{
+          numMessagesExist: 0,
+          timeStamp: expect.any(Number),
+        }, {
+          numMessagesExist: 1,
+          timeStamp: expect.any(Number),
+        }],
+        utilizationRate: expect.any(Number) // NEED TO DO THIS
+      }
+    });
   });
-
 
   test('Testing error when token is invalid', () => {
     callingClear();
@@ -713,10 +704,7 @@ describe('users/stats/v1', () => {
   });
 });
 
-
-
-
-
+/*
 
 describe('Testing user/profile/uploadphoto/v1', () => {
   test('Testing successful return', () => {
@@ -754,7 +742,6 @@ describe('Testing user/profile/uploadphoto/v1', () => {
     expect(res.statusCode).toBe(400);
     // const result = JSON.parse(String(res.getBody()));
 
-    
   });
 
   test('xStart, yStart, xEnd, yEnd are not within the dimensions', () => {
@@ -763,7 +750,7 @@ describe('Testing user/profile/uploadphoto/v1', () => {
       'password',
       'First',
       'Last').getBody()));
-  
+
       const res = callingUserUploadPhoto (authUserId.token,'valid url', -1, -1, -10, -10);
       expect(res.statusCode).toBe(400);
       // const result = JSON.parse(String(res.getBody()));
@@ -775,13 +762,12 @@ describe('Testing user/profile/uploadphoto/v1', () => {
       'password',
       'First',
       'Last').getBody()));
-  
+
       const res = callingUserUploadPhoto (authUserId.token,'valid url', 3, 5, 3, 10);
       expect(res.statusCode).toBe(400);
-      
+
       const res1 = callingUserUploadPhoto (authUserId.token,'valid url', 3, 5, 0, 10);
       expect(res1.statusCode).toBe(400);
-
 
   });
   test('yEnd is less than or equal to yStart', () => {
@@ -790,15 +776,15 @@ describe('Testing user/profile/uploadphoto/v1', () => {
       'password',
       'First',
       'Last').getBody()));
-  
+
       const res = callingUserUploadPhoto (authUserId.token,'valid url', 3, 6, 7, 6);
       expect(res.statusCode).toBe(400);
-      
+
       const res1 = callingUserUploadPhoto (authUserId.token,'valid url', 3, 6, 7, 5);
       expect(res1.statusCode).toBe(400);
-    
+
     });
-  
+
   test('image uploaded is not a JPG', () => {
     callingClear();
 
@@ -822,8 +808,4 @@ describe('Testing user/profile/uploadphoto/v1', () => {
   });
 });
 
-
-
-
-
-
+*/

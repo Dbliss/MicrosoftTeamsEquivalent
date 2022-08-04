@@ -138,7 +138,7 @@ function usersAllV1 (token: string) {
   }
   const usersArray = [];
   for (const user of data.user) {
-    if(user.nameFirst !== 'Removed' && user.nameLast !== 'user') { //checking to see if the user has been removed or not
+    if (user.nameFirst !== 'Removed' && user.nameLast !== 'user') { // checking to see if the user has been removed or not
       usersArray.push(extractUserDetails(user));
     }
   }
@@ -283,7 +283,7 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
 
 // Return Value:
 // Returns <{empty object - {}}> on <valid input of token and handleStr>
- export function userUploadPhoto (token: string, imgUrl:string, xStart: number, yStart: number, xEnd: number, yEnd: number) {
+export function userUploadPhoto (token: string, imgUrl:string, xStart: number, yStart: number, xEnd: number, yEnd: number) {
 
 }
 
@@ -295,27 +295,24 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
 // Returns <{empty object - {}}> on <valid input of token and handleStr>
 // Returns {error: 'error'} on <invalid token>
 // Returns {error: 'error'} on <invalid handleStr>
- export function userStats (token: string) {
+export function userStats (token: string) {
   const data: dataType = getData();
   const tokenIndex = getTokenIndex(token, data);
   if (tokenIndex === -1) {
     if ((tokenIndex === -1)) {
       throw HTTPError(403, 'Invalid token entered');
-    };
+    }
   }
-  
+
   const statsIndex = getIndexOfStatsUid(data, token);
-  
 
   const returnObject = {
     channelsJoined: [...data.stats[statsIndex].channelsJoined],
-    dmsJoined: [...data.stats[statsIndex].dmsJoined], 
-    messagesSent: [...data.stats[statsIndex].messagesSent], 
+    dmsJoined: [...data.stats[statsIndex].dmsJoined],
+    messagesSent: [...data.stats[statsIndex].messagesSent],
     involvementRate: involvementRateCalc(token, data),
-  }
-  return({userStats: returnObject});
-
-
+  };
+  return ({ userStats: returnObject });
 }
 
 // Arguments:
@@ -326,25 +323,22 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
 // Returns <{empty object - {}}> on <valid input of token and handleStr>
 // Returns {error: 'error'} on <invalid token>
 // Returns {error: 'error'} on <invalid handleStr>
- export function usersStats (token: string) {
+export function usersStats (token: string) {
   const data: dataType = getData();
   const tokenIndex = getTokenIndex(token, data);
   if (tokenIndex === -1) {
     if ((tokenIndex === -1)) {
       throw HTTPError(403, 'Invalid token entered');
-    };
+    }
   }
   const returnObject = {
-    channelsExist:[...data.workSpaceStats.channelsExist] ,
-    dmsExist: [...data.workSpaceStats.dmsExist], 
+    channelsExist: [...data.workSpaceStats.channelsExist],
+    dmsExist: [...data.workSpaceStats.dmsExist],
     messagesExist: [...data.workSpaceStats.messagesExist],
     utilizationRate: utilizationRateCalc(data),
-  }
-  
-  
-  return {workspaceStats: returnObject}
+  };
+
+  return { workspaceStats: returnObject };
 }
-
-
 
 export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, getTokenIndex };

@@ -147,7 +147,6 @@ app.post('/auth/logout/v2', (req, res, next) => {
 
 app.get('/channel/details/v2', (req, res, next) => {
   try {
-
     const channelId = req.query.channelId as string;
     return res.json(channelDetailsV1((req.headers.token as string), parseInt(channelId)));
   } catch (err) {
@@ -308,7 +307,7 @@ app.get('/notifications/get/v1', (req, res) => {
 
 app.delete('/admin/user/remove/v1', (req, res) => {
   const remove = adminUserRemove(req.headers.token as string, Number(req.query.uId));
-  
+
   res.json(remove);
 });
 
@@ -333,11 +332,10 @@ app.get('/users/stats/v1', (req, res) => {
 app.post('/user/profile/uploadphoto/v1', (req, res) => {
   const { imgUrl, xStart, yStart, xEnd, yEnd } = req.body;
   const token = req.headers.token;
-  const photoUpload = userUploadPhoto(String(token),imgUrl, xStart, yStart, xEnd, yEnd);
+  const photoUpload = userUploadPhoto(String(token), imgUrl, xStart, yStart, xEnd, yEnd);
 
   res.json(photoUpload);
 });
-
 
 app.get('/search/v1', (req, res) => {
   const messages = search(req.headers.token as string, req.query.queryStr as string);

@@ -14,9 +14,6 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
   // getting the uId of the message send
   const uId = data.user[flag].authUserId;
 
-  // creating a user for the token user
-  const user = data.user[flag];
-
   // checking if dm or channel
   let isDm = false;
   let isChannel = false;
@@ -140,14 +137,162 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
   return { sharedMessageId };
 }
 
-export function messagePinV1(token: string, MessageId: number) {
+export function messagePinV1(token: string, messageId: number) {
   const data: dataType = getData();
+  // Checking token
+  const flag = getTokenIndex(token, data);
+  if (flag === -1) {
+    throw HTTPError(400, 'Invalid Token');
+  }
+
+  // getting the uId of the message send
+  const uId = data.user[flag].authUserId;
+
+  let foundMessage = false;
+  let isAMember = false;
+  let isAOwner = false;
+
+
+
+  // finding the exact message relating to the ogMessageId
+  for (const channel of data.channel) {
+    for (const imessage of channel.messages) {
+      if (messageId === imessage.messageId) {
+        // need to make sure the user is apart of this channel
+        for (const member of channel.members) {
+          if (member.authUserId === uId) {
+            isAMember = true;
+          }
+        }
+        if (isAMember === false) {
+          throw HTTPError(400, 'ogMessage does not refer to a valid message within a channel/DM that the authorised user has joined');
+        }
+
+        // need to make sure the user is an owner of this channel
+        for (const owner of channel.owners) {
+          if (owner.authUserId === uId) {
+            isAOwner = true;
+          }
+        }
+        if (isAOwner === false) {
+          throw HTTPError(403, 'user does not have permission to pin a message');
+        }
+
+        // check if the message is already pinned
+        if (imessage.isPinned === true){
+          throw HTTPError(400, 'message is already pinned');
+        }
+        imessage.isPinned = true;
+        foundMessage = true;
+      }
+    }
+  }
+  for (const dm of data.dm) {
+    for (const imessage of dm.messages) {
+      if (messageId === imessage.messageId) {
+        // need the check the user is apart of the dm
+        if (dm.members.includes(uId) === false) {
+          throw HTTPError(400, 'ogMessage does not refer to a valid message within a channel/DM that the authorised user has joined');
+        }
+        // need to check the user is an owner in the dm
+        if (dm.owners.includes(uId) === false) {
+          throw HTTPError(403, 'user does not have permission to pin a message');
+        }
+        // check if the message is already pinned
+        if (imessage.isPinned === true){
+          throw HTTPError(400, 'message is already pinned');
+        }
+        imessage.isPinned = true;
+        foundMessage = true;
+      }
+    }
+  }
+
+  if (foundMessage === false){
+    throw HTTPError(400, 'ogMessage does not refer to a valid message within a channel/DM that the authorised user has joined');
+  }
+
+  setData(data);
   return {};
 }
 
-export function messageUnpinV1(token: string, MessageId: number) {
+export function messageUnpinV1(token: string, messageId: number) {
   const data: dataType = getData();
-  return {};
+  // Checking token
+  const flag = getTokenIndex(token, data);
+  if (flag === -1) {
+    throw HTTPError(400, 'Invalid Token');
+  }
+
+  // getting the uId of the message send
+  const uId = data.user[flag].authUserId;
+
+  let foundMessage = false;
+  let isAMember = false;
+  let isAOwner = false;
+
+
+
+  // finding the exact message relating to the ogMessageId
+  for (const channel of data.channel) {
+    for (const imessage of channel.messages) {
+      if (messageId === imessage.messageId) {
+        // need to make sure the user is apart of this channel
+        for (const member of channel.members) {
+          if (member.authUserId === uId) {
+            isAMember = true;
+          }
+        }
+        if (isAMember === false) {
+          throw HTTPError(400, 'ogMessage does not refer to a valid message within a channel/DM that the authorised user has joined');
+        }
+
+        // need to make sure the user is an owner of this channel
+        for (const owner of channel.owners) {
+          if (owner.authUserId === uId) {
+            isAOwner = true;
+          }
+        }
+        if (isAOwner === false) {
+          throw HTTPError(403, 'user does not have permission to pin a message');
+        }
+
+        // check if the message is pinned
+        if (imessage.isPinned === false){
+          throw HTTPError(400, 'message is already unpinned');
+        }
+        imessage.isPinned = false;
+        foundMessage = true;
+      }
+    }
+  }
+  for (const dm of data.dm) {
+    for (const imessage of dm.messages) {
+      if (messageId === imessage.messageId) {
+        // need the check the user is apart of the dm
+        if (dm.members.includes(uId) === false) {
+          throw HTTPError(400, 'ogMessage does not refer to a valid message within a channel/DM that the authorised user has joined');
+        }
+        // need to check the user is an owner in the dm
+        if (dm.owners.includes(uId) === false) {
+          throw HTTPError(403, 'user does not have permission to pin a message');
+        }
+        // check if the message is pinned
+        if (imessage.isPinned === false){
+          throw HTTPError(400, 'message is already unpinned');
+        }
+        imessage.isPinned = false;
+        foundMessage = true;
+      }
+    }
+  }
+
+  if (foundMessage === false){
+    throw HTTPError(400, 'ogMessage does not refer to a valid message within a channel/DM that the authorised user has joined');
+  }
+
+  setData(data);
+  return {}
 }
 
 export function messageSendLaterV1(token: string, channelId: number, message: string, timeSent: number) {

@@ -588,11 +588,11 @@ function callingMessagePin (token: string, messageId: number) {
         `${url}:${port}/message/pin/v1`,
         {
           body: JSON.stringify({
-            toke: token,
             messageId: messageId,
           }),
           headers: {
             'Content-type': 'application/json',
+            token: token,
           },
         }
   );
@@ -605,11 +605,11 @@ function callingMessageUnpin (token: string, messageId: number) {
         `${url}:${port}/message/unpin/v1`,
         {
           body: JSON.stringify({
-            token: token,
             messageId: messageId,
           }),
           headers: {
             'Content-type': 'application/json',
+            token: token,
           },
         }
   );
@@ -622,13 +622,13 @@ function callingMessageSendLater (token: string, channelId: number, message: str
         `${url}:${port}/message/sendlater/v1`,
         {
           body: JSON.stringify({
-            token: token,
             channelId: channelId,
             message: message,
             timeSent: timeSent,
           }),
           headers: {
             'Content-type': 'application/json',
+            token: token,
           },
         }
   );
@@ -641,13 +641,13 @@ function callingMessageSendLaterDm (token: string, dmId: number, message: string
         `${url}:${port}/message/sendlaterdm/v1`,
         {
           body: JSON.stringify({
-            token: token,
             dmId: dmId,
             message: message,
             timeSent: timeSent,
           }),
           headers: {
             'Content-type': 'application/json',
+            token: token,
           },
         }
   );

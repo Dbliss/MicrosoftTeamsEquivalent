@@ -559,7 +559,7 @@ describe('Testing message unpin', () => {
     expect(res3.statusCode).toBe(OK);
     const message1 = JSON.parse(String(res3.getBody()));
 
-    const res4 = callingMessagePin(user2.token, message1.messageId);
+    const res4 = callingMessagePin(user1.token, message1.messageId);
     expect(res4.statusCode).toBe(OK);
 
     const res2 = callingMessageUnpin(user2.token, message1.messageId);

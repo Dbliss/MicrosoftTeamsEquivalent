@@ -7,7 +7,7 @@ const url = config.url;
 function callingClear () {
   const res = request(
     'DELETE',
-  `${url}:${port}/clear/V1`);
+    `${url}:${port}/clear/V1`);
   return res;
 }
 

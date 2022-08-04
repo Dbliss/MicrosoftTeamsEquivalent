@@ -1,4 +1,3 @@
-import console from 'console';
 import { getData, setData, channelType, usersType, dataType, messageType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
@@ -337,7 +336,7 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
 function channelMessagesV2 (token: string, channelId: number, start: number) {
   // getting the dataset
   const data:dataType = getData();
-  
+
   let currentChannel: channelType;
   const messages: messageType[] = [];
 

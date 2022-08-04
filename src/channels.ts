@@ -39,7 +39,7 @@ function channelsCreateV3(token: string, name: string, isPublic: boolean) {
     owners: [data.user[flag]],
     members: [data.user[flag]],
     messages: [],
-    standup: {messages: '', timeStart: null, length: null}
+    standup: { messages: '', timeStart: null, length: null }
   };
 
   data.channel.push(newChannel);

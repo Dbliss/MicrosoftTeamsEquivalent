@@ -375,14 +375,14 @@ describe('Test auth/passwordreset/request/v1', () => {
   test('Success', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
-      'thevin369@gmail.com',
+      'thevinduhewa@gmail.com',
       'password',
       'first',
       'last'
     );
     expect(auth.statusCode).toBe(OK);
     const request = callingPasswordRequest(
-      'thevin369@gmail.com'
+      'thevinduhewa@gmail.com'
     );
     expect(request.statusCode).toBe(OK);
     const requested = JSON.parse(String(request.getBody()));

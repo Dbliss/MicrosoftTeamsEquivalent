@@ -1,4 +1,4 @@
-import { callingDmCreate, callingMessageSendDm, callingDmMessages, callingClear, callingChannelsCreate, callingAuthRegister, callingMessageSend, callingMessageRemove, callingMessageEdit, callingChannelMessages } from './helperFile';
+import { callingDmCreate, callingMessageSendDm, callingDmMessages, callingClear, callingChannelInvite, callingChannelsCreate, callingAuthRegister, callingMessageSend, callingMessageRemove, callingMessageEdit, callingChannelMessages } from './helperFile';
 
 const OK = 200;
 
@@ -174,6 +174,82 @@ describe('Testing messageEdit', () => {
     expect(res5.statusCode).toBe(OK);
 
     expect(messages).toEqual({ messages: [{ message: 'dsfwe2131wef', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
+  });
+
+  test('invalid token inputted', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const user1 = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res2 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res2.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res2.body as string);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'dsfwefwef');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(res3.body as string);
+
+    const res7 = callingMessageSend(user1.token, channel1.channelId, 'abc');
+    const message2 = JSON.parse(res7.body as string);
+    expect(res7.statusCode).toBe(OK);
+
+    const res4 = callingMessageEdit('-99999', message1.messageId, '');
+    expect(res4.statusCode).toBe(400);
+
+  });
+
+  test('not a owner of dm', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const user1 = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res8 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    const user2 = JSON.parse(res8.body as string);
+    expect(res8.statusCode).toBe(OK);
+
+    const res2 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res2.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res2.body as string);
+
+    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'dsfwefwef');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(res3.body as string);
+
+    const res4 = callingMessageEdit(user2.token, message1.messageId, 'cba');
+    expect(res4.statusCode).toBe(403);
+  });
+
+  test('is not owner of channel', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const user1 = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res8 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    const user2 = JSON.parse(res8.body as string);
+    expect(res8.statusCode).toBe(OK);
+
+    const res2 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res2.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res2.body as string);
+
+    const res7 = callingChannelInvite(user1.token, channel1.channelId, user2.authUserId);
+    expect(res7.statusCode).toBe(OK);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'dsfwefwef');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(res3.body as string);
+
+    const res4 = callingMessageEdit(user2.token, message1.messageId, '');
+    expect(res4.statusCode).toBe(403);
   });
 
   test('succesful deletion via edit for a message', () => {
@@ -377,6 +453,33 @@ describe('Testing messageRemove', () => {
     expect(res4.statusCode).toBe(400);
   });
 
+  test('aapart of channel but not owner in it', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const user1 = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res8 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    const user2 = JSON.parse(res8.body as string);
+    expect(res8.statusCode).toBe(OK);
+
+    const res2 = callingChannelsCreate(user1.token, 'channel1', true);
+    expect(res2.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res2.body as string);
+
+    const res3 = callingMessageSend(user1.token, channel1.channelId, 'dsfwefwef');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(res3.body as string);
+
+    const res6 = callingChannelInvite(user1.token, channel1.channelId, user2.authUserId);
+    expect(res6.statusCode).toBe(OK);
+
+    const res4 = callingMessageRemove(user2.token, message1.messageId);
+    expect(res4.statusCode).toBe(403);
+  });
+
   test('succesful deletion of message', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
@@ -445,6 +548,38 @@ describe('Testing messageRemove', () => {
     expect(edit1).toEqual({});
 
     expect(messages).toEqual({ messages: [{ message: 'abc', messageId: message2.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
+  });
+
+  test('user is not in dm', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    const user1 = JSON.parse(res1.body as string);
+    expect(res1.statusCode).toBe(OK);
+
+    const res8 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
+    const user2 = JSON.parse(res8.body as string);
+    expect(res8.statusCode).toBe(OK);
+
+    const res9 = callingAuthRegister('email232@gmail.com', 'password212', 'first122', 'last312');
+    const user3 = JSON.parse(res9.body as string);
+    expect(res9.statusCode).toBe(OK);
+
+    const res2 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res2.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res2.body as string);
+
+    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'dsfwefwef');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(res3.body as string);
+
+    const res7 = callingMessageSendDm(user1.token, dm1.dmId, 'abc');
+    expect(res7.statusCode).toBe(OK);
+    const message2 = JSON.parse(res7.body as string);
+
+    const res4 = callingMessageRemove(user3.token, message1.messageId);
+    expect(res4.statusCode).toBe(403);
   });
 });
 

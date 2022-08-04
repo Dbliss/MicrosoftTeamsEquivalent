@@ -318,7 +318,7 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
 
   setData(data);
 
-  return { };
+  return {};
 }
 
 // Given a channel with ID channelId that the authorised user is a member of, return

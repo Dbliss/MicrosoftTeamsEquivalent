@@ -161,14 +161,12 @@ function messageEditV1(token: string, messageId: number, message: string) {
         for (let j = 0; j < data.channel[i].members.length; j++) {
           if (data.channel[i].members[j].authUserId === userId) {
             isMemberOfChannel = true;
-            // need to check if the user has owner permissions in this channel
-            for (const channel of data.user[userIndex].channels) {
-              if (channel.cId === data.channel[i].cId) {
-                if (channel.channelPermissionsId === 1) {
-                  isOwnerMember = true;
-                }
-              }
-            }
+          }
+        }
+        // need to check if the user has owner permissions in this channel
+        for (let j = 0; j < data.channel[i].owners.length; j++) {
+          if (data.channel[i].owners[j].authUserId === userId) {
+            isOwnerMember = true;
           }
         }
         break;
@@ -210,10 +208,12 @@ function messageEditV1(token: string, messageId: number, message: string) {
       if (isDmMember === false || isDmOwner === false) {
         throw HTTPError(403, 'User did not send message, and is not a owner of the dm');
       }
-    } else if (isChannelMessage === true) {
+    }
+    if (isChannelMessage === true) {
       if (isMemberOfChannel === false) {
         throw HTTPError(403, 'User is not a member of the channel');
-      } else if (isMemberOfChannel === true) {
+      } 
+      if (isMemberOfChannel === true) {
         if (isOwnerMember === false) {
           throw HTTPError(403, 'User did not send message, and is not a owner of the channel');
         }

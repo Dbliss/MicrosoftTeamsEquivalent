@@ -63,6 +63,12 @@ type messageType = {
   isPinned: boolean
 };
 
+type standupType = {
+  messages: string,
+  timeStart: number
+  length: number
+}
+
 // Storing channel information in data
 type channelType = {
   cId: number,
@@ -71,6 +77,7 @@ type channelType = {
   owners: userType[],
   members: userType[],
   messages: messageType[],
+  standup: standupType
 };
 
 // Storing dm information in data

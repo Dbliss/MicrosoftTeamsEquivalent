@@ -1,5 +1,4 @@
-import console from 'console';
-import { getData, setData, channelType, usersType, dataType } from './dataStore';
+import { getData, setData, channelType, usersType, dataType, messageType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
 
@@ -188,7 +187,6 @@ function channelJoinV1 (token: string, channelId: number) {
   // checking if the channel is public or not if not true then error is returned
   const isPublic = data.channel[channelIndex].isPublic;
   // if member is not a global owner and channel is private then return error
-  console.log(data);
   if (isPublic === false && isGlobalMember === 0) {
     throw HTTPError(403, 'Not a global owner joining private channel');
   }
@@ -335,7 +333,7 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
   const data:dataType = getData();
 
   let currentChannel: channelType;
-  const messages = [];
+  const messages: messageType[] = [];
 
   // checking the channelId is valid and setting currentChannel to the valid channel
   let validChannel = false;
@@ -381,6 +379,7 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
         }
       }
     }
+    messages.push(currentChannel.messages[i]);
     // only print messages that are meant to be sent (e.g send later messages will not be sent)
     if (currentChannel.messages[i].timeSent < (Date.now() / 1000)) {
       messages[j] = currentChannel.messages[i];
@@ -393,7 +392,6 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
   if (j !== 50) {
     end = -1;
   }
-
   return { messages, start, end };
 }
 

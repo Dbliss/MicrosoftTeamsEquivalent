@@ -11,14 +11,14 @@ import HTTPError from 'http-errors';
  * <message> is a <string> and is the message that the user wants to send in the channel
  * <channelId> is a <number> and is a channels specific identity
  * <dmId> is a <number> and is a dms specific identity
- * 
+ *
  * Return Value:
- * <400 Error> when <both channelId and dmId are invalid> 
- * <400 Error> when <neither channelId nor dmId are -1> 
- * <400 Error> when <token refers to an invalid token> 
- * <400 Error> when <ogMessageId does not refer to a valid message within a channel/DM that the authorised user has joined> 
- * <400 Error> when <length of message is more than 1000 characters> 
- * <403 Error> when <The authorised user has not joined the channel or DM they are trying to share the message to> 
+ * <400 Error> when <both channelId and dmId are invalid>
+ * <400 Error> when <neither channelId nor dmId are -1>
+ * <400 Error> when <token refers to an invalid token>
+ * <400 Error> when <ogMessageId does not refer to a valid message within a channel/DM that the authorised user has joined>
+ * <400 Error> when <length of message is more than 1000 characters>
+ * <403 Error> when <The authorised user has not joined the channel or DM they are trying to share the message to>
  * <{ sharedMessageId }> when <everything is inputted correctly>
  */
 export function messageShareV1(token: string, ogMessageId: number, message: string, channelId: number, dmId: number) {
@@ -95,7 +95,7 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
   // creating the combined message
   let combinedMessage = ogMessage + '//' + message;
   // if the inputted message was empty, just send the ogMessage
-  if (message.length === 0){
+  if (message.length === 0) {
     combinedMessage = ogMessage;
   }
 
@@ -160,19 +160,18 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
   return { sharedMessageId };
 }
 
-
 /**
  * <Function gets an already sent message and marks it as pinned>
  *
  * Arugments:
  * <token> is a <string> and is a users session specific identity
  * <messageId> is a <number> and is a messages specific identity
- * 
+ *
  * Return Value:
- * <400 Error> when <messageId is not a valid message within a channel or DM that the authorised user has joined> 
- * <400 Error> when <the message is already pinned> 
- * <400 Error> when <token refers to an invalid token> 
- * <403 Error> when <messageId refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM> 
+ * <400 Error> when <messageId is not a valid message within a channel or DM that the authorised user has joined>
+ * <400 Error> when <the message is already pinned>
+ * <400 Error> when <token refers to an invalid token>
+ * <403 Error> when <messageId refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM>
  * <{ sharedMessageId }> when <everything is inputted correctly>
  */
 export function messagePinV1(token: string, messageId: number) {
@@ -258,12 +257,12 @@ export function messagePinV1(token: string, messageId: number) {
  * Arugments:
  * <token> is a <string> and is a users session specific identity
  * <messageId> is a <number> and is a messages specific identity
- * 
+ *
  * Return Value:
- * <400 Error> when <messageId is not a valid message within a channel or DM that the authorised user has joined> 
- * <400 Error> when <the message is already unpinned> 
- * <400 Error> when <token refers to an invalid token> 
- * <403 Error> when <messageId refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM> 
+ * <400 Error> when <messageId is not a valid message within a channel or DM that the authorised user has joined>
+ * <400 Error> when <the message is already unpinned>
+ * <400 Error> when <token refers to an invalid token>
+ * <403 Error> when <messageId refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM>
  * <{ sharedMessageId }> when <everything is inputted correctly>
  */
 export function messageUnpinV1(token: string, messageId: number) {
@@ -350,13 +349,13 @@ export function messageUnpinV1(token: string, messageId: number) {
  * <token> is a <string> and is a users session specific identity
  * <message> is a <string> and is the message that the user wants to send in the channel
  * <channelId> is a <number> and is a channels specific identity
- * 
+ *
  * Return Value:
- * <400 Error> when <channelId does not refer to a valid channel> 
- * <400 Error> when <length of message is less than 1 or over 1000 characters> 
- * <400 Error> when <token refers to an invalid token> 
- * <400 Error> when <timeSent is a time in the past> 
- * <403 Error> when <channelId is valid and the authorised user is not a member of the channel they are trying to post to> 
+ * <400 Error> when <channelId does not refer to a valid channel>
+ * <400 Error> when <length of message is less than 1 or over 1000 characters>
+ * <400 Error> when <token refers to an invalid token>
+ * <400 Error> when <timeSent is a time in the past>
+ * <403 Error> when <channelId is valid and the authorised user is not a member of the channel they are trying to post to>
  * <{ messageId }> when <everything is inputted correctly>
  */
 export function messageSendLaterV1(token: string, channelId: number, message: string, timeSent: number) {
@@ -434,13 +433,13 @@ export function messageSendLaterV1(token: string, channelId: number, message: st
  * <token> is a <string> and is a users session specific identity
  * <message> is a <string> and is the message that the user wants to send in the channel
  * <dmId> is a <number> and is a channels specific identity
- * 
+ *
  * Return Value:
- * <400 Error> when <dmId does not refer to a valid channel> 
- * <400 Error> when <length of message is less than 1 or over 1000 characters> 
- * <400 Error> when <token refers to an invalid token> 
- * <400 Error> when <timeSent is a time in the past> 
- * <403 Error> when <channelId is valid and the authorised user is not a member of the dm they are trying to post to> 
+ * <400 Error> when <dmId does not refer to a valid channel>
+ * <400 Error> when <length of message is less than 1 or over 1000 characters>
+ * <400 Error> when <token refers to an invalid token>
+ * <400 Error> when <timeSent is a time in the past>
+ * <403 Error> when <channelId is valid and the authorised user is not a member of the dm they are trying to post to>
  * <{ messageId }> when <everything is inputted correctly>
  */
 export function messageSendLaterDmV1(token: string, dmId: number, message: string, timeSent: number) {

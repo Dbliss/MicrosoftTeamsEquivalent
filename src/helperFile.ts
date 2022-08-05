@@ -7,7 +7,8 @@ const url = config.url;
 function callingClear () {
   const res = request(
     'DELETE',
-  `${url}:${port}/clear/V1`);
+      `${url}:${port}/clear/v1`
+  );
   return res;
 }
 
@@ -17,8 +18,10 @@ function callingChannelDetails (token: string, channelId: number) {
     `${url}:${port}/channel/details/v2`,
     {
       qs: {
-        token: token,
         channelId: channelId,
+      },
+      headers: {
+        token: token,
       }
     }
   );
@@ -31,10 +34,10 @@ function callingChannelJoin (token: string, channelId: number) {
           `${url}:${port}/channel/join/v3`,
           {
             body: JSON.stringify({
-              token: token,
               channelId: channelId,
             }),
             headers: {
+              token: token,
               'Content-type': 'application/json',
             },
           }
@@ -67,11 +70,11 @@ function callingMessageSend (token: string, channelId: number, message: string) 
           `${url}:${port}/message/send/v1`,
           {
             body: JSON.stringify({
-              token: token,
               channelId: channelId,
               message: message
             }),
             headers: {
+              token: token,
               'Content-type': 'application/json',
             },
           }
@@ -85,11 +88,11 @@ function callingMessageEdit (token: string, messageId: number, message: string) 
           `${url}:${port}/message/edit/v1`,
           {
             body: JSON.stringify({
-              token: token,
               messageId: messageId,
               message: message
             }),
             headers: {
+              token: token,
               'Content-type': 'application/json',
             },
           }
@@ -103,8 +106,10 @@ function callingMessageRemove (token: string, messageId: number) {
           `${url}:${port}/message/remove/v1`,
           {
             qs: {
-              token: token,
               messageId: messageId,
+            },
+            headers: {
+              token: token,
             }
           }
   );
@@ -117,9 +122,11 @@ function callingChannelMessages (token:string, channelId: number, start: number)
         `${url}:${port}/channel/messages/v2`,
         {
           qs: {
-            token: token,
             channelId: channelId,
             start: start,
+          },
+          headers: {
+            token: token,
           }
         }
   );
@@ -132,12 +139,13 @@ function callingUserProfile (token: string, uId: number) {
           `${url}:${port}/user/profile/v2`,
           {
             qs: {
-              token: token,
               uId: uId,
+            },
+            headers: {
+              token: token,
             }
           }
   );
-    // expect(res.statusCode).toBe(OK);
   return res;
 }
 
@@ -147,6 +155,9 @@ function callingUsersAll (token: string) {
         `${url}:${port}/users/all/v1`,
         {
           qs: {
+
+          },
+          headers: {
             token: token,
           }
         }
@@ -161,11 +172,11 @@ function callingUserProfileSetName (token: string, nameFirst:string, nameLast:st
         `${url}:${port}/user/profile/setname/v1`,
         {
           body: JSON.stringify({
-            token: token,
             nameFirst: nameFirst,
             nameLast: nameLast,
           }),
           headers: {
+            token: token,
             'Content-type': 'application/json',
           },
         }
@@ -180,10 +191,10 @@ function callingUserProfileSetEmail (token: string, email: string) {
         `${url}:${port}/user/profile/setemail/v1`,
         {
           body: JSON.stringify({
-            token: token,
             email: email,
           }),
           headers: {
+            token: token,
             'Content-type': 'application/json',
           },
         }
@@ -198,10 +209,10 @@ function callingUserProfileSetHandle (token: string, handleStr: string) {
         `${url}:${port}/user/profile/sethandle/v1`,
         {
           body: JSON.stringify({
-            token: token,
             handleStr: handleStr,
           }),
           headers: {
+            token: token,
             'Content-type': 'application/json',
           },
         }
@@ -654,6 +665,58 @@ function callingMessageSendLaterDm (token: string, dmId: number, message: string
   return res;
 }
 
+function callingStandupStart (token: string, channelId: number, length: number) {
+  const res = request(
+    'POST',
+        `${url}:${port}/standup/start/v1`,
+        {
+          body: JSON.stringify({
+            channelId: channelId,
+            length: length
+          }),
+          headers: {
+            token: token,
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
+}
+
+function callingStandupActive (token: string, channelId: number) {
+  const res = request(
+    'GET',
+        `${url}:${port}/standup/active/v1`,
+        {
+          qs: {
+            channelId: channelId,
+          },
+          headers: {
+            token: token,
+          }
+        }
+  );
+  return res;
+}
+
+function callingStandupSend (token: string, channelId: number, message: string) {
+  const res = request(
+    'POST',
+        `${url}:${port}/standup/send/v1`,
+        {
+          body: JSON.stringify({
+            channelId: channelId,
+            message: message
+          }),
+          headers: {
+            token: token,
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
+}
+
 export {
   callingAuthRegister,
   callingChannelsCreate,
@@ -695,9 +758,9 @@ export {
   callingMessageUnpin,
   callingMessageSendLater,
   callingMessageSendLaterDm,
-  // callingStandupStart,
-  // callingStandupActive,
-  // callingStandUpSend,
+  callingStandupStart,
+  callingStandupActive,
+  callingStandupSend,
   // callingPasswordResetRequest,
   // callingPasswordResetReset,
   // callingUserProfileUploadPhoto,

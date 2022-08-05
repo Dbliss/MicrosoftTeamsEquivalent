@@ -1,7 +1,22 @@
 import { getData, setData, channelType, messageType, dataType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
-
+/**
+ * <Function creates and sends a message to a specific channel>
+ *
+ * Arugments:
+ * <token> is a <string> and is a users session specific identity
+ * <channelId> is a <number> and is a channels specific identity
+ * <message> is a <string> and is the message that the user wants to send in the channel
+ * 
+ * Return Value:
+ * <400 Error> when <channelId does not refer to a valid channel> 
+ * <400 Error> when <length of message is less than 1 or over 1000 characters> 
+ * <400 Error> when <token refers to an invalid token> 
+ * <403 Error> when <channelId is valid and the authorised user is not a member of the channel> 
+ * <{ messageId }> when <everything is inputted correctly>
+ *
+ */
 function messageSendV1(token: string, channelId: number, message: string) {
   const data:dataType = getData();
   let currentChannel: channelType;
@@ -103,6 +118,21 @@ function messageSendV1(token: string, channelId: number, message: string) {
   return { messageId };
 }
 
+/**
+ * <Function edits an already sent messaage into the message the user specifies>
+ *
+ * Arugments:
+ * <token> is a <string> and is a users session specific identity
+ * <messageId> is a <number> and is a messages specific identity
+ * <message> is a <string> and is the message that the user wants to send in the channel
+ * 
+ * Return Value:
+ * <400 Error> when <messageId does not refer to a valid message within a channel/DM that the authorised user has joined> 
+ * <400 Error> when <length of message is over 1000 characters> 
+ * <400 Error> when <token refers to an invalid token> 
+ * <403 Error> when <If the authorised user does not have owner permissions, and the message was not sent by them> 
+ * <{}> when <everything is inputted correctly>
+ */
 function messageEditV1(token: string, messageId: number, message: string) {
   const data: dataType = getData();
   const tokenIndex = getTokenIndex(token, data);
@@ -263,6 +293,19 @@ function messageEditV1(token: string, messageId: number, message: string) {
   return {};
 }
 
+/**
+ * <Function deletes an already sent messaage>
+ *
+ * Arugments:
+ * <token> is a <string> and is a users session specific identity
+ * <messageId> is a <number> and is a messages specific identity
+ * 
+ * Return Value:
+ * <400 Error> when <messageId does not refer to a valid message within a channel/DM that the authorised user has joined> 
+ * <400 Error> when <token refers to an invalid token> 
+ * <403 Error> when <If the authorised user does not have owner permissions, and the message was not sent by them> 
+ * <{}> when <everything is inputted correctly>
+ */
 function messageRemoveV1(token: string, messageId: number) {
   const data = getData();
   let uId = 0;
@@ -374,6 +417,22 @@ function messageRemoveV1(token: string, messageId: number) {
   return {};
 }
 
+/**
+ * <Function creates and sends a message to a specific dm>
+ *
+ * Arugments:
+ * <token> is a <string> and is a users session specific identity
+ * <dmId> is a <number> and is a dms specific identity
+ * <message> is a <string> and is the message that the user wants to send in the channel
+ * 
+ * Return Value:
+ * <400 Error> when <dmId does not refer to a valid DM> 
+ * <400 Error> when <length of message is less than 1 or over 1000 characters> 
+ * <400 Error> when <token refers to an invalid token> 
+ * <403 Error> when <dmId is valid and the authorised user is not a member of the DM> 
+ * <{ messageId }> when <everything is inputted correctly>
+ *
+ */
 function messageSenddmV2 (token: string, dmId: number, message: string) {
   const data:dataType = getData();
 

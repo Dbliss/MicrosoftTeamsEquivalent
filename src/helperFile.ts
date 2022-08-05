@@ -1,5 +1,6 @@
 import request from 'sync-request';
 import config from './config.json';
+import { channelsInUserType, dataType } from './dataStore';
 
 const port = config.port;
 const url = config.url;

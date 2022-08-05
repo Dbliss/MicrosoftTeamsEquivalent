@@ -163,7 +163,6 @@ describe('Testing standup/start/v1', () => {
     );
     expect(start.statusCode).toBe(OK);
     const started = JSON.parse(String(start.getBody()));
-    console.log(started);
     expect(started).toMatchObject({ timeFinish: expect.any(Number) });
     await new Promise((r) => setTimeout(r, 2000));
   });
@@ -374,7 +373,6 @@ describe('testing standup/send/v1', () => {
     );
     expect(chmsgs.statusCode).toBe(OK);
     const reveal = JSON.parse(String(chmsgs.getBody()));
-    console.log(reveal);
   });
   test('Invalid token', async() => {
     expect(callingClear().statusCode).toBe(OK);
@@ -510,7 +508,6 @@ describe('testing standup/send/v1', () => {
     );
     expect(create.statusCode).toBe(OK);
     const created = JSON.parse(String(create.getBody()));
-    console.log('channelId in jest file', created.channelId);
     const start = callingStandupStart(
       member.token,
       created.channelId,

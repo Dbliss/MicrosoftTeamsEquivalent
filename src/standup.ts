@@ -54,7 +54,8 @@ const standupStartV1 = (token: string, channelId: number, length: number) => {
   setData(data);
   setTimeout(finishStandup, length * 1000, token, channelIndex, channelId);
 
-  const timeFinish = Math.round(length - (Date.now() / 1000 - data.channel[channelIndex].standup.timeStart));
+  const timeFinishNoInteger = length - (Date.now() / 1000 - data.channel[channelIndex].standup.timeStart);
+  const timeFinish = Math.round(timeFinishNoInteger);
   return { timeFinish: timeFinish };
 };
 

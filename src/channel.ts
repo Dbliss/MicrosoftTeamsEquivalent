@@ -237,11 +237,6 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
 
   let currentChannel: channelType;
 
-  // if no channels have been created return an error
-  if (JSON.stringify(data.channel) === JSON.stringify([])) {
-    throw HTTPError(400, 'channelId does not refer to a valid channel');
-  }
-
   // checking the channelId is valid and setting currentChannel to the valid channel
   for (const channel of data.channel) {
     if (channel.cId === channelId) {
@@ -316,7 +311,7 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
 
   setData(data);
 
-  return { };
+  return {};
 }
 
 // Given a channel with ID channelId that the authorised user is a member of, return
@@ -339,11 +334,6 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
 
   let currentChannel: channelType;
   const messages: messageType[] = [];
-
-  // if no channels have been created return an error
-  if (data.channel.length === 0) {
-    throw HTTPError(400, 'channelId does not refer to a valid channel');
-  }
 
   // checking the channelId is valid and setting currentChannel to the valid channel
   let validChannel = false;

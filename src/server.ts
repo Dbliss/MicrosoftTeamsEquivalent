@@ -368,6 +368,12 @@ app.post('/auth/passwordreset/reset/v1', (req, res) => {
   res.json(reset);
 });
 
+
+app.use('/imgurl', express.static('profileImages'));
+
+
+
+
 // start server
 const server = app.listen(PORT, HOST, () => {
   console.log(`⚡️ Server listening on port ${PORT} at ${HOST}`);

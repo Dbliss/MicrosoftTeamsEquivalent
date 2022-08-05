@@ -704,7 +704,7 @@ describe('users/stats/v1', () => {
   });
 });
 
-/*
+
 
 describe('Testing user/profile/uploadphoto/v1', () => {
   test('Testing successful return', () => {
@@ -787,9 +787,14 @@ describe('Testing user/profile/uploadphoto/v1', () => {
 
   test('image uploaded is not a JPG', () => {
     callingClear();
+    const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
+    'password',
+    'First',
+    'Last').getBody()));
 
-    const res = callingUserProfileSetHandle('!@#$', 'NewHandle');
+    const res = callingUserUploadPhoto (authUserId.token,'invalid url', 3, 6, 7, 6);
     expect(res.statusCode).toBe(400);
+
     // const result = JSON.parse(String(res.getBody()));
 
     // expect(result).toMatchObject({ error: 'error' }); // assuming that an invlaid token is given that it produces an error this
@@ -799,7 +804,7 @@ describe('Testing user/profile/uploadphoto/v1', () => {
   test('Testing error when token is invalid', () => {
     callingClear();
 
-    const res = callingUserUploadPhoto('#@!$$','valid url', -1, -1, -10, -10); //need to figure out how to put in a valid URL
+    const res = callingUserUploadPhoto('#@!$$','jpeg', -1, -1, -10, -10); //need to figure out how to put in a valid URL
     expect(res.statusCode).toBe(403);
     // const result = JSON.parse(String(res.getBody()));
 
@@ -808,4 +813,4 @@ describe('Testing user/profile/uploadphoto/v1', () => {
   });
 });
 
-*/
+

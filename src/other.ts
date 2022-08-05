@@ -79,7 +79,7 @@ function involvementRateCalc(token: string, data: dataType) {
 
 function utilizationRateCalc (data: dataType) {
   let joined = 0;
-  const numUsers = data.stats.length;
+  const numUsers = data.user.length;
   for (const user of data.stats) {
     if (user.channelsJoined.length > 1 || user.dmsJoined.length > 1) {
       joined++;

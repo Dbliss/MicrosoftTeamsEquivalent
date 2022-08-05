@@ -60,7 +60,7 @@ const standupStartV1 = (token: string, channelId: number, length: number) => {
 };
 
 // finish standup
-function finishStandup(token, channelIndex, channelId) {
+function finishStandup(token: string, channelIndex: number, channelId: number) {
   let data:dataType = getData();
   const messages = data.channel[channelIndex].standup.messages;
   try {

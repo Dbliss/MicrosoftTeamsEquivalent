@@ -210,6 +210,24 @@ describe('Test auth/register/v2', () => {
     );
     expect(res1.statusCode).toBe(BADREQ);
   });
+
+  test('Duplicate handles', () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = callingAuthRegister(
+      'email@email.com',
+      'password',
+      'first',
+      'last'
+    );
+    expect(auth.statusCode).toBe(OK);
+    const auth1 = callingAuthRegister(
+      'email1@email.com',
+      'password',
+      'first',
+      'last'
+    );
+    expect(auth1.statusCode).toBe(OK);
+  });
 });
 
 describe('Test auth/login/v2', () => {
@@ -327,14 +345,42 @@ describe('Test auth/logout/v2', () => {
       `${url}:${port}/auth/logout/v2`,
       {
         body: JSON.stringify({
-          token: '',
+
         }),
         headers: {
+          token: '',
           'Content-type': 'application/json'
         },
       }
     );
     expect(res.statusCode).toBe(FORBID);
+  });
+  test('Success', () => {
+    expect(callingClear().statusCode).toBe(OK);
+    const auth = callingAuthRegister(
+      'email@email.com',
+      'password',
+      'first',
+      'last'
+    );
+    expect(auth.statusCode).toBe(OK);
+    const member = JSON.parse(String(auth.getBody()));
+    const res = request(
+      'POST',
+      `${url}:${port}/auth/logout/v2`,
+      {
+        body: JSON.stringify({
+
+        }),
+        headers: {
+          token: member.token,
+          'Content-type': 'application/json'
+        },
+      }
+    );
+    expect(res.statusCode).toBe(OK);
+    const logout = JSON.parse(String(res.getBody()));
+    expect(logout).toStrictEqual({});
   });
 });
 

@@ -135,8 +135,7 @@ app.get('/channels/listall/v3', (req, res) => {
 
 app.post('/auth/logout/v2', (req, res, next) => {
   try {
-    const { token } = req.body;
-    return res.json(authLogoutV1(token));
+    return res.json(authLogoutV1(req.headers.token as string));
   } catch (err) {
     next(err);
   }

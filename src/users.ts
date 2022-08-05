@@ -1,5 +1,5 @@
 import validator from 'validator';
-import { dataType, getData, setData, userType, channelsInUserType } from './dataStore';
+import { dataType, getData, setData, userType } from './dataStore';
 import HTTPError from 'http-errors';
 import { getIndexOfStatsUid, involvementRateCalc, utilizationRateCalc } from './other';
 import fs from 'fs';
@@ -21,31 +21,6 @@ function extractUserDetails (user: userType) {
   };
 
   return returnUser;
-}
-
-// Helper function which takes in the data, the updateed user and the channels they are part of and updates all of
-// the instances fo that user
-function updateUserInfo(data: dataType, channels: channelsInUserType[], user: any) { // need to typescript channels as an array of channels
-  for (const channel of channels) {
-    const channelId = channel.cId;
-    const channelIndex = data.channel.findIndex((object: any) => {
-      return object.cId === channelId;
-    });
-    const ownerIndex = data.channel[channelIndex].owners.findIndex((object: any) => {
-      return object.authUserId === user.authUserId;
-    });
-    const memberIndex = data.channel[channelIndex].members.findIndex((object: any) => {
-      return object.authUserId === user.authUserId;
-    });
-
-    const perms = channel.channelPermissionsId;
-    if (perms === 1) {
-      data.channel[channelIndex].owners[ownerIndex] = user;
-      data.channel[channelIndex].members[memberIndex] = user;
-    } else {
-      data.channel[channelIndex].members[memberIndex] = user;
-    }
-  }
 }
 
 // Helper Function which finds the user which has the token,
@@ -183,9 +158,27 @@ function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: strin
   // could I just call this function on the user object within the members array
   data.user[tokenIndex].nameFirst = nameFirst;
   data.user[tokenIndex].nameLast = nameLast;
-  const updatedUser = extractUserDetails(data.user[tokenIndex]);
-  const userChannels = data.user[tokenIndex].channels;
-  updateUserInfo(data, userChannels, updatedUser);
+
+  // for (const channel of userChannels) {
+  //   const channelId = channel.cId;
+  //   const channelIndex = data.channel.findIndex((object: any) => {
+  //     return object.cId === channelId;
+  //   });
+  //   const ownerIndex = data.channel[channelIndex].owners.findIndex((object: any) => {
+  //     return object.authUserId === updatedUser.uId;
+  //   });
+  //   const memberIndex = data.channel[channelIndex].members.findIndex((object: any) => {
+  //     return object.authUserId === updatedUser.uId;
+  //   });
+
+  //   const perms = channel.channelPermissionsId;
+  //   if (perms === 1) {
+  //     data.channel[channelIndex].owners[ownerIndex] = updatedUser;
+  //     data.channel[channelIndex].members[memberIndex] = updatedUser;
+  //   } else {
+  //     data.channel[channelIndex].members[memberIndex] = updatedUser;
+  //   }
+  // }
 
   setData(data);
   return {};
@@ -224,9 +217,26 @@ function userProfileSetEmailV1 (token: string, email: string) {
   }
 
   data.user[tokenIndex].email = email;
-  const updatedUser = extractUserDetails(data.user[tokenIndex]);
-  const userChannels = data.user[tokenIndex].channels;
-  updateUserInfo(data, userChannels, updatedUser);
+  // for (const channel of userChannels) {
+  //   const channelId = channel.cId;
+  //   const channelIndex = data.channel.findIndex((object: any) => {
+  //     return object.cId === channelId;
+  //   });
+  //   const ownerIndex = data.channel[channelIndex].owners.findIndex((object: any) => {
+  //     return object.authUserId === updatedUser.uId;
+  //   });
+  //   const memberIndex = data.channel[channelIndex].members.findIndex((object: any) => {
+  //     return object.authUserId === updatedUser.uId;
+  //   });
+
+  //   const perms = channel.channelPermissionsId;
+  //   if (perms === 1) {
+  //     data.channel[channelIndex].owners[ownerIndex] = updatedUser;
+  //     data.channel[channelIndex].members[memberIndex] = updatedUser;
+  //   } else {
+  //     data.channel[channelIndex].members[memberIndex] = updatedUser;
+  //   }
+  // }
   setData(data);
   return {};
 }
@@ -262,15 +272,32 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
     throw HTTPError(400, 'Handle entered is already being used');
   }
 
-  if (handleStr.match(/^[0-9A-Za-z]+$/) === null) { // idk if this works, coded adapted from: https://tinyurl.com/2ps8ms94
-    // handleStr not alphanumeric
-    throw HTTPError(400, 'Handle constians non-alphanumeric characters');
-  }
+  // if (handleStr.match(/^[0-9A-Za-z]+$/) === null) { // idk if this works, coded adapted from: https://tinyurl.com/2ps8ms94
+  //   // handleStr not alphanumeric
+  //   throw HTTPError(400, 'Handle constians non-alphanumeric characters');
+  // }
 
   data.user[tokenIndex].handle = handleStr;
-  const updatedUser = extractUserDetails(data.user[tokenIndex]);
-  const userChannels = data.user[tokenIndex].channels;
-  updateUserInfo(data, userChannels, updatedUser);
+  // for (const channel of userChannels) {
+  //   const channelId = channel.cId;
+  //   const channelIndex = data.channel.findIndex((object: any) => {
+  //     return object.cId === channelId;
+  //   });
+  //   const ownerIndex = data.channel[channelIndex].owners.findIndex((object: any) => {
+  //     return object.authUserId === updatedUser.uId;
+  //   });
+  //   const memberIndex = data.channel[channelIndex].members.findIndex((object: any) => {
+  //     return object.authUserId === updatedUser.uId;
+  //   });
+
+  //   const perms = channel.channelPermissionsId;
+  //   if (perms === 1) {
+  //     data.channel[channelIndex].owners[ownerIndex] = updatedUser;
+  //     data.channel[channelIndex].members[memberIndex] = updatedUser;
+  //   } else {
+  //     data.channel[channelIndex].members[memberIndex] = updatedUser;
+  //   }
+  // }
   setData(data);
   return {};
 }

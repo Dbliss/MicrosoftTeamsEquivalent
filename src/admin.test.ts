@@ -1,5 +1,5 @@
 import request from 'sync-request';
-
+import { callingChannelsCreate, callingDmCreate } from './helperFile';
 import config from './config.json';
 
 const OK = 200;
@@ -113,6 +113,83 @@ describe('Testing admin/user/remove/v1', () => {
       'password1',
       'First1',
       'Last1').getBody()));
+
+    const res = callingUserRemove(authUserId.token, uId.authUserId);
+    expect(res.statusCode).toBe(OK);
+    const result = JSON.parse(String(res.getBody()));
+
+    expect(result).toStrictEqual({});
+  });
+
+  test('Testing successful return of users object from users/all/v1 withiin a dm', () => {
+    callingClear();
+    const authUserId1 = JSON.parse(String(callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last').getBody()));
+
+    const uId1 = JSON.parse(String(callingAuthRegister(
+      'email1@email.com',
+      'password1',
+      'First1',
+      'Last1').getBody()));
+
+    const res5 = callingDmCreate(authUserId1.token, [uId1.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+
+    const res = callingUserRemove(authUserId1.token, uId1.authUserId);
+    expect(res.statusCode).toBe(OK);
+    const result = JSON.parse(String(res.getBody()));
+
+    expect(result).toStrictEqual({});
+  });
+
+  test('Testing successful return of users object from users/all/v1 withiin a dm2', () => {
+    callingClear();
+    const authUserId1 = JSON.parse(String(callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last').getBody()));
+
+    const uId1 = JSON.parse(String(callingAuthRegister(
+      'email1@email.com',
+      'password1',
+      'First1',
+      'Last1').getBody()));
+
+    const res5 = callingDmCreate(authUserId1.token, [uId1.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+
+    const res = callingUserRemove(uId1.token, authUserId1.authUserId);
+    expect(res.statusCode).toBe(403);
+  });
+
+  test('Testing failed return of is global owner', () => {
+    callingClear();
+    const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last').getBody()));
+
+    const res = callingUserRemove(authUserId.token, authUserId.authUserId);
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('Testing successful return of users object from users/all/v1', () => {
+    callingClear();
+    const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last').getBody()));
+
+    const uId = JSON.parse(String(callingAuthRegister(
+      'email1@email.com',
+      'password1',
+      'First1',
+      'Last1').getBody()));
+
+    const res5 = callingChannelsCreate(authUserId.token, 'yeye', true);
+    expect(res5.statusCode).toBe(OK);
 
     const res = callingUserRemove(authUserId.token, uId.authUserId);
     expect(res.statusCode).toBe(OK);

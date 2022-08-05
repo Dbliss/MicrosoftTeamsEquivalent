@@ -71,7 +71,71 @@ import {
 
 const OK = 200;
 
-// GET REQUEST
+describe('Testing userProfileV1', () => {
+  test('Testing successful return of user object from userProfileV1', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res8 = callingUserProfile(user1.token, user2.authUserId);
+    expect(res8.statusCode).toBe(OK);
+    const result = JSON.parse(res8.body as string);
+
+    expect(result).toEqual({
+      user: {
+        uId: user2.authUserId,
+        email: 'email12@gmail.com',
+        nameFirst: 'first12',
+        nameLast: 'last12',
+        handleStr: 'first12last12'
+      }
+    });
+  });
+
+  test('Testing error return of userProfileV1 when the uId does not refer to a valid user', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res8 = callingUserProfile(user1.token, -99999);
+    expect(res8.statusCode).toBe(400);
+  });
+
+  test('Testing error return of userProfileV1 when the uId does not refer to a valid user', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res8 = callingUserProfile(user1.token, user1.authUserId);
+    expect(res8.statusCode).toBe(OK);
+  });
+
+  test('Invalid token test', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res8 = callingUserProfile('-99999', user1.authUserId);
+    expect(res8.statusCode).toBe(403);
+  });
+});
+
 function callingUserStats (token: string) {
   const res = request(
     'GET',
@@ -172,7 +236,7 @@ describe('Testing user/profile/setname/v1', () => {
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
 
     expect(result).toStrictEqual({});
-    expect(edited).toMatchObject({
+    expect(edited).toEqual({
       user: {
         uId: authUserId.authUserId,
         email: 'email@email.com',
@@ -285,7 +349,7 @@ describe('Testing user/profile/setemail/v1', () => {
     const result = JSON.parse(String(res.getBody()));
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     expect(result).toStrictEqual({});
-    expect(edited).toMatchObject({
+    expect(edited).toEqual({
       user: {
         uId: authUserId.authUserId,
         email: 'newemail@email.com',
@@ -309,7 +373,7 @@ describe('Testing user/profile/setemail/v1', () => {
 
     const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
     // expect(result).toMatchObject({ error: 'error' });
-    expect(edited).toMatchObject({
+    expect(edited).toEqual({
       user: {
         uId: authUserId.authUserId,
         email: 'email@email.com',

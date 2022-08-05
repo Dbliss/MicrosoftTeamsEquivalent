@@ -1,9 +1,8 @@
 import validator from 'validator';
-import { dataType, getData, setData, userType, channelsInUserType } from './dataStore';
+import { dataType, getData, setData, userType } from './dataStore';
 import HTTPError from 'http-errors';
 
 // const error = { error: 'error' };
-
 
 // Helper function that takes all the fields stored in a users and picks relevent information for
 // the user object
@@ -153,8 +152,6 @@ function userProfileSetNameV1 (token: string, nameFirst: string, nameLast: strin
   // could I just call this function on the user object within the members array
   data.user[tokenIndex].nameFirst = nameFirst;
   data.user[tokenIndex].nameLast = nameLast;
-  const updatedUser = extractUserDetails(data.user[tokenIndex]);
-  const userChannels = data.user[tokenIndex].channels;
 
   // for (const channel of userChannels) {
   //   const channelId = channel.cId;
@@ -214,8 +211,6 @@ function userProfileSetEmailV1 (token: string, email: string) {
   }
 
   data.user[tokenIndex].email = email;
-  const updatedUser = extractUserDetails(data.user[tokenIndex]);
-  const userChannels = data.user[tokenIndex].channels;
   // for (const channel of userChannels) {
   //   const channelId = channel.cId;
   //   const channelIndex = data.channel.findIndex((object: any) => {
@@ -277,8 +272,6 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   // }
 
   data.user[tokenIndex].handle = handleStr;
-  const updatedUser = extractUserDetails(data.user[tokenIndex]);
-  const userChannels = data.user[tokenIndex].channels;
   // for (const channel of userChannels) {
   //   const channelId = channel.cId;
   //   const channelIndex = data.channel.findIndex((object: any) => {

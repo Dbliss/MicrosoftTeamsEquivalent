@@ -52,24 +52,29 @@ const standupStartV1 = (token: string, channelId: number, length: number) => {
   data.channel[channelIndex].standup.timeStart = Date.now() / 1000;
   data.channel[channelIndex].standup.length = length;
   setData(data);
-  setTimeout(finishStandup, length * 1000);
+  setTimeout(finishStandup, length * 1000, token, channelIndex, channelId);
 
-  // finish standup
-  function finishStandup() {
-    let data:dataType = getData();
-    const messages = data.channel[channelIndex].standup.messages;
-    messageSendV1(token, channelId, messages);
-    data = getData();
-    data.channel[channelIndex].standup.messages = '';
-    data.channel[channelIndex].standup.timeStart = null;
-    data.channel[channelIndex].standup.length = null;
-    setData(data);
-  }
-
-  const timeFinish = length - (Date.now() / 1000 - data.channel[channelIndex].standup.timeStart);
+  const timeFinish = Math.round(length - (Date.now() / 1000 - data.channel[channelIndex].standup.timeStart));
   return { timeFinish: timeFinish };
 };
 
+// finish standup
+function finishStandup(token, channelIndex, channelId) {
+  let data:dataType = getData();
+  const messages = data.channel[channelIndex].standup.messages;
+  try {
+    if (messages.length > 0) {
+      messageSendV1(token, channelId, messages);
+      data = getData();
+      data.channel[channelIndex].standup.messages = '';
+      data.channel[channelIndex].standup.timeStart = null;
+      data.channel[channelIndex].standup.length = null;
+      setData(data);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
 const standupActiveV1 = (token: string, channelId: number) => {
   const data:dataType = getData();
 
@@ -115,7 +120,6 @@ const standupActiveV1 = (token: string, channelId: number) => {
     timeFinish = null;
   }
   setData(data);
-
   return { isActive: isActive, timeFinish: timeFinish };
 };
 

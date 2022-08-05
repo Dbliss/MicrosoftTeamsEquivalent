@@ -665,6 +665,58 @@ function callingMessageSendLaterDm (token: string, dmId: number, message: string
   return res;
 }
 
+function callingStandupStart (token: string, channelId: number, length: number) {
+  const res = request(
+    'POST',
+        `${url}:${port}/standup/start/v1`,
+        {
+          body: JSON.stringify({
+            channelId: channelId,
+            length: length
+          }),
+          headers: {
+            token: token,
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
+}
+
+function callingStandupActive (token: string, channelId: number) {
+  const res = request(
+    'GET',
+        `${url}:${port}/standup/active/v1`,
+        {
+          qs: {
+            channelId: channelId,
+          },
+          headers: {
+            token: token,
+          }
+        }
+  );
+  return res;
+}
+
+function callingStandupSend (token: string, channelId: number, message: string) {
+  const res = request(
+    'POST',
+        `${url}:${port}/standup/send/v1`,
+        {
+          body: JSON.stringify({
+            channelId: channelId,
+            message: message
+          }),
+          headers: {
+            token: token,
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  return res;
+}
+
 export {
   callingAuthRegister,
   callingChannelsCreate,
@@ -706,9 +758,9 @@ export {
   callingMessageUnpin,
   callingMessageSendLater,
   callingMessageSendLaterDm,
-  // callingStandupStart,
-  // callingStandupActive,
-  // callingStandUpSend,
+  callingStandupStart,
+  callingStandupActive,
+  callingStandupSend,
   // callingPasswordResetRequest,
   // callingPasswordResetReset,
   // callingUserProfileUploadPhoto,

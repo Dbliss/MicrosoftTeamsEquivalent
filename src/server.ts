@@ -366,23 +366,35 @@ app.post('/auth/passwordreset/reset/v1', (req, res) => {
   res.json(reset);
 });
 
-app.post('/standup/start/v1', (req, res) => {
-  const { channelId, length } = req.body;
-  const token = req.headers.token;
-  const start = standupStartV1(token as string, channelId, length);
-  res.json(start);
+app.post('/standup/start/v1', (req, res, next) => {
+  try {
+    const { channelId, length } = req.body;
+    const token = req.headers.token;
+    const start = standupStartV1(token as string, channelId, length);
+    res.json(start);
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.get('/standup/active/v1', (req, res) => {
-  const active = standupActiveV1(req.headers.token as string, parseInt(req.query.channelId as string));
-  res.json(active);
+app.get('/standup/active/v1', (req, res, next) => {
+  try {
+    const active = standupActiveV1(req.headers.token as string, parseInt(req.query.channelId as string));
+    res.json(active);
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.post('/standup/send/v1', (req, res) => {
-  const { channelId, message } = req.body;
-  const token = req.headers.token;
-  const send = standupSendV1(token as string, channelId, message);
-  res.json(send);
+app.post('/standup/send/v1', (req, res, next) => {
+  try {
+    const { channelId, message } = req.body;
+    const token = req.headers.token;
+    const send = standupSendV1(token as string, channelId, message);
+    res.json(send);
+  } catch (err) {
+    next(err);
+  }
 });
 
 // start server

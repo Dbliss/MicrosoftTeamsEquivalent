@@ -1,67 +1,13 @@
-import request from 'sync-request';
-import config from './config.json';
-import { callingChannelsCreate, callingClear, callingAuthRegister, callingChannelMessages } from './helperFile';
+import { callingChannelsCreate, callingClear } from './channelsServer.test';
+import { callingAuthRegister } from './dm.test';
+import { callingChannelMessages, callingStandupStart, callingStandupActive, callingStandupSend } from './helperFile';
 
 const OK = 200;
-const url = config.url;
-const port = config.port;
 const FORBID = 403;
 const BADREQ = 400;
 
-function callingStandupStart (token: string, channelId: number, length: number) {
-  const res = request(
-    'POST',
-        `${url}:${port}/standup/start/v1`,
-        {
-          body: JSON.stringify({
-            channelId: channelId,
-            length: length
-          }),
-          headers: {
-            token: token,
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
-
-function callingStandupActive (token: string, channelId: number) {
-  const res = request(
-    'GET',
-            `${url}:${port}/standup/active/v1`,
-            {
-              qs: {
-                channelId: channelId,
-              },
-              headers: {
-                token: token,
-              }
-            }
-  );
-  return res;
-}
-
-function callingStandupSend (token: string, channelId: number, message: string) {
-  const res = request(
-    'POST',
-            `${url}:${port}/standup/send/v1`,
-            {
-              body: JSON.stringify({
-                channelId: channelId,
-                message: message
-              }),
-              headers: {
-                token: token,
-                'Content-type': 'application/json',
-              },
-            }
-  );
-  return res;
-}
-
-describe('Testing standup/active/v1', () => {
-  test('Invalid token', () => {
+describe('Testing standup/start/v1', () => {
+  test('Invalid token', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -81,11 +27,12 @@ describe('Testing standup/active/v1', () => {
     const start = callingStandupStart(
       '',
       created.channelId,
-      1
+      2
     );
     expect(start.statusCode).toBe(FORBID);
+    await new Promise((r) => setTimeout(r, 2000));
   });
-  test('Invalid channelId', () => {
+  test('Invalid channelId', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -98,11 +45,12 @@ describe('Testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       -1,
-      1
+      2
     );
     expect(start.statusCode).toBe(BADREQ);
+    await new Promise((r) => setTimeout(r, 2000));
   });
-  test('Length is a negative number', () => {
+  test('Length is a negative number', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -125,8 +73,9 @@ describe('Testing standup/active/v1', () => {
       -1
     );
     expect(start.statusCode).toBe(BADREQ);
+    await new Promise((r) => setTimeout(r, 2000));
   });
-  test('Active standup running currently running', () => {
+  test('Active standup running currently running', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -146,17 +95,18 @@ describe('Testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      1
+      2
     );
     expect(start.statusCode).toBe(OK);
     const start1 = callingStandupStart(
       member.token,
       created.channelId,
-      1
+      0
     );
     expect(start1.statusCode).toBe(BADREQ);
+    await new Promise((r) => setTimeout(r, 2000));
   });
-  test('channelId is valid and user not member of channel', () => {
+  test('channelId is valid and user not member of channel', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -184,11 +134,12 @@ describe('Testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      1
+      2
     );
     expect(start.statusCode).toBe(FORBID);
+    await new Promise((r) => setTimeout(r, 2000));
   });
-  test('Success', () => {
+  test('Success', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -208,17 +159,18 @@ describe('Testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      6
+      1
     );
     expect(start.statusCode).toBe(OK);
     const started = JSON.parse(String(start.getBody()));
     console.log(started);
     expect(started).toMatchObject({ timeFinish: expect.any(Number) });
+    await new Promise((r) => setTimeout(r, 2000));
   });
 });
 
 describe('testing standup/active/v1', () => {
-  test('Success + standup active', () => {
+  test('Success + standup active', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -238,7 +190,7 @@ describe('testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      1
+      2
     );
     expect(start.statusCode).toBe(OK);
     const active = callingStandupActive(
@@ -248,6 +200,7 @@ describe('testing standup/active/v1', () => {
     expect(active.statusCode).toBe(OK);
     const activated = JSON.parse(String(active.getBody()));
     expect(activated).toMatchObject({ isActive: true, timeFinish: expect.any(Number) });
+    await new Promise((r) => setTimeout(r, 2000));
   });
   test('Success + no standup is active', () => {
     expect(callingClear().statusCode).toBe(OK);
@@ -274,7 +227,7 @@ describe('testing standup/active/v1', () => {
     const activated = JSON.parse(String(active.getBody()));
     expect(activated).toMatchObject({ isActive: false, timeFinish: null });
   });
-  test('Invalid token', () => {
+  test('Invalid token', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -294,7 +247,7 @@ describe('testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      1
+      2
     );
     expect(start.statusCode).toBe(OK);
     const active = callingStandupActive(
@@ -302,8 +255,9 @@ describe('testing standup/active/v1', () => {
       created.channelId
     );
     expect(active.statusCode).toBe(FORBID);
+    await new Promise((r) => setTimeout(r, 2000));
   });
-  test('Invalid channelId', () => {
+  test('Invalid channelId', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -323,7 +277,7 @@ describe('testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      1
+      2
     );
     expect(start.statusCode).toBe(OK);
     const active = callingStandupActive(
@@ -331,8 +285,9 @@ describe('testing standup/active/v1', () => {
       -1
     );
     expect(active.statusCode).toBe(BADREQ);
+    await new Promise((r) => setTimeout(r, 2000));
   });
-  test('channelId valid but user not in channel', () => {
+  test('channelId valid but user not in channel', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -352,7 +307,7 @@ describe('testing standup/active/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      1
+      2
     );
     expect(start.statusCode).toBe(OK);
     const auth1 = callingAuthRegister(
@@ -367,12 +322,13 @@ describe('testing standup/active/v1', () => {
       created.channelId
     );
     expect(active.statusCode).toBe(FORBID);
+    await new Promise((r) => setTimeout(r, 2000));
   });
 });
 
 describe('testing standup/send/v1', () => {
-  test('success', () => {
-    callingClear();
+  test('success', async() => {
+    expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
       'password',
@@ -408,8 +364,9 @@ describe('testing standup/send/v1', () => {
       'Can you see this?'
     );
     expect(send1.statusCode).toBe(OK);
-    const sent1 = JSON.parse(String(send1.getBody()));
-    expect(sent1).toStrictEqual({});
+    JSON.parse(String(send1.getBody()));
+    expect(sent).toStrictEqual({});
+    await new Promise((r) => setTimeout(r, 2000));
     const chmsgs = callingChannelMessages(
       member.token,
       created.channelId,
@@ -419,7 +376,7 @@ describe('testing standup/send/v1', () => {
     const reveal = JSON.parse(String(chmsgs.getBody()));
     console.log(reveal);
   });
-  test('Invalid token', () => {
+  test('Invalid token', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -439,7 +396,7 @@ describe('testing standup/send/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      1
+      2
     );
     expect(start.statusCode).toBe(OK);
     const send = callingStandupSend(
@@ -448,8 +405,9 @@ describe('testing standup/send/v1', () => {
       'Hello World'
     );
     expect(send.statusCode).toBe(FORBID);
+    await new Promise((r) => setTimeout(r, 2000));
   });
-  test('Invalid channelId', () => {
+  test('Invalid channelId', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -469,7 +427,7 @@ describe('testing standup/send/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      1
+      2
     );
     expect(start.statusCode).toBe(OK);
     const send = callingStandupSend(
@@ -478,8 +436,9 @@ describe('testing standup/send/v1', () => {
       'Hello World'
     );
     expect(send.statusCode).toBe(BADREQ);
+    await new Promise((r) => setTimeout(r, 2000));
   });
-  test('Message length over 1000 characters', () => {
+  test('Message length over 1000 characters', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -499,7 +458,7 @@ describe('testing standup/send/v1', () => {
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      1
+      2
     );
     expect(start.statusCode).toBe(OK);
     const send = callingStandupSend(
@@ -508,6 +467,7 @@ describe('testing standup/send/v1', () => {
       '141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844609550582231725359408128268066130032342448111745028410270193852110555964462294895493038196442881097566593344612847564823378678316527120190914564856692268066130034603486104543266482133936072602491412737245870066063155881748815209209628292540917153643678925903601133053052680661300488204665213841469519415116094330572703657595919530921861173819326117931051185480744623799627495673518857527248912279381 83011949129833673362440656643086021394946395224737190702179860943702770539217176293176752384674818467669405130005681271 452635608277857713427577896091736371787214684409022495343014654958537050792279689258923542019956112129021960864034418159813629774771309960518707211349999998372978049951059731732816096318595024459455346908302642522308253344685035261931188171010003137838752886587533208381420617177669147303598253490428755468731159562863882353787593751957781857780532171226806613001927876611195909216420198dsfwefwef268066130026806613002680661300268066130026806613002680661300268066130026806613002680661300'
     );
     expect(send.statusCode).toBe(BADREQ);
+    await new Promise((r) => setTimeout(r, 2000));
   });
   test('Active standup not running', () => {
     expect(callingClear().statusCode).toBe(OK);
@@ -533,7 +493,7 @@ describe('testing standup/send/v1', () => {
     );
     expect(send.statusCode).toBe(BADREQ);
   });
-  test('channelId valid but user not a member of channel', () => {
+  test('channelId valid but user not a member of channel', async() => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
       'email@email.com',
@@ -550,10 +510,11 @@ describe('testing standup/send/v1', () => {
     );
     expect(create.statusCode).toBe(OK);
     const created = JSON.parse(String(create.getBody()));
+    console.log('channelId in jest file', created.channelId);
     const start = callingStandupStart(
       member.token,
       created.channelId,
-      1
+      2
     );
     expect(start.statusCode).toBe(OK);
     const auth1 = callingAuthRegister(
@@ -569,5 +530,6 @@ describe('testing standup/send/v1', () => {
       'Hello World'
     );
     expect(send.statusCode).toBe(FORBID);
+    await new Promise((r) => setTimeout(r, 2000));
   });
-}); 
+});

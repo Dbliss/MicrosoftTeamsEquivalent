@@ -48,7 +48,6 @@ function messageSendV1(token: string, channelId: number, message: string) {
 
   // generating the timeSent
   const timeSent = Math.floor(Date.now() / 1000);
-
   // creating a new object for the message
   const newMessage: messageType = {
     messageId: messageId,

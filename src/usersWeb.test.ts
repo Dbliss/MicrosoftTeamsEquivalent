@@ -136,7 +136,6 @@ describe('Testing userProfileV1', () => {
   });
 });
 
-
 function callingUserStats (token: string) {
   const res = request(
     'GET',
@@ -163,7 +162,6 @@ function callingUsersStats (token: string) {
   );
   return res;
 }
-
 
 describe('Testing users/all/v1', () => {
   test('Testing successful return of users object from users/all/v1', () => {

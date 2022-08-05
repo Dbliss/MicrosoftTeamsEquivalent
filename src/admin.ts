@@ -59,7 +59,7 @@ export function adminUserRemove (token: string, uId: number) {
   // Remove from the user channels
   data.user[userIndex].channels = [];
 
-  // Removing teh guy from dms members if he is a member
+  // Removing the guy from dms members if he is a member
   for (const dm of data.dm) {
     for (const userInd of dm.members) {
       if (dm.members[userInd] === uId) {

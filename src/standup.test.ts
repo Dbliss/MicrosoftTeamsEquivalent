@@ -372,7 +372,6 @@ describe('testing standup/send/v1', () => {
       0
     );
     expect(chmsgs.statusCode).toBe(OK);
-    const reveal = JSON.parse(String(chmsgs.getBody()));
   });
   test('Invalid token', async() => {
     expect(callingClear().statusCode).toBe(OK);

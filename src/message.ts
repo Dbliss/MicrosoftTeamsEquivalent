@@ -8,12 +8,12 @@ import HTTPError from 'http-errors';
  * <token> is a <string> and is a users session specific identity
  * <channelId> is a <number> and is a channels specific identity
  * <message> is a <string> and is the message that the user wants to send in the channel
- * 
+ *
  * Return Value:
- * <400 Error> when <channelId does not refer to a valid channel> 
- * <400 Error> when <length of message is less than 1 or over 1000 characters> 
- * <400 Error> when <token refers to an invalid token> 
- * <403 Error> when <channelId is valid and the authorised user is not a member of the channel> 
+ * <400 Error> when <channelId does not refer to a valid channel>
+ * <400 Error> when <length of message is less than 1 or over 1000 characters>
+ * <400 Error> when <token refers to an invalid token>
+ * <403 Error> when <channelId is valid and the authorised user is not a member of the channel>
  * <{ messageId }> when <everything is inputted correctly>
  *
  */
@@ -122,12 +122,12 @@ function messageSendV1(token: string, channelId: number, message: string) {
  * <token> is a <string> and is a users session specific identity
  * <messageId> is a <number> and is a messages specific identity
  * <message> is a <string> and is the message that the user wants to send in the channel
- * 
+ *
  * Return Value:
- * <400 Error> when <messageId does not refer to a valid message within a channel/DM that the authorised user has joined> 
- * <400 Error> when <length of message is over 1000 characters> 
- * <400 Error> when <token refers to an invalid token> 
- * <403 Error> when <If the authorised user does not have owner permissions, and the message was not sent by them> 
+ * <400 Error> when <messageId does not refer to a valid message within a channel/DM that the authorised user has joined>
+ * <400 Error> when <length of message is over 1000 characters>
+ * <400 Error> when <token refers to an invalid token>
+ * <403 Error> when <If the authorised user does not have owner permissions, and the message was not sent by them>
  * <{}> when <everything is inputted correctly>
  */
 function messageEditV1(token: string, messageId: number, message: string) {
@@ -296,11 +296,11 @@ function messageEditV1(token: string, messageId: number, message: string) {
  * Arugments:
  * <token> is a <string> and is a users session specific identity
  * <messageId> is a <number> and is a messages specific identity
- * 
+ *
  * Return Value:
- * <400 Error> when <messageId does not refer to a valid message within a channel/DM that the authorised user has joined> 
- * <400 Error> when <token refers to an invalid token> 
- * <403 Error> when <If the authorised user does not have owner permissions, and the message was not sent by them> 
+ * <400 Error> when <messageId does not refer to a valid message within a channel/DM that the authorised user has joined>
+ * <400 Error> when <token refers to an invalid token>
+ * <403 Error> when <If the authorised user does not have owner permissions, and the message was not sent by them>
  * <{}> when <everything is inputted correctly>
  */
 function messageRemoveV1(token: string, messageId: number) {
@@ -418,12 +418,12 @@ function messageRemoveV1(token: string, messageId: number) {
  * <token> is a <string> and is a users session specific identity
  * <dmId> is a <number> and is a dms specific identity
  * <message> is a <string> and is the message that the user wants to send in the channel
- * 
+ *
  * Return Value:
- * <400 Error> when <dmId does not refer to a valid DM> 
- * <400 Error> when <length of message is less than 1 or over 1000 characters> 
- * <400 Error> when <token refers to an invalid token> 
- * <403 Error> when <dmId is valid and the authorised user is not a member of the DM> 
+ * <400 Error> when <dmId does not refer to a valid DM>
+ * <400 Error> when <length of message is less than 1 or over 1000 characters>
+ * <400 Error> when <token refers to an invalid token>
+ * <403 Error> when <dmId is valid and the authorised user is not a member of the DM>
  * <{ messageId }> when <everything is inputted correctly>
  *
  */

@@ -1,6 +1,9 @@
 import validator from 'validator';
 import { dataType, getData, setData, userType } from './dataStore';
 import HTTPError from 'http-errors';
+import { getIndexOfStatsUid, involvementRateCalc, utilizationRateCalc } from './other';
+import fs from 'fs';
+import request from 'sync-request';
 
 // const error = { error: 'error' };
 
@@ -13,7 +16,8 @@ function extractUserDetails (user: userType) {
     email: user.email,
     nameFirst: user.nameFirst,
     nameLast: user.nameLast,
-    handleStr: user.handle
+    handleStr: user.handle,
+    profileImgUrl: user.profileImgUrl,
   };
 
   return returnUser;
@@ -100,7 +104,7 @@ function userProfileV1(token: string, uId: number) {
 // Returns <{users}> on <valid input of authUserId and uId>
 // Returns {error: 'error'} on <invalid token>
 function usersAllV1 (token: string) {
-  const data = getData();
+  const data:dataType = getData();
   // Checks if the token exists and returns the index of the user which has that token,
   // if not found then returns -1
   const tokenIndex = getTokenIndex(token, data);
@@ -110,7 +114,9 @@ function usersAllV1 (token: string) {
   }
   const usersArray = [];
   for (const user of data.user) {
-    usersArray.push(extractUserDetails(user));
+    if (user.nameFirst !== 'Removed' && user.nameLast !== 'user') { // checking to see if the user has been removed or not
+      usersArray.push(extractUserDetails(user));
+    }
   }
 
   const returnUserArray = { users: usersArray };
@@ -294,6 +300,134 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
   // }
   setData(data);
   return {};
+}
+
+// Arguments:
+// <imgUrl> (<string>)    - <This is the unique string given to each session for a user>
+// <xStart> (<string>)    - <New email to replace the users current email>
+// <yStart> (<string>)    - <New email to replace the users current email>
+// <xEnd> (<string>)    - <New email to replace the users current email>
+// <yEnd> (<string>)    - <New email to replace the users current email>
+
+// Return Value:
+// Returns <{empty object - {}}> on <valid input of token and handleStr>
+export function userUploadPhoto (token: string, imgUrl: string, xStart: number, yStart: number, xEnd: number, yEnd: number) {
+  const data:dataType = getData();
+  // Checking if the token is valid
+  const tokenIndex = getTokenIndex(token, data);
+  if (tokenIndex === -1) {
+    if ((tokenIndex === -1)) {
+      throw HTTPError(403, 'Invalid token entered');
+    }
+  }
+  const uId = data.user[tokenIndex].authUserId;
+
+  // CHECKING IF THE URL IS VALID AND IS A jpeg (check the jpeg using the end of the url string and see if the last 4 characters is .jpeg)
+  const loweredUrl = imgUrl.toLowerCase();
+  if (!(loweredUrl.includes('jpeg') || loweredUrl.includes('jpg'))) {
+    throw HTTPError(400, 'Image uploaded is not a JPG');
+  }
+  // DOING A GET REQUEST ON THE IMAGE URL AND SEEING IF IT IS VALID
+  const res = request(
+    'GET',
+    imgUrl
+  );
+  if (res.statusCode !== 200) {
+    throw HTTPError(400, 'Invalid imgUrl entered');
+  }
+
+  // CHECK IF THE DIMENSIONS OF CROPPING ARE VALID
+  if (xEnd <= xStart || yEnd <= yStart) {
+    throw HTTPError(400, 'Invalid dimensions');
+  }
+
+  const imgBody = res.getBody();
+  fs.writeFileSync(`src/profileImages/${uId}.jpg`, imgBody, { flag: 'w' });
+
+  const sizeOf = require('image-size');
+  const dimensions = sizeOf(`src/profileImages/${uId}.jpg`);
+  console.log(dimensions.width, dimensions.height);
+
+  if (dimensions.width < xEnd || dimensions.height < yEnd) {
+    throw HTTPError(400, 'dimensions do not fit the image');
+  }
+  // STORE THE CONTENTS OF THE IMAGE IN A FILE AND NAME IT THEIR Uid
+  // CROP THE IMAGE
+
+  // EDIT THE PICTURE AND STORE IT IN THE FILE images USING ITS UID AS A NAME
+  const Jimp = require('jimp');
+
+  async function crop() { // Function name is same as of file name
+    // Reading Image
+    const image = await Jimp.read(`src/profileImages/${uId}.jpg`);
+    image.crop(xStart, yStart, xEnd - xStart, yEnd - yStart).write(`src/profileImages/${uId}.jpg`);
+  }
+  crop();
+
+  const generatedUrl = `h17bdream.alwaysdata.net/imgurl/${uId}.jpg`;
+  data.user[tokenIndex].profileImgUrl = generatedUrl;
+
+  // Calling the function here using async
+  // HAVE A RANDOM GENERIC IMAGE AS THE IMAGE THAT ALL USERS WILL HAVE INITIALLY
+
+  // CREATE THE URL FOR THE IMAGE THEN CALL THE URL (USING SOME KIND OF REQUEST)
+  // SO THAT THET PICTURE IS SENT TO THE SERVER
+
+  // STORE THE URL OF THE CREATED URL IN THE USER
+}
+
+// Arguments:
+// <token> (<string>)    - <This is the unique string given to each session for a user>
+// <handleStr> (<string>)    - <New email to replace the users current email>
+
+// Return Value:
+// Returns <{empty object - {}}> on <valid input of token and handleStr>
+// Returns {error: 'error'} on <invalid token>
+// Returns {error: 'error'} on <invalid handleStr>
+export function userStats (token: string) {
+  const data: dataType = getData();
+  const tokenIndex = getTokenIndex(token, data);
+  if (tokenIndex === -1) {
+    if ((tokenIndex === -1)) {
+      throw HTTPError(403, 'Invalid token entered');
+    }
+  }
+
+  const statsIndex = getIndexOfStatsUid(data, token);
+
+  const returnObject = {
+    channelsJoined: [...data.stats[statsIndex].channelsJoined],
+    dmsJoined: [...data.stats[statsIndex].dmsJoined],
+    messagesSent: [...data.stats[statsIndex].messagesSent],
+    involvementRate: involvementRateCalc(token, data),
+  };
+  return ({ userStats: returnObject });
+}
+
+// Arguments:
+// <token> (<string>)    - <This is the unique string given to each session for a user>
+// <handleStr> (<string>)    - <New email to replace the users current email>
+
+// Return Value:
+// Returns <{empty object - {}}> on <valid input of token and handleStr>
+// Returns {error: 'error'} on <invalid token>
+// Returns {error: 'error'} on <invalid handleStr>
+export function usersStats (token: string) {
+  const data: dataType = getData();
+  const tokenIndex = getTokenIndex(token, data);
+
+  if ((tokenIndex === -1)) {
+    throw HTTPError(403, 'Invalid token entered');
+  }
+
+  const returnObject = {
+    channelsExist: [...data.workSpaceStats.channelsExist],
+    dmsExist: [...data.workSpaceStats.dmsExist],
+    messagesExist: [...data.workSpaceStats.messagesExist],
+    utilizationRate: utilizationRateCalc(data),
+  };
+
+  return { workspaceStats: returnObject };
 }
 
 export { userProfileV1, usersAllV1, userProfileSetNameV1, userProfileSetEmailV1, userProfileSetHandleV1, getTokenIndex };

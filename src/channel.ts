@@ -1,4 +1,7 @@
-import { getData, setData, channelType, usersType, dataType, messageType } from './dataStore';
+
+import { getData, setData, channelType, usersType, dataType, channelsJoinedType, messageType } from './dataStore';
+import { getIndexOfStatsUid } from './other';
+
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
 
@@ -16,10 +19,6 @@ type tempMembersType = {
     nameLast: string,
     uId: number,
 };
-
-// type errorType = {
-//   error: string;
-// };
 
 // Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.
 
@@ -136,7 +135,7 @@ function channelDetailsV1 (token: string, channelId: number) {
 // Returns {error: error} on the authorised user is already a member of the channel
 
 function channelJoinV1 (token: string, channelId: number) {
-  const data = getData();
+  const data:dataType = getData();
   const returnObject = {};
   // const error = { error: 'error' };
 
@@ -207,6 +206,13 @@ function channelJoinV1 (token: string, channelId: number) {
   data.user[userIndex].channels.push(addingChannel);
   data.channel[channelIndex].members.push(pushObject);
 
+  // Updating the stats object
+  const timeUpdated = Math.floor(Date.now() / 1000);
+  const updateObject: channelsJoinedType = {
+    numChannelsJoined: data.stats[getIndexOfStatsUid(data, token)].channelsJoined[data.stats[getIndexOfStatsUid(data, token)].channelsJoined.length - 1].numChannelsJoined + 1,
+    timeStamp: timeUpdated,
+  };
+  data.stats[getIndexOfStatsUid(data, token)].channelsJoined.push(updateObject);
   // updating the data in the data storage file
   setData(data);
 
@@ -446,6 +452,13 @@ const channelLeaveV1 = (token: string, channelId: number) => {
         data.user[userIndex].channels.splice(i, 1);
       }
     }
+
+    const timeUpdated = Math.floor(Date.now() / 1000);
+    const updateObject: channelsJoinedType = {
+      numChannelsJoined: data.stats[getIndexOfStatsUid(data, token)].channelsJoined[data.stats[getIndexOfStatsUid(data, token)].channelsJoined.length - 1].numChannelsJoined - 1,
+      timeStamp: timeUpdated,
+    };
+    data.stats[getIndexOfStatsUid(data, token)].channelsJoined.push(updateObject);
     setData(data);
   }
   return {};
@@ -542,6 +555,7 @@ const channelAddOwnerV1 = (token: string, channelId: number, uId: number) => {
     permissionId: data.channel[channelIndex].members[memberIndex].permissionId,
     token: [...data.channel[channelIndex].members[memberIndex].token],
     notifications: [...data.channel[channelIndex].members[memberIndex].notifications],
+    profileImgUrl: data.channel[channelIndex].members[memberIndex].profileImgUrl,
     resetCode: data.channel[channelIndex].members[memberIndex].resetCode
   };
 

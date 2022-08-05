@@ -1,8 +1,71 @@
+
+import request from 'sync-request';
+import { callingChannelsCreate } from './channelsServer.test';
+import config from './config.json';
+import { callingDmCreate } from './dm.test';
+
+const port = config.port;
+const url = config.url;
+
+// function callingChannelDetails (token: string, channelId: number) {
+//     const res = request(
+//         'GET',
+//         `${url}:${port}/channel/details/v2`,
+//         {
+//             qs: {
+//                 token: token,
+//                 channelId: channelId,
+//             }
+//         }
+//     );
+//     return res;
+// }
+
+// function callingChannelJoin (token: string, channelId: number) {
+//     const res = request(
+//         'POST',
+//         `${url}:${port}/channel/details/v2`,
+//         {
+//             body: JSON.stringify({
+//                 token: token,
+//                 channelId: channelId,
+//             }),
+//             headers: {
+//                 'Content-type': 'application/json',
+//             },
+//         }
+//     );
+//     return res;
+// }
+
+// POST REQUEST
+function callingUserUploadPhoto (token: string, imgUrl: string, xStart: number, yStart: number, xEnd: number, yEnd: number) {
+  const res = request(
+    'POST',
+        `${url}:${port}/user/profile/uploadphoto/v1`,
+        {
+          body: JSON.stringify({
+            imgUrl: imgUrl,
+            xStart: xStart,
+            yStart: yStart,
+            xEnd: xEnd,
+            yEnd: yEnd
+          }),
+          headers: {
+            token: token,
+            'Content-type': 'application/json',
+          },
+        }
+  );
+  // expect(res.statusCode).toBe(OK);
+  return res;
+}
+
 import {
   callingClear,
   // callingChannelDetails,
   // callingChannelJoin,
-  callingUserProfile, callingUsersAll, callingUserProfileSetEmail, callingUserProfileSetHandle, callingUserProfileSetName, callingAuthRegister,
+  callingUserProfile, callingUsersAll, callingUserProfileSetEmail, callingUserProfileSetHandle, callingUserProfileSetName, callingAuthRegister, callingMessageSend,
   // callingChannelsCreate
 } from './helperFile';
 
@@ -72,6 +135,35 @@ describe('Testing userProfileV1', () => {
     expect(res8.statusCode).toBe(403);
   });
 });
+
+
+function callingUserStats (token: string) {
+  const res = request(
+    'GET',
+        `${url}:${port}/user/stats/v1`,
+        {
+          headers: {
+            token: token,
+          }
+        }
+  );
+  return res;
+}
+
+// GET REQUEST
+function callingUsersStats (token: string) {
+  const res = request(
+    'GET',
+        `${url}:${port}/users/stats/v1`,
+        {
+          headers: {
+            token: token,
+          }
+        }
+  );
+  return res;
+}
+
 
 describe('Testing users/all/v1', () => {
   test('Testing successful return of users object from users/all/v1', () => {
@@ -431,6 +523,227 @@ describe('Testing user/profile/sethandle/v1', () => {
     callingClear();
 
     const res = callingUserProfileSetHandle('!@#$', 'NewHandle');
+    expect(res.statusCode).toBe(403);
+    // const result = JSON.parse(String(res.getBody()));
+
+    // expect(result).toMatchObject({ error: 'error' }); // assuming that an invlaid token is given that it produces an error this
+    // condition is not given in the spec
+  });
+});
+
+describe('Testing user/stats/v1', () => {
+  test('Testing successful return', () => {
+    callingClear();
+    const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last').getBody()));
+
+    const authUserId2 = JSON.parse(String(callingAuthRegister('email3@email.com',
+      'password',
+      'First2',
+      'Last2').getBody()));
+
+    const uIds = [authUserId.authUserId, authUserId2.authUserId];
+    const channel = callingChannelsCreate(authUserId.token, 'channelname', true);
+    const channelres = JSON.parse(String(channel.getBody()));
+    const dmres = callingDmCreate(authUserId.token, uIds);
+    expect(dmres.statusCode).toBe(OK);
+    const messageres = callingMessageSend(authUserId.token, channelres.channelId, 'random message');
+    expect(messageres.statusCode).toBe(OK);
+
+    const res = callingUserStats(authUserId.token);
+    expect(res.statusCode).toBe(OK);
+    const result = JSON.parse(String(res.getBody()));
+
+    expect(result).toStrictEqual({
+      userStats: {
+        channelsJoined: [{
+          numChannelsJoined: 0,
+          timeStamp: expect.any(Number) // time when the account was created
+        }, {
+          numChannelsJoined: 1,
+          timeStamp: expect.any(Number)
+        }],
+        dmsJoined: [{
+          numDmsJoined: 0,
+          timeStamp: expect.any(Number)
+        }, {
+          numDmsJoined: 1,
+          timeStamp: expect.any(Number)
+        }],
+        messagesSent: [{
+          numMessagesSent: 0,
+          timeStamp: expect.any(Number),
+        }, {
+          numMessagesSent: 1,
+          timeStamp: expect.any(Number),
+        }],
+        involvementRate: expect.any(Number) // NEED TO DO THIS
+      }
+    });
+  });
+
+  test('Testing error when token is invalid', () => {
+    callingClear();
+
+    const res = callingUserStats('!@#$');
+    expect(res.statusCode).toBe(403);
+    // const result = JSON.parse(String(res.getBody()));
+
+    // expect(result).toMatchObject({ error: 'error' }); // assuming that an invlaid token is given that it produces an error this
+    // condition is not given in the spec
+  });
+});
+
+describe('users/stats/v1', () => {
+  test('Testing successful return', () => {
+    callingClear();
+    const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last').getBody()));
+
+    const authUserId2 = JSON.parse(String(callingAuthRegister('email3@email.com',
+      'password',
+      'First2',
+      'Last2').getBody()));
+
+    const uIds = [authUserId.authUserId, authUserId2.authUserId];
+    const channel = callingChannelsCreate(authUserId.token, 'channelname', true);
+    const channelres = JSON.parse(String(channel.getBody()));
+    const dmres = callingDmCreate(authUserId.token, uIds);
+    expect(dmres.statusCode).toBe(OK);
+    const messageres = callingMessageSend(authUserId.token, channelres.channelId, 'random message');
+    expect(messageres.statusCode).toBe(OK);
+    const res = callingUsersStats(authUserId.token);
+    expect(res.statusCode).toBe(OK);
+    const result = JSON.parse(String(res.getBody()));
+
+    expect(result).toStrictEqual({
+      workspaceStats: {
+        channelsExist: [{
+          numChannelsExist: 0,
+          timeStamp: expect.any(Number) // time when the account was created
+        }, {
+          numChannelsExist: 1,
+          timeStamp: expect.any(Number)
+        }],
+        dmsExist: [{
+          numDmsExist: 0,
+          timeStamp: expect.any(Number)
+        }, {
+          numDmsExist: 1,
+          timeStamp: expect.any(Number)
+        }],
+        messagesExist: [{
+          numMessagesExist: 0,
+          timeStamp: expect.any(Number),
+        }, {
+          numMessagesExist: 1,
+          timeStamp: expect.any(Number),
+        }],
+        utilizationRate: expect.any(Number) // NEED TO DO THIS
+      }
+    });
+  });
+
+  test('Testing error when token is invalid', () => {
+    callingClear();
+
+    const res = callingUserStats('!@#$');
+    expect(res.statusCode).toBe(403);
+    // const result = JSON.parse(String(res.getBody()));
+
+    // expect(result).toMatchObject({ error: 'error' }); // assuming that an invlaid token is given that it produces an error this
+    // condition is not given in the spec
+  });
+});
+
+describe('Testing user/profile/uploadphoto/v1', () => {
+  // test('Testing successful return', () => {
+  //   callingClear();
+  //   const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
+  //     'password',
+  //     'First',
+  //     'Last').getBody()));
+
+  //   const result = JSON.parse(String(callingUserUploadPhoto(authUserId.token,'https://nakedsecurity.sophos.com/wp-content/uploads/sites/2/2013/08/facebook-silhouette_thumb.jpg', 3, 6, 7, 6).getBody()));
+  //   expect(result).toStrictEqual({});
+
+  // });
+
+  test('ImgUrl return error other than 200', () => {
+    callingClear();
+    const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last').getBody()));
+
+    const res = callingUserUploadPhoto(authUserId.token, '', 1, 1, 10, 10);
+    expect(res.statusCode).toBe(400);
+    // const result = JSON.parse(String(res.getBody()));
+  });
+
+  test('xStart, yStart, xEnd, yEnd are not within the dimensions', () => {
+    callingClear();
+    const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last').getBody()));
+
+    const res = callingUserUploadPhoto(authUserId.token, 'https://nakedsecurity.sophos.com/wp-content/uploads/sites/2/2013/08/facebook-silhouette_thumb.jpg', -1, -1, -10, -10);
+    expect(res.statusCode).toBe(400);
+    // const result = JSON.parse(String(res.getBody()));
+  });
+
+  test('xEnd is less than or equal to xStart', () => {
+    callingClear();
+    const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last').getBody()));
+
+    const res = callingUserUploadPhoto(authUserId.token, 'https://nakedsecurity.sophos.com/wp-content/uploads/sites/2/2013/08/facebook-silhouette_thumb.jpg', 3, 5, 3, 10);
+    expect(res.statusCode).toBe(400);
+
+    const res1 = callingUserUploadPhoto(authUserId.token, 'https://nakedsecurity.sophos.com/wp-content/uploads/sites/2/2013/08/facebook-silhouette_thumb.jpg', 3, 5, 0, 10);
+    expect(res1.statusCode).toBe(400);
+  });
+  test('yEnd is less than or equal to yStart', () => {
+    callingClear();
+    const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last').getBody()));
+
+    const res = callingUserUploadPhoto(authUserId.token, 'https://nakedsecurity.sophos.com/wp-content/uploads/sites/2/2013/08/facebook-silhouette_thumb.jpg', 3, 6, 7, 6);
+    expect(res.statusCode).toBe(400);
+
+    const res1 = callingUserUploadPhoto(authUserId.token, 'https://nakedsecurity.sophos.com/wp-content/uploads/sites/2/2013/08/facebook-silhouette_thumb.jpg', 3, 6, 7, 5);
+    expect(res1.statusCode).toBe(400);
+  });
+
+  test('image uploaded is not a JPG', () => {
+    callingClear();
+    const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
+      'password',
+      'First',
+      'Last').getBody()));
+
+    const res = callingUserUploadPhoto(authUserId.token, 'invalid url', 3, 6, 7, 6);
+    expect(res.statusCode).toBe(400);
+
+    // const result = JSON.parse(String(res.getBody()));
+
+    // expect(result).toMatchObject({ error: 'error' }); // assuming that an invlaid token is given that it produces an error this
+    // condition is not given in the spec
+  });
+
+  test('Testing error when token is invalid', () => {
+    callingClear();
+
+    const res = callingUserUploadPhoto('#@!$$', 'jpeg', -1, -1, -10, -10); // need to figure out how to put in a valid URL
     expect(res.statusCode).toBe(403);
     // const result = JSON.parse(String(res.getBody()));
 

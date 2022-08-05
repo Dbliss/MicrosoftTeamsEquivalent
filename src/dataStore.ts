@@ -29,6 +29,7 @@ type userType = {
   permissionId: number,
   token: string[],
   notifications: notificationType[],
+  profileImgUrl: string,
   resetCode: string
 };
 
@@ -89,10 +90,54 @@ type dmType = {
   messages: messageType[]
 }
 
+export type channelsExistType = {
+  numChannelsExist: number,
+  timeStamp: number,
+}
+
+export type dmsExistType = {
+  numDmsExist: number,
+  timeStamp: number,
+}
+
+export type messagesExistType = {
+  numMessagesExist: number,
+  timeStamp: number,
+}
+
+export type channelsJoinedType = {
+  numChannelsJoined: number,
+  timeStamp: number,
+}
+
+export type dmsJoinedType = {
+  numDmsJoined: number,
+  timeStamp: number,
+}
+
+export type messagesSentType = {
+  numMessagesSent: number,
+  timeStamp: number,
+}
+export type workSpaceStatsType = {
+  channelsExist: channelsExistType[],
+  dmsExist: dmsExistType[],
+  messagesExist: messagesExistType[],
+  utilizationRate: number
+}
+export type statsType = {
+  uId: number,
+  channelsJoined: channelsJoinedType[],
+  dmsJoined: dmsJoinedType[],
+  messagesSent: messagesSentType[],
+  involvementRate: number,
+}
 type dataType = {
   user: userType[],
   channel: channelType[],
   dm: dmType[],
+  stats: statsType[],
+  workSpaceStats: workSpaceStatsType,
 };
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW

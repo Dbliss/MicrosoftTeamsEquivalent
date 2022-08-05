@@ -1,6 +1,10 @@
+
 import { callingClear, callingChannelDetails, callingChannelJoin, callingAuthRegister, callingChannelsCreate } from './helperFile';
 
 const OK = 200;
+
+// const port = config.port;
+// const url = config.url;
 
 describe('HTTP tests for channelDetailsV2', () => {
   test('Testing successful return of channelDetailsV2', () => {
@@ -10,9 +14,9 @@ describe('HTTP tests for channelDetailsV2', () => {
       'password',
       'First',
       'Last');
-
+    expect(auth.statusCode).toBe(OK);
     const registered = JSON.parse(String(auth.getBody()));
-
+    console.log(`This is the token: ${registered.token}`);
     const chanId = callingChannelsCreate(registered.token, 'name', true);
     const channelId = JSON.parse(String(chanId.getBody()));
 
@@ -55,7 +59,8 @@ describe('HTTP tests for channelDetailsV2', () => {
     const chanId = callingChannelsCreate(authorised.token, 'name', true);
     const channelId = JSON.parse(String(chanId.getBody()));
 
-    callingChannelJoin(authorised1.token, channelId.channelId);
+    const channelJoin = callingChannelJoin(authorised1.token, channelId.channelId);
+    expect(channelJoin.statusCode).toBe(OK);
 
     const res = callingChannelDetails(authorised.token, channelId.channelId);
     expect(res.statusCode).toBe(OK);
@@ -150,20 +155,20 @@ describe('Testing channelJoinV1', () => {
     expect(res.statusCode).toBe(OK);
 
     const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
-    const person1 = JSON.parse(res1.body as string);
     expect(res1.statusCode).toBe(OK);
+    const person1 = JSON.parse(res1.body as string);
 
     const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
-    const person2 = JSON.parse(res2.body as string);
     expect(res2.statusCode).toBe(OK);
+    const person2 = JSON.parse(res2.body as string);
 
     const res3 = callingChannelsCreate(person1.token, 'channel1', true);
-    const channel1 = JSON.parse(res3.body as string);
     expect(res3.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res3.body as string);
 
     const res4 = callingChannelJoin(person2.token, channel1.channelId);
-    const bodyObj4 = JSON.parse(res4.body as string);
     expect(res4.statusCode).toBe(OK);
+    const bodyObj4 = JSON.parse(res4.body as string);
 
     expect(bodyObj4).toStrictEqual({});
   });
@@ -173,16 +178,16 @@ describe('Testing channelJoinV1', () => {
     expect(res.statusCode).toBe(OK);
 
     const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
-    const person1 = JSON.parse(res1.body as string);
     expect(res1.statusCode).toBe(OK);
+    const person1 = JSON.parse(res1.body as string);
 
     const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
-    const person2 = JSON.parse(res2.body as string);
     expect(res2.statusCode).toBe(OK);
+    const person2 = JSON.parse(res2.body as string);
 
     const res3 = callingChannelsCreate(person1.token, 'channel1', false);
-    const channel1 = JSON.parse(res3.body as string);
     expect(res3.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res3.body as string);
 
     const res4 = callingChannelJoin(person2.token, channel1.channelId);
     // const bodyObj4 = JSON.parse(res4.body as string);
@@ -196,20 +201,20 @@ describe('Testing channelJoinV1', () => {
     expect(res.statusCode).toBe(OK);
 
     const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
-    const globalOwner = JSON.parse(res1.body as string);
     expect(res1.statusCode).toBe(OK);
+    const globalOwner = JSON.parse(res1.body as string);
 
     const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
-    const globalMember = JSON.parse(res2.body as string);
     expect(res2.statusCode).toBe(OK);
+    const globalMember = JSON.parse(res2.body as string);
 
     const res3 = callingChannelsCreate(globalMember.token, 'channel1', false);
-    const channel1 = JSON.parse(res3.body as string);
     expect(res3.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res3.body as string);
 
     const res4 = callingChannelJoin(globalOwner.token, channel1.channelId);
-    const bodyObj4 = JSON.parse(res4.body as string);
     expect(res4.statusCode).toBe(OK);
+    const bodyObj4 = JSON.parse(res4.body as string);
 
     expect(bodyObj4).toStrictEqual({});
   });
@@ -223,12 +228,12 @@ describe('Testing channelJoinV1', () => {
     expect(res1.statusCode).toBe(OK);
 
     const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
-    const globalMember = JSON.parse(res2.body as string);
     expect(res2.statusCode).toBe(OK);
+    const globalMember = JSON.parse(res2.body as string);
 
     const res3 = callingChannelsCreate(globalMember.token, 'channel1', false);
-    const channel1 = JSON.parse(res3.body as string);
     expect(res3.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res3.body as string);
 
     const res4 = callingChannelJoin('', channel1.channelId);
     // const bodyObj4 = JSON.parse(res4.body as string);
@@ -242,12 +247,12 @@ describe('Testing channelJoinV1', () => {
     expect(res.statusCode).toBe(OK);
 
     const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
-    const globalOwner = JSON.parse(res1.body as string);
     expect(res1.statusCode).toBe(OK);
+    const globalOwner = JSON.parse(res1.body as string);
 
     const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
-    const globalMember = JSON.parse(res2.body as string);
     expect(res2.statusCode).toBe(OK);
+    const globalMember = JSON.parse(res2.body as string);
 
     const res3 = callingChannelsCreate(globalMember.token, 'channel1', false);
     // const channel1 = JSON.parse(res3.body as string);
@@ -269,12 +274,12 @@ describe('Testing channelJoinV1', () => {
     expect(res1.statusCode).toBe(OK);
 
     const res2 = callingAuthRegister('email2@gmail.com', 'password2', 'first2', 'last2');
-    const globalMember = JSON.parse(res2.body as string);
     expect(res2.statusCode).toBe(OK);
+    const globalMember = JSON.parse(res2.body as string);
 
     const res3 = callingChannelsCreate(globalMember.token, 'channel1', false);
-    const channel1 = JSON.parse(res3.body as string);
     expect(res3.statusCode).toBe(OK);
+    const channel1 = JSON.parse(res3.body as string);
 
     const res4 = callingChannelJoin(globalMember.token, channel1.channelId);
     // const bodyObj4 = JSON.parse(res4.body as string);

@@ -395,7 +395,7 @@ describe('Testing dmDetails', () => {
     expect(dm.statusCode).toBe(OK);
     const dm1 = JSON.parse(String(dm.getBody()));
 
-    const res = callingDmDetails(registered3.authUserId, dm1.dmId);
+    const res = callingDmDetails(registered3.token, dm1.dmId);
     expect(res.statusCode).toBe(403);
   });
 
@@ -637,7 +637,7 @@ describe('Testing dmLeave', () => {
     });
   });
 });
-/*
+
 describe('Testing dmMessages', () => {
   test('Invalid Token', () => {
     expect(callingClear().statusCode).toBe(OK);
@@ -769,16 +769,6 @@ describe('Testing dmMessages', () => {
 
     const res = callingDmMessages(registered1.token, dm1.dmId, 0);
     expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({
-      messages: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
-        '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-        '21', '22', '23', '24', '25', '26', '27', '28', '29', '30',
-        '31', '32', '33', '34', '35', '36', '37', '38', '39', '40',
-        '41', '42', '43', '44', '45', '46', '47', '48', '49', '50'],
-      start: 0,
-      end: 50,
-    });
   });
 
   test('Valid Parameters, 10 messgaes send, Get 10', () => {
@@ -810,12 +800,6 @@ describe('Testing dmMessages', () => {
 
     const res = callingDmMessages(registered1.token, dm1.dmId, 0);
     expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
-    expect(result).toMatchObject({
-      messages: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-      start: 0,
-      end: -1,
-    });
   });
 
   test('Valid Parameters, 55 messgaes send, Start at 10', () => {
@@ -849,16 +833,371 @@ describe('Testing dmMessages', () => {
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
     expect(result).toMatchObject({
-      messages: ['11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-        '21', '22', '23', '24', '25', '26', '27', '28', '29', '30',
-        '31', '32', '33', '34', '35', '36', '37', '38', '39', '40',
-        '41', '42', '43', '44', '45', '46', '47', '48', '49', '50',
-        '51', '52', '53', '54', '55'],
+      messages: [{
+        isPinned: false,
+        message: '11',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '12',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '13',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '14',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '15',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '16',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '17',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '18',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '19',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '20',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '21',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '22',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '23',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '24',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '25',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '26',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '27',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '28',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '29',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '30',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '31',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '32',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '33',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '34',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '35',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '36',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '37',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '38',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '39',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '40',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '41',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '42',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '43',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '44',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '45',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '46',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '47',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '48',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '49',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '50',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '51',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '52',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '53',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '54',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      {
+        isPinned: false,
+        message: '55',
+        messageId: expect.any(Number),
+        reacts: [],
+        timeSent: expect.any(Number),
+        uId: expect.any(Number),
+      },
+      ],
       start: 10,
       end: -1,
     });
   });
 });
-*/
 
 export { callingDmCreate, callingMessageSendDm, callingDmMessages, callingAuthRegister, callingDmLeave };

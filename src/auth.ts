@@ -2,6 +2,7 @@ import validator from 'validator';
 import { dataType, getData, setData } from './dataStore';
 import { getHashOf } from './other';
 import HTTPError from 'http-errors';
+import { getTokenIndex } from './users';
 const nodemailer = require('nodemailer');
 
 // Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.
@@ -147,22 +148,19 @@ function authLoginV1(email: string, password: string) {
 
 const authLogoutV1 = (token: string) => {
   const data:dataType = getData();
-  const hashedToken = getHashOf(token);
-  // validate token by searching through all tokens associated with all users
-  for (let i = 0; i < data.user.length; i++) {
-    for (let j = 0; j < data.user[i].token.length; j++) {
-      // if there is a match, invalidate it by splicing the value out
-      if (hashedToken === data.user[i].token[j]) {
-        const index = data.user[i].token.indexOf(hashedToken);
-        if (index > -1) {
-          data.user[i].token.splice(index, 1);
-          setData(data);
-          return {};
-        }
-      }
-    }
+  // token check
+  const userIndex = getTokenIndex(token, data);
+  if (userIndex === -1) {
+    throw HTTPError(403, 'Invalid token');
   }
-  throw HTTPError(403, 'Invalid token');
+
+  // splice out token to invalidate
+  const index = data.user[userIndex].token.indexOf(token);
+  if (index > -1) {
+    data.user[userIndex].token.splice(index, 1);
+    setData(data);
+    return {};
+  }
 };
 
 const authPasswordRequestV1 = (email: string) => {

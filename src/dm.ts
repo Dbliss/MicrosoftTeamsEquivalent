@@ -1,4 +1,4 @@
-import { getData, setData, dmType, messageType, dataType, channelsJoinedType, dmsJoinedType, dmsExistType } from './dataStore';
+import { getData, setData, dmType, messageType, dataType, dmsJoinedType, dmsExistType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
 import { getIndexOfStatsUid } from './other';
@@ -421,7 +421,9 @@ function dmMessages (token: string, dmId: number, start: number) {
         }
       }
     }
-    returnMessages.push(data.dm[dmIndex].messages[i]);
+    if (data.dm[dmIndex].messages[i].timeSent < (Date.now() / 1000)) {
+      returnMessages.push(data.dm[dmIndex].messages[i]);
+    }
   }
   return { messages: returnMessages, start: start, end: returnEnd };
 }

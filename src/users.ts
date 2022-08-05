@@ -2,7 +2,6 @@ import validator from 'validator';
 import { dataType, getData, setData, userType, channelsInUserType } from './dataStore';
 import HTTPError from 'http-errors';
 import { getIndexOfStatsUid, involvementRateCalc, utilizationRateCalc } from './other';
-import { stat } from 'fs';
 import fs from 'fs';
 import request from 'sync-request';
 
@@ -287,7 +286,7 @@ function userProfileSetHandleV1 (token: string, handleStr: string) {
 // Returns <{empty object - {}}> on <valid input of token and handleStr>
 export function userUploadPhoto (token: string, imgUrl: string, xStart: number, yStart: number, xEnd: number, yEnd: number) {
   const data:dataType = getData();
-  // Checking if the token is valid 
+  // Checking if the token is valid
   const tokenIndex = getTokenIndex(token, data);
   if (tokenIndex === -1) {
     if ((tokenIndex === -1)) {
@@ -297,12 +296,12 @@ export function userUploadPhoto (token: string, imgUrl: string, xStart: number, 
   const uId = data.user[tokenIndex].authUserId;
 
   // CHECKING IF THE URL IS VALID AND IS A jpeg (check the jpeg using the end of the url string and see if the last 4 characters is .jpeg)
-  const loweredUrl = imgUrl.toLowerCase()
-  if( !(loweredUrl.includes('jpeg') || loweredUrl.includes('jpg')) ) {
+  const loweredUrl = imgUrl.toLowerCase();
+  if (!(loweredUrl.includes('jpeg') || loweredUrl.includes('jpg'))) {
     throw HTTPError(400, 'Image uploaded is not a JPG');
   }
-  // DOING A GET REQUEST ON THE IMAGE URL AND SEEING IF IT IS VALID 
-  const res = request (
+  // DOING A GET REQUEST ON THE IMAGE URL AND SEEING IF IT IS VALID
+  const res = request(
     'GET',
     imgUrl
   );
@@ -310,44 +309,37 @@ export function userUploadPhoto (token: string, imgUrl: string, xStart: number, 
     throw HTTPError(400, 'Invalid imgUrl entered');
   }
 
-  // CHECK IF THE DIMENSIONS OF CROPPING ARE VALID 
+  // CHECK IF THE DIMENSIONS OF CROPPING ARE VALID
   if (xEnd <= xStart || yEnd <= yStart) {
     throw HTTPError(400, 'Invalid dimensions');
-
   }
 
-
   const imgBody = res.getBody();
-  fs.writeFileSync(`profileImages/${uId}.jpg`, imgBody, { flag: 'w'});
+  fs.writeFileSync(`src/profileImages/${uId}.jpg`, imgBody, { flag: 'w' });
 
+  const sizeOf = require('image-size');
+  const dimensions = sizeOf(`src/profileImages/${uId}.jpg`);
+  console.log(dimensions.width, dimensions.height);
 
-  const sizeOf = require('image-size')
-  const dimensions = sizeOf(`profileImages/${uId}.jpg`)
-  console.log(dimensions.width, dimensions.height)
-
-
-if ( dimensions.width < xEnd || dimensions.height < yEnd) {
-  throw HTTPError(400, 'dimensions do not fit the image');
-
-}
+  if (dimensions.width < xEnd || dimensions.height < yEnd) {
+    throw HTTPError(400, 'dimensions do not fit the image');
+  }
   // STORE THE CONTENTS OF THE IMAGE IN A FILE AND NAME IT THEIR Uid
   // CROP THE IMAGE
 
   // EDIT THE PICTURE AND STORE IT IN THE FILE images USING ITS UID AS A NAME
-  const Jimp = require('jimp') ;
+  const Jimp = require('jimp');
 
   async function crop() { // Function name is same as of file name
-     // Reading Image
-     const image = await Jimp.read
-     (`profileImages/${uId}.jpg`);
-     image.crop(xStart, yStart, xEnd - xStart, yEnd - yStart)
-     .write(`profileImages/${uId}.jpg`);
+    // Reading Image
+    const image = await Jimp.read(`src/profileImages/${uId}.jpg`);
+    image.crop(xStart, yStart, xEnd - xStart, yEnd - yStart).write(`src/profileImages/${uId}.jpg`);
   }
-  crop(); 
+  crop();
 
-  const generatedUrl = `http://localhost:5001/imgurl/${uId}.jpg`
+  const generatedUrl = `h17bdream.alwaysdata.net/imgurl/${uId}.jpg`;
   data.user[tokenIndex].profileImgUrl = generatedUrl;
-  
+
   // Calling the function here using async
   // HAVE A RANDOM GENERIC IMAGE AS THE IMAGE THAT ALL USERS WILL HAVE INITIALLY
 
@@ -355,9 +347,6 @@ if ( dimensions.width < xEnd || dimensions.height < yEnd) {
   // SO THAT THET PICTURE IS SENT TO THE SERVER
 
   // STORE THE URL OF THE CREATED URL IN THE USER
-
-
-
 }
 
 // Arguments:
@@ -399,11 +388,11 @@ export function userStats (token: string) {
 export function usersStats (token: string) {
   const data: dataType = getData();
   const tokenIndex = getTokenIndex(token, data);
-  if (tokenIndex === -1) {
-    if ((tokenIndex === -1)) {
-      throw HTTPError(403, 'Invalid token entered');
-    }
+
+  if ((tokenIndex === -1)) {
+    throw HTTPError(403, 'Invalid token entered');
   }
+
   const returnObject = {
     channelsExist: [...data.workSpaceStats.channelsExist],
     dmsExist: [...data.workSpaceStats.dmsExist],

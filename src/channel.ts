@@ -1,6 +1,7 @@
-import console from 'console';
-import { getData, setData, channelType, usersType, dataType, channelsJoinedType } from './dataStore';
-import { getHashOf, getIndexOfStatsUid } from './other';
+
+import { getData, setData, channelType, usersType, dataType, channelsJoinedType, messageType } from './dataStore';
+import { getIndexOfStatsUid } from './other';
+
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
 
@@ -185,7 +186,6 @@ function channelJoinV1 (token: string, channelId: number) {
   // checking if the channel is public or not if not true then error is returned
   const isPublic = data.channel[channelIndex].isPublic;
   // if member is not a global owner and channel is private then return error
-  console.log(data);
   if (isPublic === false && isGlobalMember === 0) {
     throw HTTPError(403, 'Not a global owner joining private channel');
   }
@@ -242,11 +242,6 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
   let validUid = false;
 
   let currentChannel: channelType;
-
-  // if no channels have been created return an error
-  if (JSON.stringify(data.channel) === JSON.stringify([])) {
-    throw HTTPError(400, 'channelId does not refer to a valid channel');
-  }
 
   // checking the channelId is valid and setting currentChannel to the valid channel
   for (const channel of data.channel) {
@@ -322,7 +317,7 @@ function channelInviteV2(token: string, channelId: number, uId: number) {
 
   setData(data);
 
-  return { };
+  return {};
 }
 
 // Given a channel with ID channelId that the authorised user is a member of, return
@@ -344,12 +339,7 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
   const data:dataType = getData();
 
   let currentChannel: channelType;
-  const messages = [];
-
-  // if no channels have been created return an error
-  if (data.channel.length === 0) {
-    throw HTTPError(400, 'channelId does not refer to a valid channel');
-  }
+  const messages: messageType[] = [];
 
   // checking the channelId is valid and setting currentChannel to the valid channel
   let validChannel = false;
@@ -395,7 +385,11 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
         }
       }
     }
-    messages[j] = currentChannel.messages[i];
+    messages.push(currentChannel.messages[i]);
+    // only print messages that are meant to be sent (e.g send later messages will not be sent)
+    if (currentChannel.messages[i].timeSent < (Date.now() / 1000)) {
+      messages[j] = currentChannel.messages[i];
+    }
     j++;
   }
 
@@ -404,7 +398,6 @@ function channelMessagesV2 (token: string, channelId: number, start: number) {
   if (j !== 50) {
     end = -1;
   }
-
   return { messages, start, end };
 }
 

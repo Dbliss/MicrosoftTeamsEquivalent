@@ -64,6 +64,12 @@ type messageType = {
   isPinned: boolean
 };
 
+type standupType = {
+  messages: string,
+  timeStart: number
+  length: number
+}
+
 // Storing channel information in data
 type channelType = {
   cId: number,
@@ -72,6 +78,7 @@ type channelType = {
   owners: userType[],
   members: userType[],
   messages: messageType[],
+  standup: standupType
 };
 
 // Storing dm information in data
@@ -81,21 +88,6 @@ type dmType = {
   members: number[],
   owners: number[],
   messages: messageType[]
-}
-
-type dataType = {
-  user: userType[],
-  channel: channelType[],
-  dm: dmType[],
-  stats: statsType[],
-  workSpaceStats: workSpaceStatsType,
-};
-
-export type workSpaceStatsType = {
-  channelsExist: channelsExistType[],
-  dmsExist: dmsExistType[],
-  messagesExist: messagesExistType[],
-  utilizationRate: number
 }
 
 export type channelsExistType = {
@@ -113,13 +105,6 @@ export type messagesExistType = {
   timeStamp: number,
 }
 
-export type statsType = {
-  uId: number,
-  channelsJoined: channelsJoinedType[],
-  dmsJoined: dmsJoinedType[],
-  messagesSent: messagesSentType[],
-  involvementRate: number,
-}
 export type channelsJoinedType = {
   numChannelsJoined: number,
   timeStamp: number,
@@ -134,6 +119,26 @@ export type messagesSentType = {
   numMessagesSent: number,
   timeStamp: number,
 }
+export type workSpaceStatsType = {
+  channelsExist: channelsExistType[],
+  dmsExist: dmsExistType[],
+  messagesExist: messagesExistType[],
+  utilizationRate: number
+}
+export type statsType = {
+  uId: number,
+  channelsJoined: channelsJoinedType[],
+  dmsJoined: dmsJoinedType[],
+  messagesSent: messagesSentType[],
+  involvementRate: number,
+}
+type dataType = {
+  user: userType[],
+  channel: channelType[],
+  dm: dmType[],
+  stats: statsType[],
+  workSpaceStats: workSpaceStatsType,
+};
 
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 

@@ -1,7 +1,25 @@
-import { getData, setData, channelType, messageType, dataType, channelsJoinedType, messagesSentType, messagesExistType } from './dataStore';
+import { getData, setData, channelType, messageType, dataType, messagesSentType, messagesExistType } from './dataStore';
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
+
 import { getIndexOfStatsUid } from './other';
+
+/**
+ * <Function creates and sends a message to a specific channel>
+ *
+ * Arugments:
+ * <token> is a <string> and is a users session specific identity
+ * <channelId> is a <number> and is a channels specific identity
+ * <message> is a <string> and is the message that the user wants to send in the channel
+ *
+ * Return Value:
+ * <400 Error> when <channelId does not refer to a valid channel>
+ * <400 Error> when <length of message is less than 1 or over 1000 characters>
+ * <400 Error> when <token refers to an invalid token>
+ * <403 Error> when <channelId is valid and the authorised user is not a member of the channel>
+ * <{ messageId }> when <everything is inputted correctly>
+ *
+ */
 
 function messageSendV1(token: string, channelId: number, message: string) {
   const data:dataType = getData();
@@ -49,7 +67,6 @@ function messageSendV1(token: string, channelId: number, message: string) {
 
   // generating the timeSent
   const timeSent = Math.floor(Date.now() / 1000);
-
   // creating a new object for the message
   const newMessage: messageType = {
     messageId: messageId,
@@ -81,14 +98,12 @@ function messageSendV1(token: string, channelId: number, message: string) {
   }
 
   const userIndex2 = getTokenIndex(token, data);
-  console.log('HANDELS = ' + handles);
   // Cutting message for notification
   const sedingMessage = message.slice(0, 20);
   // Sending the notification
   for (const handle of handles) {
     for (const user in data.user) {
       if (data.user[user].handle === handle) {
-        console.log('HERE!!!!!!!!!!!!  ' + user);
         data.user[user].notifications.push({
           channelId: channelId,
           dmId: -1,
@@ -116,6 +131,21 @@ function messageSendV1(token: string, channelId: number, message: string) {
   return { messageId };
 }
 
+/**
+ * <Function edits an already sent messaage into the message the user specifies>
+ *
+ * Arugments:
+ * <token> is a <string> and is a users session specific identity
+ * <messageId> is a <number> and is a messages specific identity
+ * <message> is a <string> and is the message that the user wants to send in the channel
+ *
+ * Return Value:
+ * <400 Error> when <messageId does not refer to a valid message within a channel/DM that the authorised user has joined>
+ * <400 Error> when <length of message is over 1000 characters>
+ * <400 Error> when <token refers to an invalid token>
+ * <403 Error> when <If the authorised user does not have owner permissions, and the message was not sent by them>
+ * <{}> when <everything is inputted correctly>
+ */
 function messageEditV1(token: string, messageId: number, message: string) {
   const data: dataType = getData();
   const tokenIndex = getTokenIndex(token, data);
@@ -127,7 +157,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
   let isDmMember = false;
   let isDmOwner = false;
   let isOwnerMember = false;
-  let userIndex = 0;
   let userId = 0;
   let isMemberOfChannel = false;
   let tokenIsSender = false;
@@ -135,7 +164,6 @@ function messageEditV1(token: string, messageId: number, message: string) {
   // finding the checking if the token user has global permissions
   for (let i = 0; i < data.user.length; i++) {
     if (data.user[i].token[tokenIndex] === token) {
-      userIndex = i;
       userId = data.user[i].authUserId;
     }
   }
@@ -174,14 +202,12 @@ function messageEditV1(token: string, messageId: number, message: string) {
         for (let j = 0; j < data.channel[i].members.length; j++) {
           if (data.channel[i].members[j].authUserId === userId) {
             isMemberOfChannel = true;
-            // need to check if the user has owner permissions in this channel
-            for (const channel of data.user[userIndex].channels) {
-              if (channel.cId === data.channel[i].cId) {
-                if (channel.channelPermissionsId === 1) {
-                  isOwnerMember = true;
-                }
-              }
-            }
+          }
+        }
+        // need to check if the user has owner permissions in this channel
+        for (let j = 0; j < data.channel[i].owners.length; j++) {
+          if (data.channel[i].owners[j].authUserId === userId) {
+            isOwnerMember = true;
           }
         }
         break;
@@ -223,10 +249,12 @@ function messageEditV1(token: string, messageId: number, message: string) {
       if (isDmMember === false || isDmOwner === false) {
         throw HTTPError(403, 'User did not send message, and is not a owner of the dm');
       }
-    } else if (isChannelMessage === true) {
+    }
+    if (isChannelMessage === true) {
       if (isMemberOfChannel === false) {
         throw HTTPError(403, 'User is not a member of the channel');
-      } else if (isMemberOfChannel === true) {
+      }
+      if (isMemberOfChannel === true) {
         if (isOwnerMember === false) {
           throw HTTPError(403, 'User did not send message, and is not a owner of the channel');
         }
@@ -278,6 +306,19 @@ function messageEditV1(token: string, messageId: number, message: string) {
   return {};
 }
 
+/**
+ * <Function deletes an already sent messaage>
+ *
+ * Arugments:
+ * <token> is a <string> and is a users session specific identity
+ * <messageId> is a <number> and is a messages specific identity
+ *
+ * Return Value:
+ * <400 Error> when <messageId does not refer to a valid message within a channel/DM that the authorised user has joined>
+ * <400 Error> when <token refers to an invalid token>
+ * <403 Error> when <If the authorised user does not have owner permissions, and the message was not sent by them>
+ * <{}> when <everything is inputted correctly>
+ */
 function messageRemoveV1(token: string, messageId: number) {
   const data = getData();
   let uId = 0;
@@ -365,9 +406,6 @@ function messageRemoveV1(token: string, messageId: number) {
     for (let i = 0; i < data.channel.length; i++) {
       for (let j = 0; i < data.channel[i].messages.length; j++) {
         if (data.channel[i].messages[j].messageId === messageId) {
-          if (data.channel[i].owners.includes(uId) === true) {
-            isOwnerMember = true;
-          }
           data.channel[i].messages.splice(j, 1);
           break;
         }
@@ -403,6 +441,22 @@ function messageRemoveV1(token: string, messageId: number) {
   return {};
 }
 
+/**
+ * <Function creates and sends a message to a specific dm>
+ *
+ * Arugments:
+ * <token> is a <string> and is a users session specific identity
+ * <dmId> is a <number> and is a dms specific identity
+ * <message> is a <string> and is the message that the user wants to send in the channel
+ *
+ * Return Value:
+ * <400 Error> when <dmId does not refer to a valid DM>
+ * <400 Error> when <length of message is less than 1 or over 1000 characters>
+ * <400 Error> when <token refers to an invalid token>
+ * <403 Error> when <dmId is valid and the authorised user is not a member of the DM>
+ * <{ messageId }> when <everything is inputted correctly>
+ *
+ */
 function messageSenddmV2 (token: string, dmId: number, message: string) {
   const data:dataType = getData();
 

@@ -1,10 +1,7 @@
-import { dataType, getData, setData, userType, channelsInUserType } from './dataStore';
-import { getHashOf } from './other';
+import { dataType, getData, setData } from './dataStore';
+
 import HTTPError from 'http-errors';
 import { getTokenIndex } from './users';
-import { tokenToString } from 'typescript';
-import { memoryUsage } from 'process';
-import { dmCreate } from './dm';
 
 export function adminUserRemove (token: string, uId: number) {
   const data:dataType = getData();
@@ -136,7 +133,7 @@ export function adminPermissionChange (token: string, uId: number, permissionId:
         isOnlyGLobal = false;
       }
     }
-    if (isOnlyGLobal === true && permissionId == 2) {
+    if (isOnlyGLobal === true && permissionId === 2) {
       throw HTTPError(400, 'only globalOwner is being demoted');
     }
   }

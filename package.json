@@ -1,6 +1,8 @@
 {
     "scripts": {
-        "test": "jest src/usersWeb.test",
+
+        "test": "jest src/",
+
         "tsc": "tsc --noImplicitAny",
         "lint": "eslint src/**.ts",
         "lint-fix": "eslint --fix src/**.ts",

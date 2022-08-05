@@ -1,98 +1,10 @@
-import request from 'sync-request';
-// importing other essential functions used in channel
 
-import config from './config.json';
+import { callingClear, callingChannelDetails, callingChannelJoin, callingAuthRegister, callingChannelsCreate } from './helperFile';
 
 const OK = 200;
-const port = config.port;
-const url = config.url;
 
-function callingChannelDetails (token: string, channelId: number) {
-  const res = request(
-    'GET',
-        `${url}:${port}/channel/details/v2`,
-        {
-          qs: {
-            channelId: channelId,
-          },
-          headers: {
-            token: token,
-          }
-        }
-  );
-  // expect(res.statusCode).toBe(OK);
-  return res;
-}
-
-function callingChannelJoin (token: string, channelId: number) {
-  const res = request(
-    'POST',
-        `${url}:${port}/channel/join/v3`,
-        {
-          body: JSON.stringify({
-            channelId: channelId,
-          }),
-          headers: {
-            token: token,
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  // expect(res.statusCode).toBe(OK);
-  return res;
-}
-
-function callingClear () {
-  const res = request(
-    'DELETE',
-        `${url}:${port}/clear/v1`,
-        {
-          qs: {
-
-          }
-        }
-  );
-  expect(res.statusCode).toBe(OK);
-  return res;
-}
-
-function callingAuthRegister (email:string, password:string, nameFirst:string, nameLast:string) {
-  const res = request(
-    'POST',
-        `${url}:${port}/auth/register/v3`,
-        {
-          body: JSON.stringify({
-            email: email,
-            password: password,
-            nameFirst: nameFirst,
-            nameLast: nameLast
-          }),
-          headers: {
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  expect(res.statusCode).toBe(OK);
-  return res;
-}
-
-function callingChannelsCreate (token: string, name: string, isPublic: boolean) {
-  const res = request(
-    'POST',
-        `${url}:${port}/channels/create/v3`,
-        {
-          body: JSON.stringify({
-            name: name,
-            isPublic: isPublic,
-          }),
-          headers: {
-            token: token,
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
+// const port = config.port;
+// const url = config.url;
 
 describe('HTTP tests for channelDetailsV2', () => {
   test('Testing successful return of channelDetailsV2', () => {

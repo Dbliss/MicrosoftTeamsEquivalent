@@ -1,6 +1,6 @@
 import request from 'sync-request';
 import config from './config.json';
-import { callingClear } from './channelsServer.test';
+import { callingClear } from './helperFile';
 import { callingAuthRegister } from './dm.test';
 
 const OK = 200;
@@ -375,14 +375,14 @@ describe('Test auth/passwordreset/request/v1', () => {
   test('Success', () => {
     expect(callingClear().statusCode).toBe(OK);
     const auth = callingAuthRegister(
-      'thevin369@gmail.com',
+      'email@email.com',
       'password',
       'first',
       'last'
     );
     expect(auth.statusCode).toBe(OK);
     const request = callingPasswordRequest(
-      'thevin369@gmail.com'
+      'email@email.com'
     );
     expect(request.statusCode).toBe(OK);
     const requested = JSON.parse(String(request.getBody()));

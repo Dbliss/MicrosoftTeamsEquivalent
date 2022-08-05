@@ -1,10 +1,9 @@
+
 import request from 'sync-request';
 import { callingChannelsCreate } from './channelsServer.test';
 import config from './config.json';
 import { callingDmCreate } from './dm.test';
-import { callingMessageSend } from './message.test';
-import { involvementRateCalc, utilizationRateCalc } from './other';
-const OK = 200;
+
 const port = config.port;
 const url = config.url;
 
@@ -39,122 +38,6 @@ const url = config.url;
 //     return res;
 // }
 
-function callingClear () {
-  const res = request(
-    'DELETE',
-        `${url}:${port}/clear/v1`
-  );
-  expect(res.statusCode).toBe(OK);
-}
-
-function callingUserProfile (token: string, uId: number) {
-  const res = request(
-    'GET',
-        `${url}:${port}/user/profile/v2`,
-        {
-          qs: {
-            uId: uId,
-          },
-          headers: {
-            token: token,
-          }
-        }
-  );
-  // expect(res.statusCode).toBe(OK);
-  return res;
-}
-
-function callingUsersAll (token: string) {
-  const res = request(
-    'GET',
-        `${url}:${port}/users/all/v1`,
-        {
-          qs: {
-          },
-          headers: {
-            token: token,
-          }
-        }
-  );
-  // expect(res.statusCode).toBe(OK);
-  return res;
-}
-
-function callingUserProfileSetName (token: string, nameFirst:string, nameLast:string) {
-  const res = request(
-    'PUT',
-        `${url}:${port}/user/profile/setname/v1`,
-        {
-          body: JSON.stringify({
-            nameFirst: nameFirst,
-            nameLast: nameLast,
-          }),
-          headers: {
-            token: token,
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  // expect(res.statusCode).toBe(OK);
-  return res;
-}
-
-function callingUserProfileSetEmail (token: string, email: string) {
-  const res = request(
-    'PUT',
-        `${url}:${port}/user/profile/setemail/v1`,
-        {
-          body: JSON.stringify({
-            email: email,
-          }),
-          headers: {
-            token: token,
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  // expect(res.statusCode).toBe(OK);
-  return res;
-}
-
-function callingUserProfileSetHandle (token: string, handleStr: string) {
-  const res = request(
-    'PUT',
-        `${url}:${port}/user/profile/sethandle/v1`,
-        {
-          body: JSON.stringify({
-            handleStr: handleStr,
-          }),
-          headers: {
-            token: token,
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  // expect(res.statusCode).toBe(OK);
-  return res;
-}
-
-function callingAuthRegister (email:string, password:string, nameFirst:string, nameLast:string) {
-  const res = request(
-    'POST',
-        `${url}:${port}/auth/register/v3`,
-        {
-          body: JSON.stringify({
-            email: email,
-            password: password,
-            nameFirst: nameFirst,
-            nameLast: nameLast
-          }),
-          headers: {
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  // expect(res.statusCode).toBe(OK);
-  return res;
-}
-
 // POST REQUEST
 function callingUserUploadPhoto (token: string, imgUrl: string, xStart: number, yStart: number, xEnd: number, yEnd: number) {
   const res = request(
@@ -177,6 +60,16 @@ function callingUserUploadPhoto (token: string, imgUrl: string, xStart: number, 
   // expect(res.statusCode).toBe(OK);
   return res;
 }
+
+import {
+  callingClear,
+  // callingChannelDetails,
+  // callingChannelJoin,
+  callingUserProfile, callingUsersAll, callingUserProfileSetEmail, callingUserProfileSetHandle, callingUserProfileSetName, callingAuthRegister, callingMessageSend,
+  // callingChannelsCreate
+} from './helperFile';
+
+const OK = 200;
 
 // GET REQUEST
 function callingUserStats (token: string) {
@@ -589,10 +482,9 @@ describe('Testing user/stats/v1', () => {
     const channel = callingChannelsCreate(authUserId.token, 'channelname', true);
     const channelres = JSON.parse(String(channel.getBody()));
     const dmres = callingDmCreate(authUserId.token, uIds);
-    const dm = JSON.parse(String(dmres.getBody()));
-
+    expect(dmres.statusCode).toBe(OK);
     const messageres = callingMessageSend(authUserId.token, channelres.channelId, 'random message');
-    const message = JSON.parse(String(messageres.getBody()));
+    expect(messageres.statusCode).toBe(OK);
 
     const res = callingUserStats(authUserId.token);
     expect(res.statusCode).toBe(OK);
@@ -655,11 +547,9 @@ describe('users/stats/v1', () => {
     const channel = callingChannelsCreate(authUserId.token, 'channelname', true);
     const channelres = JSON.parse(String(channel.getBody()));
     const dmres = callingDmCreate(authUserId.token, uIds);
-    const dm = JSON.parse(String(dmres.getBody()));
-
+    expect(dmres.statusCode).toBe(OK);
     const messageres = callingMessageSend(authUserId.token, channelres.channelId, 'random message');
-    const message = JSON.parse(String(messageres.getBody()));
-
+    expect(messageres.statusCode).toBe(OK);
     const res = callingUsersStats(authUserId.token);
     expect(res.statusCode).toBe(OK);
     const result = JSON.parse(String(res.getBody()));
@@ -704,32 +594,18 @@ describe('users/stats/v1', () => {
   });
 });
 
-
-
 describe('Testing user/profile/uploadphoto/v1', () => {
-  test('Testing successful return', () => {
-    callingClear();
-    const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
-      'password',
-      'First',
-      'Last').getBody()));
+  // test('Testing successful return', () => {
+  //   callingClear();
+  //   const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
+  //     'password',
+  //     'First',
+  //     'Last').getBody()));
 
-    const res = callingUserProfileSetHandle(authUserId.token, 'NewHandle');
-    expect(res.statusCode).toBe(OK);
-    const result = JSON.parse(String(res.getBody()));
+  //   const result = JSON.parse(String(callingUserUploadPhoto(authUserId.token,'https://nakedsecurity.sophos.com/wp-content/uploads/sites/2/2013/08/facebook-silhouette_thumb.jpg', 3, 6, 7, 6).getBody()));
+  //   expect(result).toStrictEqual({});
 
-    const edited = JSON.parse(String(callingUserProfile(authUserId.token, authUserId.authUserId).getBody()));
-    expect(result).toStrictEqual({});
-    expect(edited).toMatchObject({
-      user: {
-        uId: authUserId.authUserId,
-        email: 'email@email.com',
-        nameFirst: 'First',
-        nameLast: 'Last',
-        handleStr: 'NewHandle',
-      }
-    });
-  });
+  // });
 
   test('ImgUrl return error other than 200', () => {
     callingClear();
@@ -738,10 +614,9 @@ describe('Testing user/profile/uploadphoto/v1', () => {
       'First',
       'Last').getBody()));
 
-    const res = callingUserUploadPhoto (authUserId.token,'', 1, 1, 10, 10);
+    const res = callingUserUploadPhoto(authUserId.token, '', 1, 1, 10, 10);
     expect(res.statusCode).toBe(400);
     // const result = JSON.parse(String(res.getBody()));
-
   });
 
   test('xStart, yStart, xEnd, yEnd are not within the dimensions', () => {
@@ -751,9 +626,9 @@ describe('Testing user/profile/uploadphoto/v1', () => {
       'First',
       'Last').getBody()));
 
-      const res = callingUserUploadPhoto (authUserId.token,'valid url', -1, -1, -10, -10);
-      expect(res.statusCode).toBe(400);
-      // const result = JSON.parse(String(res.getBody()));
+    const res = callingUserUploadPhoto(authUserId.token, 'https://nakedsecurity.sophos.com/wp-content/uploads/sites/2/2013/08/facebook-silhouette_thumb.jpg', -1, -1, -10, -10);
+    expect(res.statusCode).toBe(400);
+    // const result = JSON.parse(String(res.getBody()));
   });
 
   test('xEnd is less than or equal to xStart', () => {
@@ -763,12 +638,11 @@ describe('Testing user/profile/uploadphoto/v1', () => {
       'First',
       'Last').getBody()));
 
-      const res = callingUserUploadPhoto (authUserId.token,'valid url', 3, 5, 3, 10);
-      expect(res.statusCode).toBe(400);
+    const res = callingUserUploadPhoto(authUserId.token, 'https://nakedsecurity.sophos.com/wp-content/uploads/sites/2/2013/08/facebook-silhouette_thumb.jpg', 3, 5, 3, 10);
+    expect(res.statusCode).toBe(400);
 
-      const res1 = callingUserUploadPhoto (authUserId.token,'valid url', 3, 5, 0, 10);
-      expect(res1.statusCode).toBe(400);
-
+    const res1 = callingUserUploadPhoto(authUserId.token, 'https://nakedsecurity.sophos.com/wp-content/uploads/sites/2/2013/08/facebook-silhouette_thumb.jpg', 3, 5, 0, 10);
+    expect(res1.statusCode).toBe(400);
   });
   test('yEnd is less than or equal to yStart', () => {
     callingClear();
@@ -777,22 +651,21 @@ describe('Testing user/profile/uploadphoto/v1', () => {
       'First',
       'Last').getBody()));
 
-      const res = callingUserUploadPhoto (authUserId.token,'valid url', 3, 6, 7, 6);
-      expect(res.statusCode).toBe(400);
+    const res = callingUserUploadPhoto(authUserId.token, 'https://nakedsecurity.sophos.com/wp-content/uploads/sites/2/2013/08/facebook-silhouette_thumb.jpg', 3, 6, 7, 6);
+    expect(res.statusCode).toBe(400);
 
-      const res1 = callingUserUploadPhoto (authUserId.token,'valid url', 3, 6, 7, 5);
-      expect(res1.statusCode).toBe(400);
-
-    });
+    const res1 = callingUserUploadPhoto(authUserId.token, 'https://nakedsecurity.sophos.com/wp-content/uploads/sites/2/2013/08/facebook-silhouette_thumb.jpg', 3, 6, 7, 5);
+    expect(res1.statusCode).toBe(400);
+  });
 
   test('image uploaded is not a JPG', () => {
     callingClear();
     const authUserId = JSON.parse(String(callingAuthRegister('email@email.com',
-    'password',
-    'First',
-    'Last').getBody()));
+      'password',
+      'First',
+      'Last').getBody()));
 
-    const res = callingUserUploadPhoto (authUserId.token,'invalid url', 3, 6, 7, 6);
+    const res = callingUserUploadPhoto(authUserId.token, 'invalid url', 3, 6, 7, 6);
     expect(res.statusCode).toBe(400);
 
     // const result = JSON.parse(String(res.getBody()));
@@ -804,7 +677,7 @@ describe('Testing user/profile/uploadphoto/v1', () => {
   test('Testing error when token is invalid', () => {
     callingClear();
 
-    const res = callingUserUploadPhoto('#@!$$','jpeg', -1, -1, -10, -10); //need to figure out how to put in a valid URL
+    const res = callingUserUploadPhoto('#@!$$', 'jpeg', -1, -1, -10, -10); // need to figure out how to put in a valid URL
     expect(res.statusCode).toBe(403);
     // const result = JSON.parse(String(res.getBody()));
 
@@ -812,5 +685,3 @@ describe('Testing user/profile/uploadphoto/v1', () => {
     // condition is not given in the spec
   });
 });
-
-

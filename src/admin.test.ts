@@ -1,9 +1,7 @@
 import request from 'sync-request';
-import { callingChannelsCreate } from './channelsServer.test';
+
 import config from './config.json';
-import { callingDmCreate } from './dm.test';
-import { callingMessageSend } from './message.test';
-import { involvementRateCalc, utilizationRateCalc } from './other';
+
 const OK = 200;
 const port = config.port;
 const url = config.url;
@@ -174,12 +172,6 @@ describe('Testing admin/userpermission/change/v1', () => {
       'First',
       'Last').getBody()));
 
-    const globalMember = JSON.parse(String(callingAuthRegister(
-      'email1@email.com',
-      'password1',
-      'First1',
-      'Last1').getBody()));
-
     const res = callingUserPermissionChange(globalOwner.token, -3, 1);
     expect(res.statusCode).toBe(400);
   });
@@ -259,10 +251,6 @@ describe('Testing admin/userpermission/change/v1', () => {
   test('Testing error return when invalid token is given', () => {
     callingClear();
     callingClear();
-    const globalOwner = JSON.parse(String(callingAuthRegister('email@email.com',
-      'password',
-      'First',
-      'Last').getBody()));
 
     const globalMember = JSON.parse(String(callingAuthRegister(
       'email1@email.com',

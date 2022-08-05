@@ -1,37 +1,6 @@
-import request from 'sync-request';
-import config from './config.json';
+import { callingClear, callingAuthRegister, callingDmCreate, callingDmLeave, callingMessageSendDm, callingChannelsCreate, callingChannelInvite, callingMessageSend, requestChannelLeave, callingMessageReact, callingNotificationsGet } from './helperFile';
 
 const OK = 200;
-const url = config.url;
-const port = config.port;
-
-import { callingAuthRegister, callingDmCreate, callingDmLeave, callingMessageSendDm } from './dm.test';
-import { callingChannelsCreate } from './channelsServer.test';
-import { callingChannelInvite } from './channel.test';
-import { callingMessageSend } from './message.test';
-import { requestChannelLeave } from './channelServer.test';
-import { callingMessageReact } from './messageReact.test';
-
-function callingNotificationsGet(token: string) {
-  const res = request(
-    'GET',
-        `${url}:${port}/notifications/get/v1`,
-        {
-          headers: {
-            token: token,
-          }
-        }
-  );
-  return res;
-}
-
-function callingClear () {
-  const res = request(
-    'DELETE',
-        `${url}:${port}/clear/V1`
-  );
-  return res;
-}
 
 describe('Testing Notifications', () => {
   test('Invalid Token', () => {
@@ -614,9 +583,7 @@ describe('Testing Notifications', () => {
       const messageSent = JSON.parse(String(message.getBody()));
 
       const leave = requestChannelLeave(registered2.token, channelCreated.channelId);
-      console.log(leave);
-      // expect(leave.statusCode).toBe(OK);
-      // const leaveChannel = JSON.parse(String(leave.getBody()));
+      expect(leave.statusCode).toBe(OK);
 
       const react = callingMessageReact(registered1.token, messageSent.messageId, 1);
       expect(react.statusCode).toBe(OK);

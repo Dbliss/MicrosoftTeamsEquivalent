@@ -1,8 +1,10 @@
 import validator from 'validator';
 import { channelsJoinedType, dataType, dmsJoinedType, getData, messagesSentType, setData, statsType } from './dataStore';
-import { getHashOf, getIndexOfStatsUid, involvementRateCalc } from './other';
+import { getHashOf, getIndexOfStatsUid } from './other';
 import HTTPError from 'http-errors';
 const nodemailer = require('nodemailer');
+import fs from 'fs';
+import request from 'sync-request';
 
 // Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.
 // Arguments:
@@ -58,8 +60,18 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
 
   // make unique uID and store data
   const uID = Math.floor(Math.random() * Date.now());
+
+  let baseUrl = '';
   let permissionId = 2;
   if (data.user[0] === undefined) {
+    const res = request(
+      'GET',
+      'https://nakedsecurity.sophos.com/wp-content/uploads/sites/2/2013/08/facebook-silhouette_thumb.jpg'
+    );
+    const imgBody = res.getBody();
+    fs.writeFileSync('src/profileImages/common.jpg', imgBody, { flag: 'w' });
+    baseUrl = 'h17bdream.alwaysdata.net/imgurl/common.jpg';
+
     data.workSpaceStats = {
       channelsExist: [{
         numChannelsExist: 0,
@@ -99,7 +111,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     permissionId: permissionId,
     token: [],
     notifications: [],
-    profileImgUrl: '',
+    profileImgUrl: baseUrl,
     resetCode: ''
   };
   data.user[j].token.push(token);

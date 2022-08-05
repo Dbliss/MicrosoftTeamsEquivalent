@@ -3,9 +3,9 @@ import {
 } from './dataStore';
 
 import crypto from 'crypto';
-import { rawListeners } from 'process';
+
 import { getTokenIndex } from './users';
-import { statSync } from 'fs';
+
 const SECRET = 'SecretSAUCE';
 
 // <Resets the internal data of the application to its initial state>

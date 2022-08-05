@@ -1,103 +1,9 @@
-import request from 'sync-request';
-import config from './config.json';
-
 const OK = 200;
-const port = config.port;
-const url = config.url;
 
-function callingClear () {
-  const res = request(
-    'DELETE',
-  `${url}:${port}/clear/V1`);
-  return res;
-}
-
-function callingChannelsCreate (token: string, name: string, isPublic: boolean) {
-  const res = request(
-    'POST',
-        `${url}:${port}/channels/create/v3`,
-        {
-          body: JSON.stringify({
-            name: name,
-            isPublic: isPublic
-          }),
-          headers: {
-            token: token,
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
-
-function callingAuthRegister (email: string, password: string, nameFirst: string, nameLast: string) {
-  const res = request(
-    'POST',
-        `${url}:${port}/auth/register/v3`,
-        {
-          body: JSON.stringify({
-            email: email,
-            password: password,
-            nameFirst: nameFirst,
-            nameLast: nameLast
-          }),
-          headers: {
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
-
-function callingChannelInvite (token:string, channelId: number, uId: number) {
-  const res = request(
-    'POST',
-        `${url}:${port}/channel/invite/v2`,
-        {
-          body: JSON.stringify({
-            channelId: channelId,
-            uId: uId,
-          }),
-          headers: {
-            token: token,
-            'Content-type': 'application/json',
-          },
-        }
-  );
-  return res;
-}
-
-function callingChannelMessages (token:string, channelId: number, start: number) {
-  const res = request(
-    'GET',
-        `${url}:${port}/channel/messages/v2`,
-        {
-          qs: {
-            token: token,
-            channelId: channelId,
-            start: start,
-          }
-        }
-  );
-  return res;
-}
-
-// function callingChannelJoin (token: string, channelId: number) {
-//   const res = request(
-//     'POST',
-//         `${url}:${port}/channel/join/v2`,
-//         {
-//           body: JSON.stringify({
-//             token: token,
-//             channelId: channelId,
-//           }),
-//           headers: {
-//             'Content-type': 'application/json',
-//           },
-//         }
-//   );
-//   return res;
-// }
+import {
+  callingClear, callingChannelsCreate, callingAuthRegister, callingChannelInvite, callingChannelMessages,
+  // callingChannelJoin
+} from './helperFile';
 
 // describe('Testing channelDetailsV1', () => {
 //   test('Testing successful return of channelDetailsV1', () => {
@@ -352,9 +258,26 @@ describe('Testing channelInvite1', () => {
     const bodyObj1 = JSON.parse(res1.body as string);
 
     const res2 = callingChannelsCreate(bodyObj1.token, 'channel1', true);
+    const channel1 = JSON.parse(res2.body as string);
     expect(res2.statusCode).toBe(OK);
 
-    const res3 = callingChannelInvite(bodyObj1.token, -31231451, bodyObj1.authUserId);
+    const res3 = callingChannelInvite(bodyObj1.token, channel1.channelId, bodyObj1.authUserId);
+    expect(res3.statusCode).toBe(400);
+  });
+
+  test('Uid refers to a invalid uId', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const bodyObj1 = JSON.parse(res1.body as string);
+
+    const res2 = callingChannelsCreate(bodyObj1.token, 'channel1', true);
+    const channel1 = JSON.parse(res2.body as string);
+    expect(res2.statusCode).toBe(OK);
+
+    const res3 = callingChannelInvite(bodyObj1.token, channel1.channelId, -9999);
     expect(res3.statusCode).toBe(400);
   });
 
@@ -545,5 +468,3 @@ describe('Testing channelMessages1', () => {
 //     expect(bodyObj4).toStrictEqual({});
 //   });
 // });
-
-export { callingChannelInvite, callingChannelMessages };

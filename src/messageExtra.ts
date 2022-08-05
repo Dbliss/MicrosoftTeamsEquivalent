@@ -2,6 +2,25 @@ import { getData, setData, messageType, dataType, channelType, dmType } from './
 import { getTokenIndex } from './users';
 import HTTPError from 'http-errors';
 
+/**
+ * <Function gets an already sent message and the user has the option to add to it, then this message is sent to the choosen dm or channel>
+ *
+ * Arugments:
+ * <token> is a <string> and is a users session specific identity
+ * <ogMessageId> is a <number> and is a messages specific identity
+ * <message> is a <string> and is the message that the user wants to send in the channel
+ * <channelId> is a <number> and is a channels specific identity
+ * <dmId> is a <number> and is a dms specific identity
+ * 
+ * Return Value:
+ * <400 Error> when <both channelId and dmId are invalid> 
+ * <400 Error> when <neither channelId nor dmId are -1> 
+ * <400 Error> when <token refers to an invalid token> 
+ * <400 Error> when <ogMessageId does not refer to a valid message within a channel/DM that the authorised user has joined> 
+ * <400 Error> when <length of message is more than 1000 characters> 
+ * <403 Error> when <The authorised user has not joined the channel or DM they are trying to share the message to> 
+ * <{ sharedMessageId }> when <everything is inputted correctly>
+ */
 export function messageShareV1(token: string, ogMessageId: number, message: string, channelId: number, dmId: number) {
   const data: dataType = getData();
 
@@ -74,7 +93,11 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
   const timeSent = Math.floor(Date.now() / 1000);
 
   // creating the combined message
-  const combinedMessage = ogMessage + '//' + message;
+  let combinedMessage = ogMessage + '//' + message;
+  // if the inputted message was empty, just send the ogMessage
+  if (message.length === 0){
+    combinedMessage = ogMessage;
+  }
 
   // creating a new object for the message
   const newMessage: messageType = {
@@ -117,7 +140,7 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
   if (isDm === true) {
     for (const dm of data.dm) {
       if (dm.dmId === dmId) {
-        // need to make sure he authorised user is apart of this channel
+        // need to make sure he authorised user is apart of the dm
         if (dm.members.includes(uId) === false) {
           throw HTTPError(403, 'authorised user is not a member of the specified dmId');
         }
@@ -137,6 +160,21 @@ export function messageShareV1(token: string, ogMessageId: number, message: stri
   return { sharedMessageId };
 }
 
+
+/**
+ * <Function gets an already sent message and marks it as pinned>
+ *
+ * Arugments:
+ * <token> is a <string> and is a users session specific identity
+ * <messageId> is a <number> and is a messages specific identity
+ * 
+ * Return Value:
+ * <400 Error> when <messageId is not a valid message within a channel or DM that the authorised user has joined> 
+ * <400 Error> when <the message is already pinned> 
+ * <400 Error> when <token refers to an invalid token> 
+ * <403 Error> when <messageId refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM> 
+ * <{ sharedMessageId }> when <everything is inputted correctly>
+ */
 export function messagePinV1(token: string, messageId: number) {
   const data: dataType = getData();
   // Checking token
@@ -214,6 +252,20 @@ export function messagePinV1(token: string, messageId: number) {
   return {};
 }
 
+/**
+ * <Function gets an already sent message and marks it as unpinned>>
+ *
+ * Arugments:
+ * <token> is a <string> and is a users session specific identity
+ * <messageId> is a <number> and is a messages specific identity
+ * 
+ * Return Value:
+ * <400 Error> when <messageId is not a valid message within a channel or DM that the authorised user has joined> 
+ * <400 Error> when <the message is already unpinned> 
+ * <400 Error> when <token refers to an invalid token> 
+ * <403 Error> when <messageId refers to a valid message in a joined channel/DM and the authorised user does not have owner permissions in the channel/DM> 
+ * <{ sharedMessageId }> when <everything is inputted correctly>
+ */
 export function messageUnpinV1(token: string, messageId: number) {
   const data: dataType = getData();
   // Checking token
@@ -291,6 +343,22 @@ export function messageUnpinV1(token: string, messageId: number) {
   return {};
 }
 
+/**
+ * <Function creates a message and then sends it to a channel at a specific time in the future>
+ *
+ * Arugments:
+ * <token> is a <string> and is a users session specific identity
+ * <message> is a <string> and is the message that the user wants to send in the channel
+ * <channelId> is a <number> and is a channels specific identity
+ * 
+ * Return Value:
+ * <400 Error> when <channelId does not refer to a valid channel> 
+ * <400 Error> when <length of message is less than 1 or over 1000 characters> 
+ * <400 Error> when <token refers to an invalid token> 
+ * <400 Error> when <timeSent is a time in the past> 
+ * <403 Error> when <channelId is valid and the authorised user is not a member of the channel they are trying to post to> 
+ * <{ messageId }> when <everything is inputted correctly>
+ */
 export function messageSendLaterV1(token: string, channelId: number, message: string, timeSent: number) {
   const data:dataType = getData();
   let currentChannel: channelType;
@@ -359,6 +427,22 @@ export function messageSendLaterV1(token: string, channelId: number, message: st
   return { messageId };
 }
 
+/**
+ * <Function creates a message and then sends it to a dm at a specific time in the future>
+ *
+ * Arugments:
+ * <token> is a <string> and is a users session specific identity
+ * <message> is a <string> and is the message that the user wants to send in the channel
+ * <dmId> is a <number> and is a channels specific identity
+ * 
+ * Return Value:
+ * <400 Error> when <dmId does not refer to a valid channel> 
+ * <400 Error> when <length of message is less than 1 or over 1000 characters> 
+ * <400 Error> when <token refers to an invalid token> 
+ * <400 Error> when <timeSent is a time in the past> 
+ * <403 Error> when <channelId is valid and the authorised user is not a member of the dm they are trying to post to> 
+ * <{ messageId }> when <everything is inputted correctly>
+ */
 export function messageSendLaterDmV1(token: string, dmId: number, message: string, timeSent: number) {
   const data:dataType = getData();
   let currentDm: dmType;

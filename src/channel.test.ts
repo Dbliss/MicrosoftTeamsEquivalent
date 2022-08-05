@@ -258,9 +258,26 @@ describe('Testing channelInvite1', () => {
     const bodyObj1 = JSON.parse(res1.body as string);
 
     const res2 = callingChannelsCreate(bodyObj1.token, 'channel1', true);
+    const channel1 = JSON.parse(res2.body as string);
     expect(res2.statusCode).toBe(OK);
 
-    const res3 = callingChannelInvite(bodyObj1.token, -31231451, bodyObj1.authUserId);
+    const res3 = callingChannelInvite(bodyObj1.token, channel1.channelId, bodyObj1.authUserId);
+    expect(res3.statusCode).toBe(400);
+  });
+
+  test('Uid refers to a invalid uId', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const bodyObj1 = JSON.parse(res1.body as string);
+
+    const res2 = callingChannelsCreate(bodyObj1.token, 'channel1', true);
+    const channel1 = JSON.parse(res2.body as string);
+    expect(res2.statusCode).toBe(OK);
+
+    const res3 = callingChannelInvite(bodyObj1.token, channel1.channelId, -9999);
     expect(res3.statusCode).toBe(400);
   });
 

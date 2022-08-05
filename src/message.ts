@@ -393,9 +393,6 @@ function messageRemoveV1(token: string, messageId: number) {
     for (let i = 0; i < data.channel.length; i++) {
       for (let j = 0; i < data.channel[i].messages.length; j++) {
         if (data.channel[i].messages[j].messageId === messageId) {
-          if (data.channel[i].owners.includes(uId) === true) {
-            isOwnerMember = true;
-          }
           data.channel[i].messages.splice(j, 1);
           break;
         }

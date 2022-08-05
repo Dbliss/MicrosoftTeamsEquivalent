@@ -380,6 +380,37 @@ describe('Testing message Share', () => {
     expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq//yes sir', messageId: result.sharedMessageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }, { message: 'heaqaewqeuhq', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
   });
 
+  test('Success sharing a message to a channel from a channel with an empty string in message share', () => {
+    const res = callingClear();
+    expect(res.statusCode).toBe(OK);
+
+    const res1 = callingAuthRegister('email1@gmail.com', 'password1', 'first1', 'last1');
+    expect(res1.statusCode).toBe(OK);
+    const user1 = JSON.parse(res1.body as string);
+
+    const res7 = callingAuthRegister('email12@gmail.com', 'password12', 'first12', 'last12');
+    expect(res7.statusCode).toBe(OK);
+    const user2 = JSON.parse(res7.body as string);
+
+    const res5 = callingDmCreate(user1.token, [user2.authUserId]);
+    expect(res5.statusCode).toBe(OK);
+    const dm1 = JSON.parse(res5.body as string);
+
+    const res3 = callingMessageSendDm(user1.token, dm1.dmId, 'heaqaewqeuhq');
+    expect(res3.statusCode).toBe(OK);
+    const message1 = JSON.parse(String(res3.getBody()));
+
+    const res4 = callingMessageShare(user2.token, message1.messageId, '', -1, dm1.dmId);
+    expect(res4.statusCode).toBe(OK);
+    const result = JSON.parse(res4.body as string);
+
+    const res8 = callingDmMessages(user1.token, dm1.dmId, 0);
+    expect(res8.statusCode).toBe(OK);
+    const messages = JSON.parse(res8.body as string);
+
+    expect(messages).toEqual({ messages: [{ message: 'heaqaewqeuhq', messageId: result.sharedMessageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }, { message: 'heaqaewqeuhq', messageId: message1.messageId, timeSent: expect.any(Number), uId: expect.any(Number), reacts: [], isPinned: false }], start: 0, end: -1 });
+  });
+
   test('succesful message share to a channel from a dm', () => {
     const res = callingClear();
     expect(res.statusCode).toBe(OK);
